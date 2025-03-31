@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 
 // Middleware para verificar si el usuario está autenticado
@@ -48,5 +49,5 @@ Route::middleware(['web'])->group(function () {
         $response->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
         return $response;
     })->name('dashboard')->middleware('auth');
-    
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
 });
