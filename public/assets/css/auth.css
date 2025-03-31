@@ -1,0 +1,872 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --primary-color: #9d2449;
+    --primary-light: #c25f7c;
+    --primary-dark: #7c1d3a;
+    --primary-bg: #fff0f4;
+    --white: #ffffff;
+    --gray-light: #f5f5f5;
+    --gray: #e5e5e5;
+    --text-dark: #333333;
+    --text-light: #666666;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--primary-bg);
+    background-image: linear-gradient(135deg, #ffe6ed 0%, #fff0f4 100%);
+    padding: 20px;
+    position: relative;
+    opacity: 0;
+    animation: fadeIn 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("/assets/images/welcome/oaxaca-logo.png");
+    background-repeat: repeat;
+    background-position: center;
+    background-size: 100px;
+    opacity: 0.04;
+    z-index: -1;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    height: 600px;
+    background-color: var(--white);
+    box-shadow: 0 20px 40px rgba(157, 36, 73, 0.15);
+    border-radius: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: containerAppear 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation-delay: 0.2s;
+}
+
+.left-section {
+    position: relative;
+    width: 45%;
+    overflow: hidden;
+    border-radius: 20px 0 0 20px;
+    background-color: var(--gray-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: carouselAnimation 1s ease-out forwards;
+    animation-delay: 0.5s;
+    opacity: 0;
+}
+
+.carousel-wrapper {
+    width: 85%;
+    height: 85%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    position: relative;
+    transition: all 0.5s ease;
+}
+
+.carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.8s cubic-bezier(0.45, 0, 0.55, 1);
+    height: 100%;
+}
+
+.carousel-item {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1s ease;
+}
+
+.carousel-item:hover img {
+    transform: scale(1.05);
+}
+
+.carousel-text {
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+    right: 20px;
+    color: #ffffff; /* Cambiado a blanco puro */
+    text-align: left;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    transform: translateY(0);
+    opacity: 1;
+    transition: all 0.5s ease;
+  
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra añadida para más profundidad */
+}
+
+.carousel-item.active .carousel-text {
+    animation: slideUp 0.7s ease forwards;
+}
+
+.carousel-text h2 {
+    margin-bottom: 8px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff; /* Blanco para los títulos */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Sombra de texto para mejor legibilidad */
+}
+
+.carousel-text p {
+    font-size: 14px;
+    margin: 0;
+    opacity: 0.9;
+    color: #ffffff; /* Blanco para los párrafos */
+    line-height: 1.5; /* Mejor espaciado entre líneas */
+}
+
+.carousel-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.carousel-dot.active {
+    background-color: #ffffff; /* Blanco puro para el punto activo */
+    transform: scale(1.2);
+    border: 2px solid var(--primary-color);
+}
+
+.carousel-dot:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    color: var(--primary-dark);
+    border: none;
+    cursor: pointer;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    z-index: 2;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    opacity: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Mostrar controles al hacer hover */
+.carousel-wrapper:hover .carousel-control {
+    opacity: 1;
+}
+
+/* Mejoras adicionales */
+.carousel-control:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Animación para el texto */
+@keyframes slideUp {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+.prev {
+    left: 15px;
+    transform: translate(-10px, -50%);
+}
+
+.next {
+    right: 15px;
+    transform: translate(10px, -50%);
+}
+
+.carousel-wrapper:hover .carousel-control {
+    opacity: 1;
+    transform: translateY(-50%);
+}
+
+.prev:hover, .next:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    z-index: 1;
+}
+
+.right-section {
+    width: 55%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: var(--white);
+}
+
+.forms-container {
+    width: 100%;
+    max-width: 380px;
+    position: relative;
+    height: auto;
+    min-height: 550px;
+    overflow: hidden;
+}
+
+.form-page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo-img {
+    width: 190px;
+    height: auto;
+    margin: 0 auto 15px;
+    border-radius: 0;
+    object-fit: contain;
+    animation: logoAnimation 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    animation-delay: 0.3s;
+    opacity: 0;
+}
+
+h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-align: center;
+    color: var(--primary-color);
+    position: relative;
+    animation: titleAnimation 0.8s ease-out forwards;
+    animation-delay: 0.6s;
+    opacity: 0;
+}
+
+p {
+    color: var(--text-light);
+    font-size: 12px;
+    margin: 15px 0;
+    text-align: center;
+    animation: titleAnimation 0.8s ease-out forwards;
+    animation-delay: 0.7s;
+    opacity: 0;
+}
+
+form {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.welcome-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* Estilo mejorado para el campo de subida de archivos */
+.input-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.custom-file-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    background-color: #f9fafb;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.custom-file-upload:hover {
+    border-color: #9F1F4F;
+    background-color: #fef2f5;
+}
+
+.custom-file-upload span {
+    display: block;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.custom-file-upload small {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.custom-file-upload::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(159, 31, 79, 0.05);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.custom-file-upload:hover::before {
+    opacity: 1;
+}
+
+.custom-file-upload svg {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 0.75rem;
+    color: #9F1F4F;
+}
+
+#register-file {
+    display: none;
+}
+
+/* Estilo cuando se ha seleccionado un archivo */
+.custom-file-upload.has-file {
+    border-color: #9F1F4F;
+    background-color: #fef2f5;
+}
+
+.custom-file-upload.has-file span {
+    color: #9F1F4F;
+}
+
+/* Indicador de archivo seleccionado */
+.file-selected {
+    display: none;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #9F1F4F;
+    font-weight: 500;
+}
+
+.file-selected svg {
+    width: 1rem;
+    height: 1rem;
+    vertical-align: middle;
+    margin-right: 0.25rem;
+}
+
+/* Animación de carga */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.custom-file-upload.loading {
+    animation: pulse 1.5s infinite;
+}
+
+/* Mensaje de error */
+.file-error {
+    display: none;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #dc2626;
+}
+
+/* Estilo para el botón de ver ejemplo */
+.view-example-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+}
+
+label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-light);
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="file"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--gray);
+    border-radius: 6px;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    background-color: var(--gray-light);
+}
+
+.input-group .custom-file-upload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px dashed var(--primary-light);
+    border-radius: 8px;
+    background-color: var(--gray-light);
+    color: var(--text-light);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+}
+
+.btn {
+    width: 100%;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(157, 36, 73, 0.2);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 14px rgba(157, 36, 73, 0.3);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+}
+
+.btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(157, 36, 73, 0.25);
+}
+
+.back-btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+    opacity: 0;
+    animation: titleAnimation 0.8s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+.back-btn:hover {
+    background: var(--gray-light);
+    color: var(--primary-dark);
+    transform: translateX(-3px);
+}
+
+.back-btn svg {
+    transition: transform 0.3s ease;
+}
+
+.back-btn:hover svg {
+    transform: translateX(-3px);
+}
+
+.link-button {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-weight: 500;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 5px;
+    position: relative;
+}
+
+.link-button:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.link-button:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: 0;
+    left: 50%;
+    background-color: var(--primary-dark);
+    transition: all 0.3s ease;
+}
+
+.link-button:hover:after {
+    width: 100%;
+    left: 0;
+}
+
+button {
+    position: relative;
+    overflow: hidden;
+}
+
+button:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.4);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+button:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+.link-text {
+    font-size: 11px;
+    color: var(--text-light);
+    text-align: center;
+    margin-top: 12px;
+    opacity: 0;
+    animation: titleAnimation 0.8s ease-out forwards;
+}
+
+.welcome-subtitle {
+    color: var(--primary-dark);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    text-align: center;
+    animation: titleAnimation 0.8s ease-out forwards;
+    animation-delay: 0.7s;
+    opacity: 0;
+}
+
+.welcome-description {
+    color: var(--text-light);
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+    animation: titleAnimation 0.8s ease-out forwards;
+    animation-delay: 0.8s;
+    opacity: 0;
+}
+
+#pdf-data-preview {
+    margin: 15px 0 25px;
+    padding: 18px 15px;
+    background-color: var(--white);
+    border-radius: 10px;
+    border: 1px solid var(--gray);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: titleAnimation 0.8s ease-out forwards;
+    animation-delay: 0.4s;
+}
+
+.pdf-data-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.pdf-data-item {
+    padding: 8px;
+    transition: all 0.2s ease;
+}
+
+.pdf-data-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-light);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pdf-data-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.form-page {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.form-page.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+    visibility: visible;
+    position: relative;
+}
+
+.forms-container {
+    position: relative;
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    perspective: 1000px;
+    transition: height 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+        max-width: 100%;
+    }
+
+    .left-section {
+        display: none;
+    }
+
+    .right-section {
+        width: 100%;
+        padding: 30px 20px;
+        border-radius: 20px;
+    }
+
+    .forms-container {
+        height: 450px;
+    }
+
+    .logo-img {
+        width: 150px;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .welcome-description {
+        font-size: 12px;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"],
+    input[type="file"] {
+        padding: 12px 15px;
+        font-size: 16px;
+    }
+
+    .btn {
+        padding: 14px;
+        min-height: 48px;
+    }
+}
+.file-input-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.file-input-header label {
+    margin: 0;
+}
+
+.small-btn {
+    height: 28px;
+    padding: 0 12px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #9F1F4F;
+    background: transparent;
+    color: #9F1F4F;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.small-btn:hover {
+    background: rgba(159, 31, 79, 0.05);
+}
+
+.small-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.small-btn.outline {
+    border-color: #E5E7EB;
+}
+
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: scale(0.98) translateY(10px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes titleAnimation {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes buttonAnimation {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes logoAnimation {
+    0% { transform: scale(0.8) rotate(-5deg); opacity: 0; }
+    80% { transform: scale(1.05) rotate(2deg); }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes carouselAnimation {
+    0% { transform: translateX(20px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes containerAppear {
+    0% { opacity: 0; transform: translateY(20px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes slideIn {
+    0% { opacity: 0; transform: translateX(30px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideOut {
+    0% { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(-30px); }
+}
+
+@keyframes slideUp {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes ripple {
+    0% { transform: scale(0, 0); opacity: 0.5; }
+    20% { transform: scale(25, 25); opacity: 0.3; }
+    100% { opacity: 0; transform: scale(40, 40); }
+}
+
+@keyframes flipIn {
+    0% { transform: perspective(1000px) rotateY(90deg); opacity: 0; }
+    100% { transform: perspective(1000px) rotateY(0); opacity: 1; }
+}
+
+@keyframes flipOut {
+    0% { transform: perspective(1000px) rotateY(0); opacity: 1; }
+    100% { transform: perspective(1000px) rotateY(-90deg); opacity: 0; }
+}
