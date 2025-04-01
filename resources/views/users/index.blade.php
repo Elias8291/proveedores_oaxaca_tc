@@ -2,6 +2,10 @@
 
 @section('title', '¡Bienvenidos a Proveedores de Oaxaca!')
 
+@section('css')
+    <link href="{{ asset('assets/css/users.css') }}" rel="stylesheet">
+@endsection
+
 @section('content')
 <div class="container">
     <!-- Sección para mostrar los usuarios -->

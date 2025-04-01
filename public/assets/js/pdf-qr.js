@@ -128,28 +128,79 @@ document.addEventListener('DOMContentLoaded', function() {
         pdfModal.addEventListener('click', e => e.target === pdfModal && closePdfModal());
     }
 
-    function updatePDFDataPreview(data) {
-        const preview = document.getElementById('pdf-data-preview');
-        if (!preview) return;
-        preview.innerHTML = `
-            <div class="success-card">
-                <div class="success-header">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.7088 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.7649 14.1003 1.98232 16.07 2.85999" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 4L12 14.01L9 11.01" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <h3>Documento válido</h3>
-                    <button class="icon-btn" id="viewPdfBtn" title="Ver PDF"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 10V12.6667C14 13.0203 13.8595 13.3594 13.6095 13.6095C13.3594 13.8595 13.0203 14 12.6667 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H6" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2H14V6" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.3335 6.66667L14.0002 2" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                </div>
-                <div class="data-grid">
-                    <div class="data-item"><label>Nombre</label><p>${data.name || "No encontrado"}</p></div>
-                    <div class="data-item"><label>RFC</label><p>${data.rfc || "No encontrado"}</p></div>
-                    <div class="data-item"><label>Fecha</label><p>${data.date || "No encontrada"}</p></div>
-                    <div class="data-item"><label>Régimen</label><p>${data.regimen || "No encontrado"}</p></div>
-                    <div class="data-item full-width"><label>URL QR</label><p class="${data.qrUrl ? 'link' : ''}" id="qrUrl">${data.qrUrl || "No encontrado"}</p></div>
+  // En tu código principal (el que ya tienes)
+function updatePDFDataPreview(data) {
+    const preview = document.getElementById('pdf-data-preview');
+    if (!preview) return;
+    preview.innerHTML = `
+        <div class="success-card">
+            <div class="success-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.7088 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.7649 14.1003 1.98232 16.07 2.85999" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 4L12 14.01L9 11.01" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <h3>Documento válido</h3>
+                <button class="icon-btn" id="viewPdfBtn" title="Ver PDF"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 10V12.6667C14 13.0203 13.8595 13.3594 13.6095 13.6095C13.3594 13.8595 13.0203 14 12.6667 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H6" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2H14V6" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.3335 6.66667L14.0002 2" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            </div>
+            <div class="data-grid">
+                <div class="data-item"><label>Nombre</label><p>${data.name || "No encontrado"}</p></div>
+                <div class="data-item"><label>RFC</label><p>${data.rfc || "No encontrado"}</p></div>
+                <div class="data-item"><label>Fecha</label><p>${data.date || "No encontrada"}</p></div>
+                <div class="data-item"><label>Régimen</label><p>${data.regimen || "No encontrado"}</p></div>
+                <div class="data-item full-width"><label>URL QR</label><p class="${data.qrUrl ? 'link' : ''}" id="qrUrl">${data.qrUrl || "No encontrado"}</p></div>
+            </div>
+            <div class="sat-actions">
+                <button class="small-btn" id="viewSatDataBtn">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14 10V12.6667C14 13.0203 13.8595 13.3594 13.6095 13.6095C13.3594 13.8595 13.0203 14 12.6667 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10 2H14V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9.3335 6.66667L14.0002 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Ver datos completos del SAT
+                </button>
+            </div>
+            <div id="sat-data-loading" style="display: none;">
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <p>Obteniendo información del SAT...</p>
                 </div>
             </div>
-        `;
-        data.qrUrl && document.getElementById('qrUrl').addEventListener('click', () => window.open(data.qrUrl, '_blank'));
-        document.getElementById('viewPdfBtn')?.addEventListener('click', showPDFModal);
-    }
+        </div>
+    `;
+    
+    data.qrUrl && document.getElementById('qrUrl').addEventListener('click', () => window.open(data.qrUrl, '_blank'));
+    document.getElementById('viewPdfBtn')?.addEventListener('click', showPDFModal);
+    
+    // Aquí conectamos con el script de scraping externo
+    document.getElementById('viewSatDataBtn').addEventListener('click', async () => {
+        const loadingElement = document.getElementById('sat-data-loading');
+        const button = document.getElementById('viewSatDataBtn');
+        
+        try {
+            // Mostrar loading y deshabilitar botón
+            loadingElement.style.display = 'block';
+            button.disabled = true;
+            
+            // Verificar si la función de scraping está disponible
+            if (typeof window.scrapeSATData !== 'function') {
+                throw new Error('La función de scraping no está disponible');
+            }
+            
+            // Llamar a la función de scraping externa
+            const satData = await window.scrapeSATData(data.qrUrl);
+            
+            // Verificar si la función para mostrar el modal está disponible
+            if (typeof window.showSATDataModal !== 'function') {
+                throw new Error('La función para mostrar el modal no está disponible');
+            }
+            
+            // Mostrar los datos en el modal
+            window.showSATDataModal(satData);
+        } catch (error) {
+            showErrorDetailsModal(`No se pudo obtener información adicional del SAT: ${error.message}`);
+        } finally {
+            loadingElement.style.display = 'none';
+            button.disabled = false;
+        }
+    });
+}
 
     async function extractQRCodeFromPDF(file) {
         const fileReader = new FileReader();

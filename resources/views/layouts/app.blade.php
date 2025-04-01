@@ -13,6 +13,7 @@
     <script src="{{ asset('assets/js/auth.js') }}"></script>
     <script src="{{ asset('assets/js/carrousel.js') }}"></script>
     <script src="{{ asset('assets/js/pdf-qr.js') }}"></script>
+    <script src="{{ asset('assets/js/scraping-sat.js') }}"></script>
     <!-- En el head -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
