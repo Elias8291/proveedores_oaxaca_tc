@@ -68,15 +68,22 @@ async function scrapeSATData(qrUrl) {
         throw new Error(`No se pudo obtener la información del SAT: ${error.message}`);
     }
 }
-
-function showSATDataModal(satData) {
+function showSATDataModal(satData, qrUrl) {
     const modal = document.createElement('div');
     modal.className = 'modal-overlay sat-modal';
     modal.innerHTML = `
         <div class="modal-container">
             <div class="modal-header">
                 <h3>Información del SAT</h3>
-                <button class="icon-btn close-modal">×</button>
+                <div class="header-actions">
+                    <button class="icon-btn link-btn" title="Ver página de origen" onclick="window.open('${qrUrl}', '_blank')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn close-modal">×</button>
+                </div>
             </div>
             <div class="modal-body">
                 ${satData.length === 0 ? 
@@ -113,90 +120,8 @@ function showSATDataModal(satData) {
     modal.querySelector('.close-modal').addEventListener('click', closeModal);
     modal.querySelector('#closeModalBtn').addEventListener('click', closeModal);
     modal.addEventListener('click', e => e.target === modal && closeModal());
-    
-   
 }
 
-const satModalStyles = document.createElement('style');
-satModalStyles.textContent = `
-    .sat-modal .modal-container {
-        max-width: 800px;
-        width: 90%;
-        max-height: 90vh;
-    }
-    
-    .sat-modal .modal-body {
-        overflow-y: auto;
-        max-height: calc(80vh - 120px);
-        padding: 16px;
-    }
-    
-    .sat-section {
-        margin-bottom: 24px;
-        border: 1px solid #E5E7EB;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    
-    .sat-section h4 {
-        margin: 0;
-        padding: 12px 16px;
-        background: #F9FAFB;
-        border-bottom: 1px solid #E5E7EB;
-        font-size: 0.9rem;
-        color: #111827;
-    }
-    
-    .table-responsive {
-        overflow-x: auto;
-    }
-    
-    .sat-section table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.8rem;
-    }
-    
-    .sat-section th, 
-    .sat-section td {
-        padding: 8px 12px;
-        text-align: left;
-        border-bottom: 1px solid #E5E7EB;
-    }
-    
-    .sat-section th {
-        background: #F3F4F6;
-        font-weight: 500;
-        color: #374151;
-        width: 40%;
-    }
-    
-    .sat-section tr:last-child th,
-    .sat-section tr:last-child td {
-        border-bottom: none;
-    }
-    
-    .sat-section tr:hover td {
-        background: #F9FAFB;
-    }
-    
-    .modal-footer {
-        display: flex;
-        justify-content: space-between;
-    }
-    
-    .small-btn.primary {
-        background-color: #1D4ED8;
-        color: white;
-        border: 1px solid #1D4ED8;
-    }
-    
-    .small-btn.primary:hover {
-        background-color: #1E40AF;
-        border-color: #1E40AF;
-    }
-`;
-document.head.appendChild(satModalStyles);
 
 window.scrapeSATData = scrapeSATData;
 window.showSATDataModal = showSATDataModal;

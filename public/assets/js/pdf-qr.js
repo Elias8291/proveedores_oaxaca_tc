@@ -131,10 +131,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function updatePDFDataPreview(data) {
         const preview = document.getElementById('pdf-data-preview');
         if (!preview) return;
-        
-        // Determinar clase CSS según estatus
+    
+        // Determine CSS class based on status
         const statusClass = data.estatus === "Vencido" ? "expired" : "valid";
-        
+    
         preview.innerHTML = `
             <div class="success-card ${statusClass}">
                 <div class="success-header">
@@ -147,14 +147,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         '<div class="warning-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12M12 16H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Vencido</div>' : 
                         ''}
                     <button class="icon-btn" id="viewPdfBtn" title="Ver PDF"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 10V12.6667C14 13.0203 13.8595 13.3594 13.6095 13.6095C13.3594 13.8595 13.0203 14 12.6667 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H6" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2H14V6" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.3335 6.66667L14.0002 2" stroke="#9F1F4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                </div>
-                <div class="data-grid">
-                    <div class="data-item"><label>Tipo</label><p>Persona ${data.tipo || "No identificado"}</p></div>
-                    <div class="data-item"><label>Nombre</label><p>${data.name || "No encontrado"}</p></div>
-                    <div class="data-item"><label>RFC</label><p>${data.rfc || "No encontrado"}</p></div>
-                    <div class="data-item"><label>Fecha</label><p>${data.date || "No encontrada"} ${data.estatus ? `(${data.estatus})` : ''}</p></div>
-                    <div class="data-item"><label>Régimen</label><p>${data.regimen || "No encontrado"}</p></div>
-                    <div class="data-item full-width"><label>URL QR</label><p class="${data.qrUrl ? 'link' : ''}" id="qrUrl">${data.qrUrl || "No encontrado"}</p></div>
                 </div>
                 ${data.estatus === "Vencido" ? 
                     `<div class="warning-message">
@@ -180,29 +172,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         `;
-        
-        data.qrUrl && document.getElementById('qrUrl').addEventListener('click', () => window.open(data.qrUrl, '_blank'));
+    
         document.getElementById('viewPdfBtn')?.addEventListener('click', showPDFModal);
-        
+    
         document.getElementById('viewSatDataBtn').addEventListener('click', async () => {
             const loadingElement = document.getElementById('sat-data-loading');
             const button = document.getElementById('viewSatDataBtn');
-            
+    
             try {
                 loadingElement.style.display = 'block';
                 button.disabled = true;
-                
+    
                 if (typeof window.scrapeSATData !== 'function') {
                     throw new Error('La función de scraping no está disponible');
                 }
-                
+    
                 const satData = await window.scrapeSATData(data.qrUrl);
-                
+    
                 if (typeof window.showSATDataModal !== 'function') {
                     throw new Error('La función para mostrar el modal no está disponible');
                 }
-                
-                window.showSATDataModal(satData);
+    
+                window.showSATDataModal(satData, data.qrUrl);
             } catch (error) {
                 showErrorDetailsModal(`No se pudo obtener información adicional del SAT: ${error.message}`);
             } finally {
@@ -231,11 +222,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         const textContent = await page.getTextContent();
                         const text = textContent.items.map(item => item.str).join(' ');
                         
-                        // Mejorar detección de RFC (física y moral)
                         const rfcMatch = text.match(/([A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3})/);
                         if (rfcMatch) {
                             data.rfc = rfcMatch[0];
-                            // Determinar si es persona moral (longitud 12) o física (longitud 13)
                             data.tipo = data.rfc.length === 12 ? "Moral" : "Física";
                         }
                         
@@ -264,25 +253,15 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                                 qrFound = true;
                                 
-                                // Mejorar extracción de fecha
                                 const dateMatch = text.match(/(\d{2}\/\d{2}\/\d{4})/g);
                                 if (dateMatch && dateMatch.length > 0) {
-                                    // Tomar la última fecha encontrada (generalmente es la de emisión)
                                     data.date = dateMatch[dateMatch.length - 1];
-                                    
-                                    // Verificar si la fecha es pasada
                                     const docDate = new Date(data.date.split('/').reverse().join('-'));
                                     const today = new Date();
                                     today.setHours(0, 0, 0, 0);
-                                    
-                                    if (docDate < today) {
-                                        data.estatus = "Vencido";
-                                    } else {
-                                        data.estatus = "Vigente";
-                                    }
+                                    data.estatus = docDate < today ? "Vencido" : "Vigente";
                                 }
                                 
-                                // Mejorar extracción de nombre y régimen
                                 if (!data.name) {
                                     const nameMatch = text.match(/NOMBRE(?:\sDEL\sCONTRIBUYENTE)?:\s*([A-ZÀ-ÚÑ&\s]+)/i);
                                     data.name = nameMatch?.[1]?.trim() || "";
@@ -324,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.head.appendChild(Object.assign(document.createElement('style'), {
         textContent: `
-            #pdf-loading{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.95);display:flex;justify-content:center;align-items:center;z-index:1000;backdrop-filter:blur(2px)}.loading-container{text-align:center;padding:24px;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);max-width:300px;width:100%}.spinner{width:40px;height:40px;border:3px solid rgba(159,31,79,0.1);border-top:3px solid #9F1F4F;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}#pdf-loading p{color:#4B5563;font-size:0.9rem;margin:0}.error-card{background:#FFF5F7;border:1px solid #FED7E2;border-radius:8px;padding:12px;font-size:0.8rem}.error-header{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}.error-icon{flex-shrink:0;margin-top:2px;color:#9F1F4F}.error-text h3{margin:0;color:#9F1F4F;font-size:0.85rem;font-weight:600}.error-text p{margin:4px 0 0;color:#6B7280;font-size:0.8rem;line-height:1.4}.error-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}.small-btn{height:28px;padding:0 12px;font-size:0.75rem;border-radius:6px;border:1px solid #9F1F4F;background:#9F1F4F;color:white;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;font-weight:500}.small-btn:hover{background:#7A1740;border-color:#7A1740}.small-btn.outline{background:transparent;color:#9F1F4F;border-color:#E5E7EB}.small-btn.outline:hover{background:rgba(159,31,79,0.05);border-color:#D1D5DB}.icon-btn{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:none;border:none;border-radius:6px;color:#9F1F4F;cursor:pointer;transition:all 0.2s;padding:0}.icon-btn:hover{background:rgba(159,31,79,0.1)}.success-card{background:white;border:1px solid #E5E7EB;border-radius:8px;padding:12px}.success-card.expired{border-color:#FECACA;background-color:#FEF2F2}.success-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}.success-header h3{margin:0;font-size:0.9rem;color:#9F1F4F;font-weight:600;flex-grow:1}.success-header svg{color:#9F1F4F}.warning-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background-color:#FEE2E2;color:#B91C1C;border-radius:9999px;font-size:0.75rem;font-weight:500}.warning-badge svg{color:#B91C1C}.warning-message{display:flex;align-items:flex-start;gap:8px;padding:8px;background-color:#FEF2F2;border-radius:6px;margin-top:8px;margin-bottom:12px}.warning-message svg{flex-shrink:0;color:#B91C1C;margin-top:2px}.warning-message p{margin:0;font-size:0.8rem;color:#B91C1C;line-height:1.4}.data-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.data-item{margin-bottom:4px}.data-item.full-width{grid-column:span 2}.data-item label{display:block;font-size:0.7rem;color:#6B7280;margin-bottom:2px;text-transform:uppercase;letter-spacing:0.5px}.data-item p{margin:0;font-size:0.8rem;color:#111827;font-weight:500;word-break:break-word}.data-item p.link{color:#9F1F4F;text-decoration:underline;cursor:pointer}.data-item p.link:hover{color:#7A1740}.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:2000;animation:fadeIn 0.2s ease-out}@keyframes fadeIn{from{opacity:0}to{opacity:1}}.modal-container{background:white;border-radius:8px;width:90%;max-width:400px;overflow:hidden;animation:slideUp 0.3s ease-out}@keyframes slideUp{from{transform:translateY(20px)}to{transform:translateY(0)}}.modal-header{padding:12px 16px;border-bottom:1px solid #F3F4F6;display:flex;justify-content:space-between;align-items:center}.modal-header h3{margin:0;font-size:0.95rem;color:#111827}.modal-body{padding:16px}.modal-body p{margin:0 0 12px;font-size:0.85rem;color:#4B5563;line-height:1.5}.tip-box{display:flex;gap:8px;padding:10px;background:#F9FAFB;border-radius:6px;font-size:0.8rem;color:#6B7280;line-height:1.5}.tip-box svg{flex-shrink:0;color:#9F1F4F}.modal-footer{padding:12px 16px;border-top:1px solid #F3F4F6;display:flex;justify-content:flex-end;gap:8px}.pdf-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:2100;animation:fadeIn 0.2s ease-out}.pdf-modal-container{background:white;border-radius:8px;width:90%;max-width:800px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;animation:slideUp 0.3s ease-out}.pdf-modal-header{padding:12px 16px;border-bottom:1px solid #F3F4F6;display:flex;justify-content:space-between;align-items:center}.pdf-modal-header h3{margin:0;font-size:1rem;color:#111827}.pdf-modal-body{padding:16px;overflow-y:auto;flex-grow:1;position:relative}#pdf-viewer-container{display:flex;flex-direction:column;gap:20px}#pdf-viewer-container canvas{width:100%;height:auto;border:1px solid #E5E7EB;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.05)}.pdf-loader{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;justify-content:center;align-items:center;background:rgba(255,255,255,0.9)}.pdf-spinner{width:40px;height:40px;border:3px solid rgba(159,31,79,0.1);border-top:3px solid #9F1F4F;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:12px}.pdf-loader p{margin:0;color:#4B5563;font-size:0.9rem}.pdf-modal-footer{padding:12px 16px;border-top:1px solid #F3F4F6;display:flex;justify-content:flex-end}
+            #pdf-loading{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.95);display:flex;justify-content:center;align-items:center;z-index:1000;backdrop-filter:blur(2px)}.loading-container{text-align:center;padding:24px;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);max-width:300px;width:100%}.spinner{width:40px;height:40px;border:3px solid rgba(159,31,79,0.1);border-top:3px solid #9F1F4F;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}#pdf-loading p{color:#4B5563;font-size:0.9rem;margin:0}.error-card{background:#FFF5F7;border:1px solid #FED7E2;border-radius:8px;padding:12px;font-size:0.8rem}.error-header{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}.error-icon{flex-shrink:0;margin-top:2px;color:#9F1F4F}.error-text h3{margin:0;color:#9F1F4F;font-size:0.85rem;font-weight:600}.error-text p{margin:4px 0 0;color:#6B7280;font-size:0.8rem;line-height:1.4}.error-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}.small-btn{height:28px;padding:0 12px;font-size:0.75rem;border-radius:6px;border:1px solid #9F1F4F;background:#9F1F4F;color:white;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;font-weight:500}.small-btn:hover{background:#7A1740;border-color:#7A1740}.small-btn.outline{background:transparent;color:#9F1F4F;border-color:#E5E7EB}.small-btn.outline:hover{background:rgba(159,31,79,0.05);border-color:#D1D5DB}.icon-btn{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:none;border:none;border-radius:6px;color:#9F1F4F;cursor:pointer;transition:all 0.2s;padding:0}.icon-btn:hover{background:rgba(159,31,79,0.1)}.success-card{background:white;border:1px solid #E5E7EB;border-radius:8px;padding:12px}.success-card.expired{border-color:#FECACA;background-color:#FEF2F2}.success-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}.success-header h3{margin:0;font-size:0.9rem;color:#9F1F4F;font-weight:600;flex-grow:1}.success-header svg{color:#9F1F4F}.warning-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background-color:#FEE2E2;color:#B91C1C;border-radius:9999px;font-size:0.75rem;font-weight:500}.warning-badge svg{color:#B91C1C}.warning-message{display:flex;align-items:flex-start;gap:8px;padding:8px;background-color:#FEF2F2;border-radius:6px;margin-top:8px;margin-bottom:12px}.warning-message svg{flex-shrink:0;color:#B91C1C;margin-top:2px}.warning-message p{margin:0;font-size:0.8rem;color:#B91C1C;line-height:1.4}.data-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.data-item{margin-bottom:4px}.data-item.full-width{grid-column:span 2}.data-item label{display:block;font-size:0.7rem;color:#6B7280;margin-bottom:2px;text-transform:uppercase;letter-spacing:0.5px}.data-item p{margin:0;font-size:0.8rem;color:#111827;font-weight:500;word-break:break-word}.data-item p.link{color:#9F1F4F;text-decoration:underline;cursor:pointer}.data-item p.link:hover{color:#7A1740}.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:2000;animation:fadeIn 0.2s ease-out}@keyframes fadeIn{from{opacity:0}to{opacity:1}}.modal-container{background:white;border-radius:8px;width:90%;max-width:400px;overflow:hidden;animation:slideUp 0.3s ease-out}@keyframes slideUp{from{transform:translateY(20px)}to{transform:translateY(0)}}.modal-header{padding:12px 16px;border-bottom:1px solid #F3F4F6;display:flex;justify-content:space-between;align-items:center}.modal-header h3{margin:0;font-size:0.95rem;color:#111827}.modal-body{padding:16px}.modal-body p{margin:0 0 12px;font-size:0.85rem;color:#4B5563;line-height:1.5}.tip-box{display:flex;gap:8px;padding:10px;background:#F9FAFB;border-radius:6px;font-size:0.8rem;color:#6B7280;line-height:1.5}.tip-box svg{flex-shrink:0;color:#9F1F4F}.modal-footer{padding:12px 16px;border-top:1px solid #F3F4F6;display:flex;justify-content:flex-end;gap:8px}.pdf-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index: the's2100;animation:fadeIn 0.2s ease-out}.pdf-modal-container{background:white;border-radius:8px;width:90%;max-width:800px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;animation:slideUp 0.3s ease-out}.pdf-modal-header{padding:12px 16px;border-bottom:1px solid #F3F4F6;display:flex;justify-content:space-between;align-items:center}.pdf-modal-header h3{margin:0;font-size:1rem;color:#111827}.pdf-modal-body{padding:16px;overflow-y:auto;flex-grow:1;position:relative}#pdf-viewer-container{display:flex;flex-direction:column;gap:20px}#pdf-viewer-container canvas{width:100%;height:auto;border:1px solid #E5E7EB;border-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,0.05)}.pdf-loader{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;justify-content:center;align-items:center;background:rgba(255,255,255,0.9)}.pdf-spinner{width:40px;height:40px;border:3px solid rgba(159,31,79,0.1);border-top:3px solid #9F1F4F;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:12px}.pdf-loader p{margin:0;color:#4B5563;font-size:0.9rem}.pdf-modal-footer{padding:12px 16px;border-top:1px solid #F3F4F6;display:flex;justify-content:flex-end}
         `
     }));
 

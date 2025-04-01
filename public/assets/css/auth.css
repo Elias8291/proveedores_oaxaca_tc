@@ -807,7 +807,82 @@ button:focus:not(:active)::after {
 .small-btn.outline {
     border-color: #E5E7EB;
 }
+.sat-modal .modal-container {
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+}
 
+.sat-modal .modal-body {
+    overflow-y: auto;
+    max-height: calc(80vh - 120px);
+    padding: 16px;
+}
+
+.sat-section {
+    margin-bottom: 24px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.sat-section h4 {
+    margin: 0;
+    padding: 12px 16px;
+    background: #F9FAFB;
+    border-bottom: 1px solid #E5E7EB;
+    font-size: 0.9rem;
+    color: #111827;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.sat-section table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.sat-section th, 
+.sat-section td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.sat-section th {
+    background: #F3F4F6;
+    font-weight: 500;
+    color: #374151;
+    width: 40%;
+}
+
+.sat-section tr:last-child th,
+.sat-section tr:last-child td {
+    border-bottom: none;
+}
+
+.sat-section tr:hover td {
+    background: #F9FAFB;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.small-btn.primary {
+    background-color: #1D4ED8;
+    color: white;
+    border: 1px solid #1D4ED8;
+}
+
+.small-btn.primary:hover {
+    background-color: #1E40AF;
+    border-color: #1E40AF;
+}
 
 @keyframes fadeIn {
     0% { opacity: 0; transform: scale(0.98) translateY(10px); }
