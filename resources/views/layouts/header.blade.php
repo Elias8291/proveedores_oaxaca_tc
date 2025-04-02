@@ -32,15 +32,16 @@
                     </svg>
                     <span>Mi perfil</span>
                 </div>
-                <form action="{{ route('logout') }}" method="POST" class="dropdown-item">
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="dropdown-item">
                     @csrf
-                    <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; width: 100%;">
+                    <button type="submit" id="logout-button" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; width: 100%;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M10 3H6a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h4M16 17l5-5-5-5M19.8 12H9"></path>
                         </svg>
                         <span style="margin-left: 8px;">Cerrar sesión</span>
                     </button>
                 </form>
+                
             </div>
         </div>
     </div>
