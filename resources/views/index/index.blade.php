@@ -1,11 +1,9 @@
 @extends('dashboard')
 
 @section('title', '¡Bienvenidos a Proveedores de Oaxaca!')
-
+<link rel="stylesheet" href="{{ asset('assets/css/index.css') }}">
 @section('content')
-<!-- Contenedor principal con fondo suave -->
 <div class="dashboard-container">
-    <!-- Tarjeta de bienvenida con hora -->
     <div class="welcome-card">
         <div class="welcome-left">
             <div class="welcome-status">Sesión Activa</div>
@@ -14,17 +12,13 @@
             <div class="time-display" id="currentTime">10:29 am</div>
         </div>
         <div class="welcome-right">
-            <!-- Corregimos la ruta de la imagen para asegurarnos que se cargue correctamente -->
             <img src="{{ asset('assets/images/welcome/jacqueAI.png') }}" alt="Asistente" class="welcome-image">
         </div>
     </div>
-    <!-- Secciones lado a lado para Features y Help -->
     <div class="side-by-side-sections">
-        <!-- Features Section -->
         <div class="side-section features-section">
             <h2 class="section-title">Descubre cómo usar Proveedores de Oaxaca</h2>
             <div class="cards-container-vertical">
-                <!-- Tarjeta: Subir Documentos -->
                 <div class="card">
                     <div class="card-content">
                         <div class="card-icon icon-upload">
@@ -34,8 +28,6 @@
                         <div class="card-meta">Carga contratos o catálogos de proveedores</div>
                     </div>
                 </div>
-                
-                <!-- Tarjeta: Revisar Estado -->
                 <div class="card">
                     <div class="card-content">
                         <div class="card-icon icon-status">
@@ -45,8 +37,6 @@
                         <div class="card-meta">Consulta el estado de tus pedidos</div>
                     </div>
                 </div>
-                
-                <!-- Tarjeta: Explorar Proveedores -->
                 <div class="card">
                     <div class="card-content">
                         <div class="card-icon icon-suppliers">
@@ -56,8 +46,6 @@
                         <div class="card-meta">Encuentra proveedores locales de Oaxaca</div>
                     </div>
                 </div>
-                
-                <!-- Tarjeta: Automatizar Tareas -->
                 <div class="card">
                     <div class="card-content">
                         <div class="card-icon icon-automate">
@@ -69,12 +57,9 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Help Section -->
         <div class="side-section help-section">
             <h2 class="section-title">Obtén ayuda</h2>
             <div class="cards-container-vertical">
-                <!-- Tarjeta: Documentación -->
                 <div class="card">
                     <div class="card-content">
                         <div class="card-icon icon-docs">
@@ -84,8 +69,6 @@
                         <div class="card-meta">Aprende en detalle</div>
                     </div>
                 </div>
-                
-                <!-- Tarjeta: Incorporación -->
                 <div class="card">
                     <div class="card-content">
                         <div class="card-icon icon-onboarding">
@@ -95,8 +78,6 @@
                         <div class="card-meta">Recorrido del producto</div>
                     </div>
                 </div>
-                
-                <!-- Tarjeta: Foro de la Comunidad -->
                 <div class="card">
                     <div class="card-content">
                         <div class="card-icon icon-community">
@@ -106,8 +87,6 @@
                         <div class="card-meta">Conecta con otros usuarios</div>
                     </div>
                 </div>
-                
-                <!-- Tarjeta: Tutoriales -->
                 <div class="card">
                     <div class="card-content">
                         <div class="card-icon icon-tutorials">
@@ -122,10 +101,8 @@
     </div>
 </div>
 
-<!-- Script para la hora y saludo -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Función para actualizar la hora
         function updateTime() {
             const now = new Date();
             const hours = now.getHours();
@@ -136,7 +113,6 @@
             
             document.getElementById('currentTime').textContent = `${formattedHours}.${formattedMinutes} ${ampm}`;
             
-            // Actualizar el saludo según la hora
             const greeting = document.getElementById('greeting');
             const userName = '{{ auth()->user()->name }}';
             
@@ -149,11 +125,10 @@
             }
         }
         
-        // Actualizar la hora inmediatamente
         updateTime();
-        
-        // Actualizar la hora cada minuto
         setInterval(updateTime, 60000);
     });
 </script>
+
+
 @endsection

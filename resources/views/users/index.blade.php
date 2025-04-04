@@ -1,10 +1,8 @@
 @extends('dashboard')
 
 @section('title', '¡Bienvenidos a Proveedores de Oaxaca!')
+<link rel="stylesheet" href="{{ asset('assets/css/tabla.css') }}">
 
-@section('css')
-    <link href="{{ asset('assets/css/users.css') }}" rel="stylesheet">
-@endsection
 
 @section('content')
 <div class="container">
@@ -28,7 +26,6 @@
                 </tr>
             </thead>
             <tbody>
-                
                 @foreach ($users as $user)
                     <tr>
                         <td>
