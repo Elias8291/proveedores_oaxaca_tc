@@ -1692,3 +1692,128 @@ body {
         font-size: 28px;
     }
 }
+/* Estilos mejorados para la tabla */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.table tbody tr {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.table tbody tr:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Filas con espaciado */
+.table tbody tr td {
+    border-bottom: none;
+    background: white;
+    vertical-align: middle;
+}
+
+/* Contenedor de los checkboxes */
+.checkbox-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Indicador de estado */
+.status-indicator {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-active {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Botones mejorados */
+.btn {
+    padding: 8px 14px;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s ease-in-out;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Iconos en botones */
+.btn i {
+    margin-right: 5px;
+}
+
+/* Estilos para hacer que la tabla sea más compacta en pantallas pequeñas */
+@media (max-width: 768px) {
+    .table th, .table td {
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Estilo para el avatar con inicial */
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-right: 10px;
+}
+
+/* Contenedor de usuario con avatar */
+.user-container {
+    display: flex;
+    align-items: center;
+}
