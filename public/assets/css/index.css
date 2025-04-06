@@ -1,14 +1,10 @@
-/* Dashboard Container */
-.dashboard-container {
-    background: transparent;
-    max-width: 100%; /* Antes: 1200px */
-    width: 100%;
-    margin: 0; /* Eliminamos margen auto */
-    padding: 1.5rem;
+
+/* Añadiendo espacio entre sidebar y contenido principal */
+.main-content {
+    margin-left: 1.5rem;
 }
 
-
-/* Welcome Card */
+/* Welcome Card - Versión más compacta */
 .welcome-card {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -19,14 +15,15 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     margin-bottom: 2rem;
     position: relative;
-    max-width: 900px;
+    max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
     transition: all 0.3s ease;
+    min-height: 280px; /* Altura reducida */
 }
 
 .welcome-left {
-    padding: 2rem;
+    padding: 1.5rem; /* Padding reducido */
     position: relative;
     z-index: 1;
     display: flex;
@@ -34,19 +31,17 @@
     justify-content: center;
 }
 
-/* NUEVO BLOQUE AGREGADO */
 .status-time {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem; /* Margen reducido */
 }
 
-/* Puedes ajustar estos estilos si quieres más separación o diseño */
 .time-display {
-    font-size: 1rem;
+    font-size: 0.9rem; /* Tamaño reducido */
     font-weight: 600;
-    color: #7A1C38;
+    color: #361a23;
     padding: 0.3rem 0.8rem;
     border-bottom: 2px solid #B38E5D;
     background: #f9f9f9;
@@ -56,9 +51,9 @@
 .welcome-status {
     background: rgba(157, 36, 73, 0.1);
     color: #9D2449;
-    padding: 0.3rem 1rem;
+    padding: 0.3rem 0.8rem; /* Padding reducido */
     border-radius: 30px;
-    font-size: 0.75rem;
+    font-size: 0.7rem; /* Tamaño reducido */
     font-weight: 600;
     letter-spacing: 0.03em;
     text-transform: uppercase;
@@ -77,13 +72,15 @@
     z-index: -1;
 }
 
-.welcome-right {
-    background: linear-gradient(135deg, #9D2449, #7A1C38);
+/* Welcome-right más compacto */
+.welcome-right { 
+    background: linear-gradient(135deg, #EBD6D1, #F3F3F3);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    padding: 1rem; /* Padding reducido */
 }
 
 .welcome-right::before {
@@ -97,9 +94,10 @@
     opacity: 0.15;
 }
 
+/* Imagen más pequeña */
 .welcome-image {
-    max-width: 85%;
-    max-height: 85%;
+    max-width: 75%; /* Reducido de 85% */
+    max-height: 75%; /* Reducido de 85% */
     object-fit: contain;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
     transition: transform 0.3s ease;
@@ -111,24 +109,10 @@
     transform: scale(1.05);
 }
 
-.welcome-status {
-    display: inline-block;
-    background: rgba(157, 36, 73, 0.1);
-    color: #9D2449;
-    padding: 0.3rem 1rem;
-    border-radius: 30px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-    border: 1px solid rgba(157, 36, 73, 0.2);
-    align-self: flex-start;
-}
-
+/* Contenido de texto más compacto */
 #greeting {
-    font-size: 1.6rem;
-    margin: 0 0 0.5rem 0;
+    font-size: 1.4rem; /* Reducido de 1.6rem */
+    margin: 0 0 0.4rem 0; /* Margen reducido */
     color: #9D2449;
     font-weight: 700;
     letter-spacing: -0.01em;
@@ -137,49 +121,38 @@
 
 .welcome-subtitle {
     color: #555;
-    margin: 0 0 0.5rem 0;
-    font-size: 1rem;
+    margin: 0 0 0.4rem 0; /* Margen reducido */
+    font-size: 0.9rem; /* Reducido de 1rem */
     font-weight: 500;
 }
 
 .welcome-description {
     color: #666;
-    margin: 0 0 1.5rem 0;
-    font-size: 0.95rem;
-    line-height: 1.5;
+    margin: 0 0 1rem 0; /* Margen reducido */
+    font-size: 0.85rem; /* Reducido de 0.95rem */
+    line-height: 1.4; /* Reducido de 1.5 */
 }
 
-.time-display {
-    margin-top: 0.5rem;
-    margin-bottom: 1.5rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #7A1C38;
-    display: inline-block;
-    padding: 0.25rem 0;
-    border-bottom: 2px solid #B38E5D;
-}
-
-/* Botón de registro rediseñado - versión compacta */
+/* Botón de registro más compacto */
 .register-button {
     background: linear-gradient(135deg, #9D2449, #7A1C38);
     color: white;
     border: none;
     border-radius: 6px;
-    padding: 0.45rem 0.75rem; /* reducido a la mitad */
-    font-size: 0.8rem;        /* tamaño de fuente más pequeño */
+    padding: 0.4rem 0.7rem; /* Padding reducido */
+    font-size: 0.75rem; /* Reducido de 0.8rem */
     font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;              /* espacio entre ícono y texto más pequeño */
+    gap: 0.4rem;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(157, 36, 73, 0.2);
     position: relative;
     overflow: hidden;
     align-self: flex-start;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; /* Margen reducido */
 }
 
 .register-button::before {
@@ -208,7 +181,7 @@
 }
 
 .register-button i {
-    font-size: 0.75rem;
+    font-size: 0.7rem; /* Reducido de 0.75rem */
     transition: transform 0.3s ease;
 }
 
@@ -216,19 +189,18 @@
     transform: translateX(3px);
 }
 
-
 /* Discover Section */
 .discover-section {
     margin-top: 0.5rem;
 }
 
 .section-heading {
-    font-size: 1.3rem;
-    margin: 0 0 1.5rem 0;
+    font-size: 1.2rem; /* Reducido de 1.3rem */
+    margin: 0 0 1rem 0; /* Margen reducido */
     color: #9D2449;
     font-weight: 600;
     position: relative;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.4rem; /* Reducido de 0.5rem */
     display: inline-block;
 }
 
@@ -237,20 +209,22 @@
     position: absolute;
     left: 0;
     bottom: 0;
-    width: 50px;
-    height: 3px;
+    width: 40px; /* Reducido de 50px */
+    height: 2px; /* Reducido de 3px */
     background: #B38E5D;
     border-radius: 2px;
 }
 
-/* Cards Container */
+/* Cards Container - 4 columnas en escritorio */
 .cards-container-vertical {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-/* Card Styles */
+/* Card Styles - Versión compacta */
 .card {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
@@ -262,6 +236,7 @@
     display: flex;
     position: relative;
     backdrop-filter: blur(8px);
+    min-height: 140px; /* Altura reducida */
 }
 
 .card::before {
@@ -287,7 +262,7 @@
 }
 
 .card-content {
-    padding: 1.2rem;
+    padding: 0.8rem; /* Padding reducido */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -295,16 +270,16 @@
     width: 100%;
 }
 
-/* Iconos rediseñados */
+/* Iconos más pequeños */
 .card-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 45px;
-    height: 45px;
+    width: 36px; /* Reducido de 40px */
+    height: 36px; /* Reducido de 40px */
     border-radius: 50%;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
+    margin-bottom: 0.6rem; /* Margen reducido */
+    font-size: 0.9rem; /* Reducido de 1rem */
     color: white;
     position: relative;
     overflow: hidden;
@@ -348,17 +323,18 @@
 }
 
 .card-title {
-    margin: 0 0 0.5rem 0;
-    font-size: 1rem;
+    margin: 0 0 0.3rem 0; /* Margen reducido */
+    font-size: 0.85rem; /* Reducido de 0.9rem */
     font-weight: 600;
     color: #444;
     letter-spacing: 0.01em;
 }
 
 .card-meta {
-    font-size: 0.8rem;
+    font-size: 0.7rem; /* Reducido de 0.75rem */
     color: #666;
-    line-height: 1.4;
+    line-height: 1.3; /* Reducido de 1.4 */
+    margin-bottom: 0;
 }
 
 /* Animaciones */
@@ -386,37 +362,111 @@
 .cards-container-vertical .card:nth-child(4) { animation-delay: 0.7s; }
 
 /* Media Queries */
+@media (max-width: 1024px) {
+    .cards-container-vertical {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 800px) {
-    .welcome-card { grid-template-columns: 1fr; }
-    .welcome-right { height: 140px; order: -1; }
-    .welcome-left { padding: 1.5rem; text-align: center; }
+    .welcome-card { 
+        grid-template-columns: 1fr; 
+        min-height: auto;
+    }
+    .welcome-right { 
+        height: 120px; /* Altura reducida */
+        order: -1; 
+    }
+    .welcome-left { 
+        padding: 1.2rem; /* Padding reducido */
+        text-align: center; 
+    }
     .welcome-status { align-self: center; }
     .register-button { align-self: center; }
     .section-heading::after { left: 50%; transform: translateX(-50%); }
     .section-heading { display: block; text-align: center; }
+    .main-content { margin-left: 0; }
 }
 
 @media screen and (max-width: 768px) {
-    .dashboard-container { padding: 1rem; }
+    .dashboard-container { 
+        padding: 1.2rem; /* Padding reducido */
+        margin-top: 1.2rem;
+        padding-top: 0.8rem;
+    }
     .welcome-card { grid-template-columns: 1fr; }
-    .welcome-left { padding: 1.5rem; text-align: center; }
-    .welcome-status { margin: 0 auto 0.8rem; }
-    .welcome-right { min-height: 130px; order: -1; }
-    .welcome-image { max-height: 120px; }
-    .cards-container-vertical { grid-template-columns: repeat(2, 1fr); }
-    #greeting { font-size: 1.4rem; }
-    .time-display { margin: 0.5rem auto 1.5rem; text-align: center; display: block; }
+    .welcome-left { padding: 1.2rem; text-align: center; }
+    .welcome-status { margin: 0 auto 0.6rem; }
+    .welcome-right { min-height: 110px; order: -1; }
+    .welcome-image { max-height: 100px; }
+    .cards-container-vertical { 
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+    }
+    #greeting { font-size: 1.3rem; }
+    .time-display { margin: 0.4rem auto 1rem; text-align: center; display: block; }
+    
+    .card {
+        min-height: 130px;
+    }
+    .card-content {
+        padding: 0.7rem;
+    }
+    .card-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+        margin-bottom: 0.6rem;
+    }
+    .card-title {
+        font-size: 0.8rem;
+    }
+    .card-meta {
+        font-size: 0.65rem;
+    }
 }
 
 @media (max-width: 480px) {
-    .welcome-card { margin-bottom: 1.5rem; }
-    .welcome-left { padding: 1.2rem; }
-    .welcome-right { min-height: 100px; }
-    .welcome-image { max-height: 110px; }
-    #greeting { font-size: 1.3rem; }
-    .welcome-subtitle { font-size: 0.9rem; }
-    .welcome-description { font-size: 0.85rem; margin-bottom: 1.2rem; }
-    .cards-container-vertical { grid-template-columns: 1fr; }
-    .card { margin-bottom: 0.8rem; }
-    .card-content { padding: 1rem; }
+    .dashboard-container { 
+        padding: 0.8rem; 
+        margin-top: 0.8rem;
+        padding-top: 0.5rem;
+    }
+    .welcome-card { margin-bottom: 1.2rem; }
+    .welcome-left { padding: 1rem; }
+    .welcome-right { min-height: 90px; }
+    .welcome-image { max-height: 85px; }
+    #greeting { font-size: 1.2rem; }
+    .welcome-subtitle { font-size: 0.8rem; }
+    .welcome-description { font-size: 0.75rem; margin-bottom: 0.8rem; }
+    .cards-container-vertical { 
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+    }
+    .card { 
+        min-height: 110px;
+    }
+    .card-content {
+        padding: 0.6rem;
+    }
+    .card-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+    .card-title {
+        font-size: 0.75rem;
+    }
+    .card-meta {
+        font-size: 0.6rem;
+    }
+    .section-heading {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+    }
+    .section-heading::after {
+        width: 35px;
+        height: 2px;
+    }
 }

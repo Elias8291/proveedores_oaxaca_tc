@@ -1,7 +1,7 @@
 /* Root Variables */
 :root {
     --color-primary: #9d2449;
-    --color-primary-light: #c86b89;
+    --color-primary-light: #000000;
     --color-primary-lighter: #e6a5b8;
     --color-primary-pale: rgba(255, 245, 248, 0.9);
     --color-accent: #2d4356;
@@ -50,12 +50,12 @@ html {
     -webkit-text-size-adjust: 100%;
 }
 body {
-    background: linear-gradient(135deg, 
-        rgba(255, 210, 218, 0.4),    /* Lighter pink - was 255, 192, 203 */
-        rgba(255, 182, 205, 0.4),    /* Lighter hot pink - was 255, 105, 180 */
-        rgba(230, 130, 180, 0.3)     /* Lighter magenta - was 199, 21, 133 */
+    background: linear-gradient(135deg,
+      rgba(157, 36, 73, 0.05),    /* Lighter version of primary color */
+      rgba(45, 67, 86, 0.03),     /* Lighter version of accent color */
+      rgba(255, 255, 255, 0.9)    /* Almost white background */
     );
-    color: #333;
+    color: var(--color-text);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px;
     line-height: 1.8;
@@ -66,20 +66,30 @@ body {
     margin: 0;
     padding: 0;
     transition: all 0.5s ease;
-}
-body::before {
+  }
+  
+  body::before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: url("/assets/images/welcome/oaxaca-logo.png") repeat center / 120px;
-    opacity: 0.1;
+    background: url("/assets/images/welcome/oaxaca-logo.png") repeat center / 200px;
+    opacity: 0.03;   /* Much more subtle logo watermark */
     z-index: -1;
-    animation: subtleMove 60s linear infinite;
-}
+    animation: subtleMove 120s linear infinite; /* Slower movement for subtlety */
+  }
 
+
+  .dashboard-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 40px;
+    font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+}
 
 ol, ul {
     list-style: none;
@@ -444,16 +454,6 @@ img {
     width: auto;
 }
 
-/* Content */
-.content {
-    margin-left: 60px;
-    margin-top: var(--header-height);
-    margin-bottom: var(--footer-height);
-    padding: 30px;
-    min-height: calc(100vh - var(--header-height) - var(--footer-height));
-    background: transparent;
-    border-radius: 12px 0 0 0;
-}
 
 .sidebar:hover + .content {
     margin-left: var(--sidebar-width);

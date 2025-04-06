@@ -2,7 +2,7 @@
 
 @section('title', '¡Bienvenidos a Proveedores de Oaxaca!')
 <link rel="stylesheet" href="{{ asset('assets/css/index.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/dashboard-optimized.css') }}">
+
 
 @section('content')
 <div class="dashboard-container">
