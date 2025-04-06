@@ -1,10 +1,12 @@
 /* Dashboard Container */
 .dashboard-container {
     background: transparent;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 100%; /* Antes: 1200px */
+    width: 100%;
+    margin: 0; /* Eliminamos margen auto */
     padding: 1.5rem;
 }
+
 
 /* Welcome Card */
 .welcome-card {

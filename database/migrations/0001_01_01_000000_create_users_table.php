@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->timestamp('ultimo_acceso')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->string('verification_token')->nullable();
+            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
         });
     }
 

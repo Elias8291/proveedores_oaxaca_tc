@@ -1,0 +1,165 @@
+/* Main Styles for Registration */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+}
+
+.registration-section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(157, 36, 73, 0.15);
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+    border-top: 5px solid #9D2449;
+    position: relative;
+    padding-bottom: 4.5rem; /* Space for the fixed button */
+}
+
+.registration-section h1 {
+    color: #9D2449;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.registration-section h1:after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 3px;
+    background-color: #9D2449;
+    margin-top: 8px;
+}
+
+.greeting {
+    font-size: 0.95rem;
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.terms-section {
+    background-color: #f9f5f6;
+    border-radius: 6px;
+    padding: 1.2rem;
+    border-left: 4px solid #9D2449;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #9D2449 #f1f1f1;
+}
+
+.terms-section h3 {
+    color: #9D2449;
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+}
+
+.terms-section p {
+    line-height: 1.5;
+    color: #444;
+    margin-bottom: 0.8rem;
+}
+
+.form-group {
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+}
+
+.form-group input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    accent-color: #9D2449;
+}
+
+.form-group label {
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+/* Fixed position button container at bottom of registration section */
+form {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    padding: 0.8rem 1.8rem;
+    border-top: 1px solid #f0f0f0;
+    border-radius: 0 0 8px 8px;
+}
+
+.btn-submit {
+    background-color: #9D2449;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn-submit:hover {
+    background-color: #7e1d3a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(157, 36, 73, 0.2);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 0.8rem;
+    }
+    
+    .registration-section {
+        padding: 1.2rem;
+        padding-bottom: 4rem;
+    }
+    
+    .registration-section h1 {
+        font-size: 1.5rem;
+    }
+    
+    .terms-section {
+        padding: 1rem;
+        max-height: 250px;
+    }
+    
+    form {
+        padding: 0.8rem 1.2rem;
+    }
+}
+
+.terms-section::-webkit-scrollbar {
+    width: 6px;
+}
+
+.terms-section::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.terms-section::-webkit-scrollbar-thumb {
+    background: #9D2449;
+    border-radius: 10px;
+}
+
+.terms-section::-webkit-scrollbar-thumb:hover {
+    background: #7e1d3a;
+}

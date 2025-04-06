@@ -11,46 +11,29 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
+        // New inactive user
         User::updateOrCreate(
-            ['email' => 'eliasr32j824@gmail.com'],
+            ['email' => 'inactive' . Str::random(5) . '@example.com'],
             [
-                'name' => 'Elias Abisai Ramos Jacinto',
-                'rfc' => 'EARS820312ABC',
-                'password' => Hash::make('Elias1234'),
-                'ultimo_acceso' => now(),
-                'email_verified_at' => now(),
+                'name' => 'Usuario Inactivo ' . Str::random(8),
+                'rfc' => $this->generateRandomRFC(),
+                'password' => Hash::make('Inactive2025'),
+                'ultimo_acceso' => now()->subDays(rand(31, 90)), // Last access older than active users
+                'email_verified_at' => now()->subDays(rand(31, 90)),
                 'remember_token' => Str::random(10),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => now()->subDays(rand(61, 120)),
+                'updated_at' => now()->subDays(rand(31, 90)),
+                'status' => 'inactive',
             ]
         );
+    }
 
-        User::updateOrCreate(
-            ['email' => 'prueba@proveedor.com'],
-            [
-                'name' => 'Usuario de Prueba',
-                'rfc' => 'XAXX010101000', 
-                'password' => Hash::make('Password123'),
-                'ultimo_acceso' => now()->subDays(5),
-                'email_verified_at' => now(),
-                'remember_token' => Str::random(10),
-                'created_at' => now()->subDays(10),
-                'updated_at' => now()->subDays(2),
-            ]
-        );
-
-        User::updateOrCreate(
-            ['email' => 'otro@proveedor.com'],
-            [
-                'name' => 'Otro Proveedor',
-                'rfc' => 'PERJ890405XYZ',
-                'password' => Hash::make('Proveedor2023'),
-                'ultimo_acceso' => now()->subDays(15),
-                'email_verified_at' => now(),
-                'remember_token' => Str::random(10),
-                'created_at' => now()->subDays(30),
-                'updated_at' => now()->subDays(3),
-            ]
-        );
+    // Helper function to generate RANDOM RFC
+    private function generateRandomRFC(): string
+    {
+        $letters = strtoupper(Str::random(4));
+        $date = sprintf('%02d%02d%02d', rand(0, 99), rand(1, 12), rand(1, 28));
+        $homoclave = strtoupper(Str::random(3));
+        return $letters . $date . $homoclave;
     }
 }

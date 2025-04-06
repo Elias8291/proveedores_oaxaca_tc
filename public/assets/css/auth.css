@@ -1167,7 +1167,83 @@ input:checked + .toggle-slider:before {
     justify-content: flex-end;
 }
 
+/* Estilos generales para mensajes de error */
+.error-message,
+.alert-danger {
+    display: block;
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease-in-out;
+}
 
+/* Estilo específico para errores de campos de formulario */
+.error-message {
+    color: #dc2626; /* Rojo 600 */
+    background-color: #fef2f2; /* Rojo 50 */
+    border-left: 4px solid #dc2626;
+    padding-left: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+/* Estilo para alertas generales (como credenciales incorrectas) */
+.alert-danger {
+    color: #b91c1c; /* Rojo 700 */
+    background-color: #fee2e2; /* Rojo 100 */
+    border: 1px solid #fca5a5; /* Rojo 300 */
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Estilo para los campos con error */
+.input-group input:invalid,
+.input-group input.error {
+    border-color: #f87171; /* Rojo 400 */
+    background-color: #fff5f5; /* Rojo 50 */
+}
+
+.input-group input:invalid:focus,
+.input-group input.error:focus {
+    border-color: #dc2626; /* Rojo 600 */
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+/* Posicionamiento de los mensajes de error */
+.input-group {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+/* Animación para aparecer suavemente */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilo para el icono opcional (puedes agregar un SVG) */
+.error-message::before,
+.alert-danger::before {
+    content: "⚠ ";
+    margin-right: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .error-message,
+    .alert-danger {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+    }
+}
 
 @keyframes fadeIn {
     0% { opacity: 0; transform: scale(0.98) translateY(10px); }
@@ -1230,3 +1306,4 @@ input:checked + .toggle-slider:before {
     0% { transform: perspective(1000px) rotateY(0); opacity: 1; }
     100% { transform: perspective(1000px) rotateY(-90deg); opacity: 0; }
 }
+
