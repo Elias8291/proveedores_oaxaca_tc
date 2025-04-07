@@ -3,7 +3,6 @@
 @section('title', '¡Bienvenidos a Proveedores de Oaxaca!')
 <link rel="stylesheet" href="{{ asset('assets/css/index.css') }}">
 
-
 @section('content')
 <div class="dashboard-container">
     <div class="welcome-card">
@@ -15,14 +14,10 @@
             <h2 id="greeting">Buenos días, {{ auth()->user()->name }}</h2>
             <p class="welcome-subtitle">¿Cómo va tu día? 🌟</p>
             <p class="welcome-description">Bienvenido al sistema de registro de proveedores del gobierno de Oaxaca.</p>   
-    
-            <!-- Start Registration Button - Rediseñado -->
             <button class="register-button">
                 <span>Comenzar tu inscripción</span>
                 <i class="fas fa-arrow-right"></i>
             </button>
-            
-            <!-- Discover Section -->
             <div class="discover-section">
                 <h3 class="section-heading">Descubre Proveedores de Oaxaca</h3>
                 <div class="cards-container-vertical">
@@ -35,7 +30,6 @@
                             <p class="card-meta">Carga tus documentos oficiales</p>
                         </div>
                     </div>
-                    
                     <div class="card">
                         <div class="card-content">
                             <div class="card-icon">
@@ -45,7 +39,6 @@
                             <p class="card-meta">Consulta tu proceso</p>
                         </div>
                     </div>
-                    
                     <div class="card">
                         <div class="card-content">
                             <div class="card-icon">
@@ -55,7 +48,6 @@
                             <p class="card-meta">Encuentra proveedores locales</p>
                         </div>
                     </div>
-                    
                     <div class="card">
                         <div class="card-content">
                             <div class="card-icon">
@@ -89,7 +81,7 @@
             const greeting = document.getElementById('greeting');
             const userName = '{{ auth()->user()->name }}';
 
-            if (hours >= 5 && hours < 12) {
+            if (hours < 12) {
                 greeting.textContent = `Buenos días, ${userName}`;
             } else if (hours >= 12 && hours < 19) {
                 greeting.textContent = `Buenas tardes, ${userName}`;

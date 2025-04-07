@@ -11,19 +11,51 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        // New inactive user
+        // User 1: Specific RFC, active user
         User::updateOrCreate(
-            ['email' => 'inactive' . Str::random(5) . '@example.com'],
+            ['email' => 'eliasrj824@gmail.com'],
             [
-                'name' => 'Usuario Inactivo ' . Str::random(8),
-                'rfc' => $this->generateRandomRFC(),
-                'password' => Hash::make('Inactive2025'),
-                'ultimo_acceso' => now()->subDays(rand(31, 90)), // Last access older than active users
-                'email_verified_at' => now()->subDays(rand(31, 90)),
+                'name' => 'Usuario Activo RAJE', // You can modify the name as needed
+                'rfc' => 'RAJE020226G97',
+                'password' => Hash::make('Abisai1789'),
+                'ultimo_acceso' => now(),
+                'email_verified_at' => now(),
                 'remember_token' => Str::random(10),
-                'created_at' => now()->subDays(rand(61, 120)),
-                'updated_at' => now()->subDays(rand(31, 90)),
-                'status' => 'inactive',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'status' => 'active',
+            ]
+        );
+
+        // User 2: Random RFC, Telcel user
+        User::updateOrCreate(
+            ['email' => 'telcel' . Str::random(5) . '@example.com'],
+            [
+                'name' => 'Radiomóvil Dipsa, S.A. de C.V.',
+                'rfc' => $this->generateRandomRFC(),
+                'password' => Hash::make('telcel1234'),
+                'ultimo_acceso' => now(),
+                'email_verified_at' => now(),
+                'remember_token' => Str::random(10),
+                'created_at' => now(),
+                'updated_at' => now(),
+                'status' => 'active',
+            ]
+        );
+
+        // User 3: Specific RFC, Jacqueline user
+        User::updateOrCreate(
+            ['email' => 'jacquempd@gmail.com'],
+            [
+                'name' => 'JACQUELINE PETRICIA MIGUEL PENSAMIENTO DOMINGUEZ',
+                'rfc' => 'MIDJ020222G49',
+                'password' => Hash::make('jacque12345'),
+                'ultimo_acceso' => now(),
+                'email_verified_at' => now(),
+                'remember_token' => Str::random(10),
+                'created_at' => now(),
+                'updated_at' => now(),
+                'status' => 'active',
             ]
         );
     }

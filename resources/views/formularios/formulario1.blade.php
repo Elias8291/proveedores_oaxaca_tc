@@ -2,7 +2,7 @@
 @section('title', 'Formulario de Trámites')
 @section('content')
     <div class="container">
-        <div class="form-container">
+
             <div class="form-header">
                 <h1 class="form-title">Registro de Trámites</h1>
                 <p class="form-subtitle">Complete el formulario con la información solicitada para procesar su trámite de manera eficiente</p>
@@ -72,6 +72,6 @@
                     </div>
                 </form>
             </div>
-        </div>
+        
     </div>
 @endsection

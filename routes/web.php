@@ -69,14 +69,14 @@ Route::middleware(['web'])->group(function () {
     })->name('registration.index')->middleware('auth');
 
     // Ruta para el formulario 1
-    Route::post('/registration/form1', function (Request $request) {
+    Route::post('/registration/formularios', function (Request $request) {
         if (!Auth::check()) {
             return redirect('/');
         }
         $request->validate([
             'terms' => 'accepted',
         ]);
-        $response = response()->view('registration.forms.form1');
+        $response = response()->view('registration.forms.formularios');
         $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
         $response->header('Pragma', 'no-cache');
         $response->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
