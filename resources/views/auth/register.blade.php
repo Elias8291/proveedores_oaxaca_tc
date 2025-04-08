@@ -11,7 +11,7 @@
         <h1>Regístrate</h1>
         <p>Registro en el <span class="system-name">Padrón de Proveedores de Oaxaca</span></p>
 
-        <form method="POST" enctype="multipart/form-data" id="registerForm">
+        <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" id="registerForm">
             @csrf
             <div class="input-group">
                 <div class="file-input-header">
@@ -55,7 +55,7 @@
         <h1>Datos del PDF</h1>
         <div id="pdf-data-preview"></div>
 
-        <button type="button" class="btn" id="registerBtn">Registrarse</button>
+  <button type="button" class="btn" id="registerBtn">Registrarse</button>
     </div>
 
     @push('scripts')

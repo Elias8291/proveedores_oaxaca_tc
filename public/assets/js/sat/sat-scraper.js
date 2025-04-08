@@ -106,7 +106,7 @@ export function showSATDataModal(satData, qrUrl) {
         html: `<div class="modal-container"><div class="modal-header"><h3>Información del SAT</h3><div class="header-actions"><button class="icon-btn link-btn" onclick="window.open('${qrUrl}', '_blank')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></button><button class="icon-btn close-modal">×</button></div></div><div class="modal-body">${
             satData.rfc
                 ? `<div class="rfc-display"><strong>RFC:</strong> ${satData.rfc} (${
-                      satData.rfc.length === 12 ? "Persona Moral" : satData.rfc.length === 13 ? "Persona Física" : "Longitud inválida"
+                      satData.rfc.length === 12 ? "Moral" : satData.rfc.length === 13 ? "Física" : "Longitud inválida"
                   })</div>`
                 : ""
         }${

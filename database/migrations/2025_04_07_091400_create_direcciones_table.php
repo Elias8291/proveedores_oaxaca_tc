@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('direcciones', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('asentamiento_id')->constrained('asentamientos');
+            $table->integer('codigo_postal');
+            $table->foreignId('asentamiento_id')->nullable()->constrained('asentamientos'); // Keep as optional reference
             $table->string('calle', 255);
             $table->string('numero_exterior', 255);
             $table->string('numero_interior', 255)->nullable();

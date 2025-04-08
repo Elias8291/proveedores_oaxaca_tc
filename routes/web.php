@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SectorController;
-
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\SetPasswordController;
+use App\Http\Controllers\SolicitanteController;
 
 // Middleware para verificar si el usuario está autenticado
 Route::middleware(['web'])->group(function () {
@@ -70,7 +72,14 @@ Route::middleware(['web'])->group(function () {
         $response->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
         return $response;
     })->name('registration.index')->middleware('auth');
+    Route::get('/tramites', [SolicitanteController::class, 'showForm'])
+    ->name('tramites.form')
+    ->middleware('auth'); // Ensures only authenticated users can access
 
+// Optional: If you need an API route for fetching solicitante data
+Route::get('/solicitante/data', [SolicitanteController::class, 'getSolicitanteData'])
+    ->name('solicitante.data')
+    ->middleware('auth');
     // Ruta para el formulario 1
     Route::post('/registration/formularios', function (Request $request) {
         if (!Auth::check()) {
@@ -86,5 +95,9 @@ Route::middleware(['web'])->group(function () {
         return $response;
     })->name('registration.form1')->middleware('auth');
     Route::get('/profiles', [ProfileController::class, 'index'])->name('profiles.index');
-   
+    Route::post('/registro', [RegisterController::class, 'register'])->name('register');
+    Route::middleware('auth:api')->get('/solicitante', [SolicitanteController::class, 'getSolicitante']);
+    Route::get('/set-password', [SetPasswordController::class, 'showSetForm'])->name('password.set.form');
+Route::post('/set-password', [SetPasswordController::class, 'setPassword'])->name('password.set');
+Route::middleware('auth')->get('/api/solicitante-data', [SolicitanteController::class, 'getSolicitanteData']);
 });

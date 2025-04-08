@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
-
-class User extends Authenticatable
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\SetPasswordNotification; 
+class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
     use HasRoles;
@@ -74,5 +75,14 @@ class User extends Authenticatable
     public function scopeSuspended($query)
     {
         return $query->where('status', 'suspended');
+    }
+    public function solicitante()
+    {
+        return $this->hasOne(Solicitante::class, 'user_id');
+    }
+
+     public function sendPasswordSetNotification()
+    {
+        $this->notify(new SetPasswordNotification($this->verification_token));
     }
 }

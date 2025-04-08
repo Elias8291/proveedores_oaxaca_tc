@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Solicitante;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,5 +19,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AsentamientosSeeder::class);
         $this->call(SectoresSeeder::class);
         $this->call(ActividadesSeeder::class);
+        $this->call(SolicitanteSeeder::class);
     }
 }
