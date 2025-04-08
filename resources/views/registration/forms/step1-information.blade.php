@@ -1,106 +1,41 @@
-<!-- resources/views/registration/forms/step1-information.blade.php -->
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Paso 1 - Información General</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        .actividades-contenedor {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px;
-            margin-top: 10px;
-        }
-        .actividades-header {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .actividades-lista {
-            min-height: 50px;
-        }
-        .actividad-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px;
-            border-bottom: 1px solid #eee;
-        }
-        .remove-actividad {
-            background: none;
-            border: none;
-            color: #dc3545;
-            cursor: pointer;
-            padding: 0 5px;
-        }
-        .empty-message {
-            color: #6c757d;
-            font-style: italic;
-        }
-        .formulario__input-error {
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-        .custom-select {
-            position: relative;
-        }
-        .custom-select select {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 15px;
-        }
-        .form-loading-message {
-            color: #666;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-        .data-field {
-            font-size: 16px;
-            color: #495057;
-            margin-top: 5px;
-            display: inline-block;
-        }
-        .data-label {
-            font-weight: bold;
-            color: #333;
-        }
-    </style>
-</head>
-<body>
     <div class="form-section" id="form-step-1">
         <div class="form-container">
             <div class="form-column">
                 <div class="form-group">
                     <h4><i class="fas fa-building"></i> Datos Generales</h4>
                 </div>
-                <div class="form-group">
-                    <label class="form-label data-label">Tipo de Proveedor</label>
-                    <span id="tipo_proveedor_display" class="data-field">Cargando...</span>
+                <div class="form-group horizontal-group">
+                    <div class="half-width">
+                        <label class="form-label data-label">Tipo de Proveedor</label>
+                        <span id="tipo_proveedor_display" class="data-field">Cargando...</span>
+                    </div>
+                    <div class="half-width" id="grupo_rfc">
+                        <label class="form-label data-label">RFC</label>
+                        <span id="rfc_display" class="data-field">Cargando...</span>
+                    </div>
                 </div>
-                <div class="form-group custom-select">
-                    <label class="form-label" for="sector">Sector al que Pertenece *</label>
-                    <select id="sector" name="sector" class="form-control" required>
-                        <option value="">Seleccione un sector</option>
-                    </select>
-                    <p class="formulario__input-error">Debes seleccionar un sector.</p>
+                
+                <div class="form-group horizontal-group">
+                    <!-- Selector de sector -->
+                    <div class="half-width custom-select">
+                        <label class="form-label" for="sector">Sector al que Pertenece *</label>
+                        <select id="sector" name="sector" class="form-control" required>
+                            <option value="">Seleccione un sector</option>
+                        </select>
+                        <p class="formulario__input-error">Debes seleccionar un sector.</p>
+                    </div>
+                
+                    <!-- Selector de actividades -->
+                    <div class="half-width">
+                        <label class="form-label" for="actividad_comercial">Actividades Comerciales *</label>
+                        <select id="actividad_comercial" name="actividad_comercial" class="form-control" required disabled>
+                            <option value="">Primero seleccione un sector</option>
+                        </select>
+                        <p class="formulario__input-error">Debes seleccionar al menos una actividad comercial.</p>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="actividad_comercial">Actividades Comerciales (Puede seleccionar una o varias) *</label>
-                    <select id="actividad_comercial" name="actividad_comercial" class="form-control" required disabled>
-                        <option value="">Primero seleccione un sector</option>
-                    </select>
-                    <p class="formulario__input-error">Debes seleccionar al menos una actividad comercial.</p>
-                </div>
+                
                 <div class="form-group full-width actividades-contenedor">
                     <div class="actividades-header">
                         <i class="fas fa-list-check"></i> Actividades Seleccionadas
@@ -115,20 +50,23 @@
                     <span id="curp_display" class="data-field">Cargando...</span>
                     <p class="form-loading-message">Cargando datos del solicitante...</p>
                 </div>
-                <div class="form-group" id="grupo_rfc">
-                    <label class="form-label data-label">RFC</label>
-                    <span id="rfc_display" class="data-field">Cargando...</span>
+               
+                <div class="form-group horizontal-group">
+                    <!-- Teléfono de contacto -->
+                    <div class="half-width">
+                        <label class="form-label" for="contacto_telefono">Teléfono de Contacto *</label>
+                        <input type="tel" id="contacto_telefono" name="contacto_telefono" class="form-control" placeholder="Ej: (951) 145 45 25" required>
+                        <p class="formulario__input-error">El teléfono debe contener entre 7 y 14 números.</p>
+                    </div>
+                
+                    <!-- Página web -->
+                    <div class="half-width">
+                        <label class="form-label" for="contacto_web">Página Web</label>
+                        <input type="url" id="contacto_web" name="contacto_web" class="form-control scroll-input" placeholder="Ej: https://www.empresa.com">
+                        <p class="formulario__input-error">La URL no es válida.</p>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="contacto_telefono">Teléfono de Contacto *</label>
-                    <input type="tel" id="contacto_telefono" name="contacto_telefono" class="form-control" placeholder="Ej: (951) 145 45 25" required>
-                    <p class="formulario__input-error">El teléfono debe contener entre 7 y 14 números.</p>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="contacto_web">Página Web</label>
-                    <input type="url" id="contacto_web" name="contacto_web" class="form-control" placeholder="Ej: https://www.empresa.com">
-                    <p class="formulario__input-error">La URL no es válida.</p>
-                </div>
+                
             </div>
             <div class="form-column">
                 <div class="form-group">
@@ -330,4 +268,3 @@
         });
     </script>
 </body>
-</html>
