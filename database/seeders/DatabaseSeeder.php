@@ -10,5 +10,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(UserSeeder::class);
         $this->call(RoleSeeder::class);
+        $this->call(PaisSeeder::class);
+        $this->call(EstadosTableSeeder::class);
+        $this->call(MunicipioSeeder::class);
+        $this->call(LocalidadesSeeder::class);
+        $this->call(TiposAsentamientoSeeder::class);
+        $this->call(AsentamientosSeeder::class);
     }
 }

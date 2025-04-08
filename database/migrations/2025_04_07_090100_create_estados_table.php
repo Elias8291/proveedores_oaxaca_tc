@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('estados', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pais_id')->constrained('paises');
+            $table->foreignId('id_pais')->constrained('paises')->onDelete('cascade');
             $table->string('nombre', 255);
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
