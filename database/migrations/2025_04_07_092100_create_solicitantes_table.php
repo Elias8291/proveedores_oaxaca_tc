@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('telefono', 255)->nullable();
             $table->string('sitio_web', 255)->nullable();
             $table->string('razon_social', 255);
-            $table->enum('tipo_persona', ['Fisica', 'Moral']);
+            $table->enum('tipo_persona', ['Física', 'Moral']);
             $table->string('curp', 255)->nullable();
             $table->foreignId('direccion_id')->nullable()->constrained('direcciones');
             $table->foreignId('contacto_id')->nullable()->constrained('contactos_solicitante');

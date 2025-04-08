@@ -16,5 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LocalidadesSeeder::class);
         $this->call(TiposAsentamientoSeeder::class);
         $this->call(AsentamientosSeeder::class);
+        $this->call(SectoresSeeder::class);
+        $this->call(ActividadesSeeder::class);
     }
 }

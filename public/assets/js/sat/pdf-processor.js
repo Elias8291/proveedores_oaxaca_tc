@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="name-display">
                     <p><strong>${data.tipo === "Moral" ? 'Denominación/Razón Social' : 'Nombre'}:</strong> ${nombre}</p>
+                    <p><strong>Tipo de Persona:</strong> Persona ${data.tipo}</p>
                 </div>
                 <div class="email-section">
                     <p class="name-display"><strong>Correo Electrónico:</strong></p>

@@ -11,11 +11,10 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        // User 1: Specific RFC, active user
         User::updateOrCreate(
             ['email' => 'eliasrj824@gmail.com'],
             [
-                'name' => 'Usuario Activo RAJE', // You can modify the name as needed
+                'name' => 'Elias Abisai Ramos Jacinto', 
                 'rfc' => 'RAJE020226G97',
                 'password' => Hash::make('Abisai1789'),
                 'ultimo_acceso' => now(),
@@ -26,8 +25,6 @@ class UserSeeder extends Seeder
                 'status' => 'active',
             ]
         );
-
-        // User 2: Random RFC, Telcel user
         User::updateOrCreate(
             ['email' => 'telcel' . Str::random(5) . '@example.com'],
             [
@@ -42,12 +39,10 @@ class UserSeeder extends Seeder
                 'status' => 'active',
             ]
         );
-
-        // User 3: Specific RFC, Jacqueline user
         User::updateOrCreate(
             ['email' => 'jacquempd@gmail.com'],
             [
-                'name' => 'JACQUELINE PETRICIA MIGUEL PENSAMIENTO DOMINGUEZ',
+                'name' => 'JACQUELINE PATRICIA MIGUEL PENSAMIENTO DOMINGUEZ',
                 'rfc' => 'MIDJ020222G49',
                 'password' => Hash::make('jacque12345'),
                 'ultimo_acceso' => now(),
@@ -59,8 +54,6 @@ class UserSeeder extends Seeder
             ]
         );
     }
-
-    // Helper function to generate RANDOM RFC
     private function generateRandomRFC(): string
     {
         $letters = strtoupper(Str::random(4));

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SectorController;
+
 
 // Middleware para verificar si el usuario está autenticado
 Route::middleware(['web'])->group(function () {
@@ -22,8 +24,9 @@ Route::middleware(['web'])->group(function () {
         $response->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
         return $response;
     });
+    Route::get('/api/sectores', [SectorController::class, 'getSectores']);
+    Route::get('/api/sectores/{sector}/actividades', [SectorController::class, 'getActividades']);
 
-    // Ruta de login
     Route::get('/login', function () {
         if (Auth::check()) {
             return redirect()->route('dashboard');
@@ -83,4 +86,5 @@ Route::middleware(['web'])->group(function () {
         return $response;
     })->name('registration.form1')->middleware('auth');
     Route::get('/profiles', [ProfileController::class, 'index'])->name('profiles.index');
+   
 });

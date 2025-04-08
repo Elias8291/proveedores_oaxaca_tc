@@ -55,7 +55,7 @@
         <h1>Datos del PDF</h1>
         <div id="pdf-data-preview"></div>
 
-        <button type="submit" class="btn" id="registerBtn" form="registerForm">Registrarse</button>
+        <button type="button" class="btn" id="registerBtn">Registrarse</button>
     </div>
 
     @push('scripts')
