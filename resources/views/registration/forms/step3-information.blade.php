@@ -24,10 +24,6 @@
                 <label class="form-label" for="numero_notario">Número de Notario</label>
                 <input type="text" id="numero_notario" name="numero_notario" class="form-control" placeholder="Ej: 123">
             </div>
-        </div>
-
-        <!-- Segunda columna -->
-        <div class="form-column">
             <div class="form-group">
                 <h4><i class="fas fa-file-contract"></i> Datos de Inscripción en el Registro Público</h4>
             </div>

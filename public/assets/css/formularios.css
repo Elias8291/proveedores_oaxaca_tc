@@ -760,7 +760,17 @@ body {
     overflow-x: auto;
     white-space: nowrap;
   }
-  
+  .form-row {
+    display: flex;
+    gap: 20px; /* Espacio entre columnas */
+    flex-wrap: wrap; /* Para que se adapte en pantallas pequeñas */
+}
+
+.form-row .form-group {
+    flex: 1; /* Ambas columnas ocupan el mismo ancho */
+    min-width: 250px; /* Ancho mínimo para evitar que se vean muy pequeñas */
+}
+
   /* Mejora visual al pasar el mouse */
   .form-control:hover:not(:focus) {
     border-color: #b8b8b8;
