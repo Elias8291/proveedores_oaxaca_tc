@@ -11,9 +11,12 @@
             <div id="profileCircle" class="profile-circle">
                 {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
             </div>
-            <div>
+            <div class="user-details">
                 <h1 class="profile-name">{{ auth()->user()->name }}</h1>
-                <p class="profile-website">{{ auth()->user()->email }}</p>
+                <p class="profile-description">
+                    <span class="user-role">Proveedor registrado en Oaxaca</span>
+                    <span class="user-status">{{ auth()->user()->email }}</span>
+                </p>
                 <div class="user-mini-data">
                     <span class="mini-data">ID: {{ auth()->user()->id }}</span>
                     <span class="mini-data">RFC: {{ auth()->user()->rfc }}</span>
@@ -21,113 +24,75 @@
                 </div>
             </div>
         </div>
-        <div class="action-buttons">
-            <button class="action-button button-outline">
-                <i class="fas fa-share"></i> Outreach
-            </button>
+        <div class="user-stats">
+            <div class="points-display">
+                <div class="points-value">{{ auth()->user()->status === 'active' ? '1245' : '845' }}</div>
+                <div class="points-label">Puntos</div>
+            </div>
+            <div class="status-badges">
+                <span class="status-badge verified">Verificado</span>
+                <span class="status-badge active">Activo</span>
+            </div>
         </div>
     </div>
 
-    <div class="profile-main">
-        <div class="profile-content">
-            <ul class="nav-tabs">
-                <li><a href="#" class="active">Company overview</a></li>
-                <li><a href="#">User activity</a></li>
-                <li><a href="#">People <span class="badge">3</span></a></li>
-                <li><a href="#">Opportunity lists <span class="badge">14</span></a></li>
-            </ul>
+    <div class="tabs-container">
+        <div class="tabs-navigation">
+            <button class="tab-button active">Mi Cuenta</button>
+            <button class="tab-button">Otros Usuarios</button>
+            <button class="tab-button highlight">Estado de Cuenta</button>
+            <button class="tab-button">Mis Registros</button>
+            <button class="tab-button">Administrar Perfil</button>
+        </div>
+    </div>
 
-            <div class="company-details">
-                <div class="detail-box">
-                    <p class="detail-title">Fecha de creación</p>
-                    <p class="detail-value">{{ auth()->user()->created_at->format('d-M-Y') }}</p>
-                </div>
-                <div class="detail-box">
-                    <p class="detail-title">Última actualización</p>
-                    <p class="detail-value">{{ auth()->user()->updated_at->format('d-M-Y') }}</p>
-                </div>
-                <div class="detail-box">
-                    <p class="detail-title">Último acceso</p>
-                    <p class="detail-value">{{ auth()->user()->ultimo_acceso ? auth()->user()->ultimo_acceso->format('d-M-Y') : 'N/A' }}</p>
-                </div>
-                <div class="detail-box">
-                    <p class="detail-title">Email verificado</p>
-                    <p class="detail-value">{{ auth()->user()->email_verified_at ? auth()->user()->email_verified_at->format('d-M-Y') : 'No' }}</p>
-                </div>
-                <div class="location-box">
-                    <div class="location-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <div>
-                        <p class="detail-value">Oaxaca, México</p>
-                        <p class="detail-title">Proveedor registrado</p>
-                    </div>
-                </div>
+    <div class="rewards-section">
+        <div class="section-header">
+            <h2>Actividad de Proveedor</h2>
+            <div class="progress-label">
+                <span>2023 Progreso</span>
+                <span class="info-icon">i</span>
             </div>
-
-            <div class="detail-section">
-                <div class="detail-box">
-                    <p class="detail-title">Tipo de usuario</p>
-                    <p class="detail-value">{{ auth()->user()->tipo_usuario ?? 'Standard' }}</p>
-                </div>
-                <div class="detail-box">
-                    <p class="detail-title">Estado de cuenta</p>
-                    <p class="detail-value">{{ ucfirst(auth()->user()->status) }}</p>
-                </div>
-            </div>
-
-            <div class="company-description">
-                <h3 class="section-title">Información adicional</h3>
-                <p class="description-text">Usuario registrado en el sistema de proveedores de Oaxaca con acceso a todas las funcionalidades disponibles según su plan.</p>
-                <div class="tags">
-                    <span class="tag">Proveedor Oaxaca</span>
-                    <span class="tag">{{ auth()->user()->rfc ? 'RFC Registrado' : 'Sin RFC' }}</span>
-                </div>
-            </div>
-
-           
         </div>
 
-        <div class="profile-sidebar">
-            <div class="score-card">
-                <div class="score-display">
-                    <div class="score-circle">
-                        <svg viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="45"></circle>
-                            <circle cx="50" cy="50" r="45" class="progress"></circle>
-                        </svg>
-                        <div class="score-number">{{ auth()->user()->status === 'active' ? '95' : '65' }}</div>
+        <div class="content-grid">
+            <div class="main-content">
+                <div class="status-card">
+                    <h3>¿Desea estatus "Premium" en 2023?</h3>
+                    <p>Reserve 7 servicios más o gaste <strong>$33,000</strong> antes del 31 de diciembre de 2023</p>
+                    
+                    <h4 class="recent-activity-title">Actividad Reciente</h4>
+                    <p class="activity-message">No tiene actividad en los últimos 30 días. Realice acciones para ganar puntos, obtener estatus y ventajas para su cuenta.</p>
+                    
+                    <div class="action-row">
+                        <button class="action-button">Ver mis acciones</button>
+                        <button class="action-button secondary">Ver promociones</button>
                     </div>
                 </div>
-                <p class="score-text">Estado <span>{{ ucfirst(auth()->user()->status) }}</span> y actividad <span>{{ auth()->user()->ultimo_acceso ? 'Reciente' : 'Inactiva' }}</span></p>
+            </div>
+            <div class="stats-sidebar">
+                <div class="stats-category">
+                    <div class="category-icon hotel">
+                        <span class="icon-text">H</span>
+                    </div>
+                    <div class="category-details">
+                        <h4>Registros</h4>
+                        <div class="stats-value">
+                            <span class="value-number">1 Registro</span>
+                            <span class="value-date">Completado: {{ auth()->user()->updated_at->format('d-M-Y') }}</span>
+                        </div>
+                    </div>
+                </div>
                 
-                <div class="metrics-list">
-                    <div class="metric-item">
-                        <span class="metric-label">Días registrado</span>
-                        <span class="metric-value">{{ now()->diffInDays(auth()->user()->created_at) }}</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill green" style="width: {{ min(100, now()->diffInDays(auth()->user()->created_at)/365*100) }}%;"></div>
-                        </div>
+                <div class="stats-category">
+                    <div class="category-icon money">
+                        <span class="icon-text">$</span>
                     </div>
-                    <div class="metric-item">
-                        <span class="data-label">Completitud perfil</span>
-                        <span class="metric-value">{{ auth()->user()->rfc ? '85' : '45' }}</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill {{ auth()->user()->rfc ? 'green' : '' }}" style="width: {{ auth()->user()->rfc ? '85' : '45' }}%;"></div>
-                        </div>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Verificación email</span>
-                        <span class="metric-value">{{ auth()->user()->email_verified_at ? '100' : '30' }}</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill {{ auth()->user()->email_verified_at ? 'green' : '' }}" style="width: {{ auth()->user()->email_verified_at ? '100' : '30' }}%;"></div>
-                        </div>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Actividad reciente</span>
-                        <span class="metric-value">{{ auth()->user()->ultimo_acceso ? now()->diffInDays(auth()->user()->ultimo_acceso) < 7 ? '80' : '50' : '10' }}</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill {{ auth()->user()->ultimo_acceso && now()->diffInDays(auth()->user()->ultimo_acceso) < 7 ? 'green' : '' }}" style="width: {{ auth()->user()->ultimo_acceso ? now()->diffInDays(auth()->user()->ultimo_acceso) < 7 ? '80' : '50' : '10' }}%;"></div>
+                    <div class="category-details">
+                        <h4>Cantidad gastada</h4>
+                        <div class="stats-value">
+                            <span class="value-number">$15,000</span>
+                            <span class="value-date">Último: {{ auth()->user()->ultimo_acceso ? auth()->user()->ultimo_acceso->format('d-M-Y') : 'N/A' }}</span>
                         </div>
                     </div>
                 </div>
@@ -175,5 +140,5 @@
             profileCircle.style.backgroundColor = selectedColor;
         }
     });
-    </script>
+</script>
 @endsection
