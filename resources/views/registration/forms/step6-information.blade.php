@@ -7,142 +7,147 @@
             </div>
 
             <!-- Documentos Personales -->
-            <div class="document-category">
-                <h5 class="document-category-title"><i class="fas fa-user"></i> Documentos Personales</h5>
-                <div class="file-upload-grid">
-                    <!-- Constancia de Situación Fiscal -->
-                    <div class="file-upload-card">
-                        <div class="file-upload-header">
-                            <i class="fas fa-receipt"></i>
-                            <h6>Constancia de Situación Fiscal</h6>
-                            <span class="file-type-badge">PDF</span>
-                        </div>
-                        <div class="file-upload-body">
-                            <input type="file" id="constancia_situacion_fiscal" name="constancia_situacion_fiscal" class="file-upload-input" accept=".pdf" required>
-                            <label for="constancia_situacion_fiscal" class="file-upload-label">
-                                <i class="fas fa-cloud-upload-alt"></i> Subir archivo
-                            </label>
-                            <div class="file-upload-help">
-                                <i class="fas fa-info-circle"></i> Documento vigente emitido por el SAT
-                            </div>
-                        </div>
-                        <div class="file-upload-state" data-status="pending">
-                            <span class="file-status-icon"><i class="fas fa-clock"></i></span>
-                            <span class="file-status-text">Pendiente</span>
-                        </div>
-                    </div>
+<div class="document-category">
+    <h5 class="document-category-title"><i class="fas fa-user"></i> Documentos Personales</h5>
 
-                    <!-- Identificación Oficial -->
-                    <div class="file-upload-card">
-                        <div class="file-upload-header">
-                            <i class="fas fa-id-card"></i>
-                            <h6>Identificación Oficial</h6>
-                            <span class="file-type-badge">PDF</span>
-                        </div>
-                        <div class="file-upload-body">
-                            <input type="file" id="identificacion_oficial" name="identificacion_oficial" class="file-upload-input" accept=".pdf" required>
-                            <label for="identificacion_oficial" class="file-upload-label">
-                                <i class="fas fa-cloud-upload-alt"></i> Subir archivo
-                            </label>
-                            <div class="file-upload-help">
-                                <i class="fas fa-info-circle"></i> INE, pasaporte o cédula profesional
-                            </div>
-                        </div>
-                        <div class="file-upload-state" data-status="pending">
-                            <span class="file-status-icon"><i class="fas fa-clock"></i></span>
-                            <span class="file-status-text">Pendiente</span>
-                        </div>
-                    </div>
-
-                    <!-- Curriculum -->
-                    <div class="file-upload-card">
-                        <div class="file-upload-header">
-                            <i class="fas fa-file-alt"></i>
-                            <h6>Curriculum Actualizado</h6>
-                            <span class="file-type-badge">PDF</span>
-                        </div>
-                        <div class="file-upload-body">
-                            <input type="file" id="curriculum" name="curriculum" class="file-upload-input" accept=".pdf" required>
-                            <label for="curriculum" class="file-upload-label">
-                                <i class="fas fa-cloud-upload-alt"></i> Subir archivo
-                            </label>
-                            <div class="file-upload-help">
-                                <i class="fas fa-info-circle"></i> Versión actualizada con datos de contacto
-                            </div>
-                        </div>
-                        <div class="file-upload-state" data-status="pending">
-                            <span class="file-status-icon"><i class="fas fa-clock"></i></span>
-                            <span class="file-status-text">Pendiente</span>
-                        </div>
-                    </div>
-
-                    <!-- Comprobante de Domicilio -->
-                    <div class="file-upload-card">
-                        <div class="file-upload-header">
-                            <i class="fas fa-home"></i>
-                            <h6>Comprobante de Domicilio</h6>
-                            <span class="file-type-badge">PDF</span>
-                        </div>
-                        <div class="file-upload-body">
-                            <input type="file" id="comprobante_domicilio" name="comprobante_domicilio" class="file-upload-input" accept=".pdf" required>
-                            <label for="comprobante_domicilio" class="file-upload-label">
-                                <i class="fas fa-cloud-upload-alt"></i> Subir archivo
-                            </label>
-                            <div class="file-upload-help">
-                                <i class="fas fa-info-circle"></i> No mayor a 3 meses de antigüedad
-                            </div>
-                        </div>
-                        <div class="file-upload-state" data-status="pending">
-                            <span class="file-status-icon"><i class="fas fa-clock"></i></span>
-                            <span class="file-status-text">Pendiente</span>
-                        </div>
-                    </div>
-
-                    <!-- Acta de Nacimiento -->
-                    <div class="file-upload-card">
-                        <div class="file-upload-header">
-                            <i class="fas fa-certificate"></i>
-                            <h6>Acta de Nacimiento</h6>
-                            <span class="file-type-badge">PDF</span>
-                        </div>
-                        <div class="file-upload-body">
-                            <input type="file" id="acta_nacimiento" name="acta_nacimiento" class="file-upload-input" accept=".pdf" required>
-                            <label for="acta_nacimiento" class="file-upload-label">
-                                <i class="fas fa-cloud-upload-alt"></i> Subir archivo
-                            </label>
-                            <div class="file-upload-help">
-                                <i class="fas fa-info-circle"></i> Copia legible y completa
-                            </div>
-                        </div>
-                        <div class="file-upload-state" data-status="pending">
-                            <span class="file-status-icon"><i class="fas fa-clock"></i></span>
-                            <span class="file-status-text">Pendiente</span>
-                        </div>
-                    </div>
-
-                    <!-- CURP -->
-                    <div class="file-upload-card">
-                        <div class="file-upload-header">
-                            <i class="fas fa-id-badge"></i>
-                            <h6>CURP</h6>
-                            <span class="file-type-badge">PDF</span>
-                        </div>
-                        <div class="file-upload-body">
-                            <input type="file" id="curp" name="curp" class="file-upload-input" accept=".pdf" required>
-                            <label for="curp" class="file-upload-label">
-                                <i class="fas fa-cloud-upload-alt"></i> Subir archivo
-                            </label>
-                            <div class="file-upload-help">
-                                <i class="fas fa-info-circle"></i> Formato actualizado
-                            </div>
-                        </div>
-                        <div class="file-upload-state" data-status="pending">
-                            <span class="file-status-icon"><i class="fas fa-clock"></i></span>
-                            <span class="file-status-text">Pendiente</span>
-                        </div>
-                    </div>
+    <!-- Primera fila de documentos -->
+    <div class="file-upload-row">
+        <!-- Constancia de Situación Fiscal -->
+        <div class="file-upload-card">
+            <div class="file-upload-header">
+                <i class="fas fa-receipt"></i>
+                <h6>Constancia de Situación Fiscal</h6>
+                <span class="file-type-badge">PDF</span>
+            </div>
+            <div class="file-upload-body">
+                <input type="file" id="constancia_situacion_fiscal" name="constancia_situacion_fiscal" class="file-upload-input" accept=".pdf" required>
+                <label for="constancia_situacion_fiscal" class="file-upload-label">
+                    <i class="fas fa-cloud-upload-alt"></i> Subir archivo
+                </label>
+                <div class="file-upload-help">
+                    <i class="fas fa-info-circle"></i> Documento vigente emitido por el SAT
                 </div>
             </div>
+            <div class="file-upload-state" data-status="pending">
+                <span class="file-status-icon"><i class="fas fa-clock"></i></span>
+                <span class="file-status-text">Pendiente</span>
+            </div>
+        </div>
+
+        <!-- Identificación Oficial -->
+        <div class="file-upload-card">
+            <div class="file-upload-header">
+                <i class="fas fa-id-card"></i>
+                <h6>Identificación Oficial</h6>
+                <span class="file-type-badge">PDF</span>
+            </div>
+            <div class="file-upload-body">
+                <input type="file" id="identificacion_oficial" name="identificacion_oficial" class="file-upload-input" accept=".pdf" required>
+                <label for="identificacion_oficial" class="file-upload-label">
+                    <i class="fas fa-cloud-upload-alt"></i> Subir archivo
+                </label>
+                <div class="file-upload-help">
+                    <i class="fas fa-info-circle"></i> INE, pasaporte o cédula profesional
+                </div>
+            </div>
+            <div class="file-upload-state" data-status="pending">
+                <span class="file-status-icon"><i class="fas fa-clock"></i></span>
+                <span class="file-status-text">Pendiente</span>
+            </div>
+        </div>
+
+        <!-- Curriculum -->
+        <div class="file-upload-card">
+            <div class="file-upload-header">
+                <i class="fas fa-file-alt"></i>
+                <h6>Curriculum Actualizado</h6>
+                <span class="file-type-badge">PDF</span>
+            </div>
+            <div class="file-upload-body">
+                <input type="file" id="curriculum" name="curriculum" class="file-upload-input" accept=".pdf" required>
+                <label for="curriculum" class="file-upload-label">
+                    <i class="fas fa-cloud-upload-alt"></i> Subir archivo
+                </label>
+                <div class="file-upload-help">
+                    <i class="fas fa-info-circle"></i> Versión actualizada con datos de contacto
+                </div>
+            </div>
+            <div class="file-upload-state" data-status="pending">
+                <span class="file-status-icon"><i class="fas fa-clock"></i></span>
+                <span class="file-status-text">Pendiente</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Segunda fila de documentos -->
+    <div class="file-upload-row">
+        <!-- Comprobante de Domicilio -->
+        <div class="file-upload-card">
+            <div class="file-upload-header">
+                <i class="fas fa-home"></i>
+                <h6>Comprobante de Domicilio</h6>
+                <span class="file-type-badge">PDF</span>
+            </div>
+            <div class="file-upload-body">
+                <input type="file" id="comprobante_domicilio" name="comprobante_domicilio" class="file-upload-input" accept=".pdf" required>
+                <label for="comprobante_domicilio" class="file-upload-label">
+                    <i class="fas fa-cloud-upload-alt"></i> Subir archivo
+                </label>
+                <div class="file-upload-help">
+                    <i class="fas fa-info-circle"></i> No mayor a 3 meses de antigüedad
+                </div>
+            </div>
+            <div class="file-upload-state" data-status="pending">
+                <span class="file-status-icon"><i class="fas fa-clock"></i></span>
+                <span class="file-status-text">Pendiente</span>
+            </div>
+        </div>
+
+        <!-- Acta de Nacimiento -->
+        <div class="file-upload-card">
+            <div class="file-upload-header">
+                <i class="fas fa-certificate"></i>
+                <h6>Acta de Nacimiento</h6>
+                <span class="file-type-badge">PDF</span>
+            </div>
+            <div class="file-upload-body">
+                <input type="file" id="acta_nacimiento" name="acta_nacimiento" class="file-upload-input" accept=".pdf" required>
+                <label for="acta_nacimiento" class="file-upload-label">
+                    <i class="fas fa-cloud-upload-alt"></i> Subir archivo
+                </label>
+                <div class="file-upload-help">
+                    <i class="fas fa-info-circle"></i> Copia legible y completa
+                </div>
+            </div>
+            <div class="file-upload-state" data-status="pending">
+                <span class="file-status-icon"><i class="fas fa-clock"></i></span>
+                <span class="file-status-text">Pendiente</span>
+            </div>
+        </div>
+
+        <!-- CURP -->
+        <div class="file-upload-card">
+            <div class="file-upload-header">
+                <i class="fas fa-id-badge"></i>
+                <h6>CURP</h6>
+                <span class="file-type-badge">PDF</span>
+            </div>
+            <div class="file-upload-body">
+                <input type="file" id="curp" name="curp" class="file-upload-input" accept=".pdf" required>
+                <label for="curp" class="file-upload-label">
+                    <i class="fas fa-cloud-upload-alt"></i> Subir archivo
+                </label>
+                <div class="file-upload-help">
+                    <i class="fas fa-info-circle"></i> Formato actualizado
+                </div>
+            </div>
+            <div class="file-upload-state" data-status="pending">
+                <span class="file-status-icon"><i class="fas fa-clock"></i></span>
+                <span class="file-status-text">Pendiente</span>
+            </div>
+        </div>
+    </div>
+</div>
 
             <!-- Documentos Fiscales -->
             <div class="document-category">

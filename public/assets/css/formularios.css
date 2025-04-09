@@ -827,6 +827,12 @@ body {
 .progress-info.starting::before {
     background-color: var(--pending);
 }
+.file-upload-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: nowrap;
+    margin-bottom: 20px;
+}
 
 /* File upload cards */
 .file-upload-grid {
