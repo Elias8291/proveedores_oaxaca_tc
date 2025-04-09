@@ -827,10 +827,11 @@ body {
 .progress-info.starting::before {
     background-color: var(--pending);
 }
+/* Ajuste para las filas de documentos personales */
 .file-upload-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Tres columnas por fila */
+    gap: 15px; /* Espacio entre tarjetas */
     margin-bottom: 20px;
 }
 
@@ -842,6 +843,7 @@ body {
     margin-bottom: 20px;
 }
 
+/* Estilo para la tarjeta */
 .file-upload-card {
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -849,6 +851,8 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     background-color: var(--very-light-gray);
     transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column; /* Asegura que los elementos dentro se alineen verticalmente */
 }
 
 .file-upload-card:hover {
