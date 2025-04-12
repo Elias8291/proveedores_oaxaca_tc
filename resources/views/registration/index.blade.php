@@ -1,4 +1,3 @@
-<!-- resources/views/registration/index.blade.php -->
 @extends('dashboard')
 
 @section('title', 'Inscripción al Padrón de Proveedores - Proveedores de Oaxaca')
@@ -9,6 +8,7 @@
     <div class="registration-section">
         <h1>Inscripción al Padrón de Proveedores</h1>
         <p>Antes de continuar con tu registro en el padrón de proveedores de Oaxaca, por favor revisa y acepta los siguientes términos y condiciones:</p>
+        <p>Tipo de solicitante: <strong>{{ Auth::user()->solicitante->tipo_persona }}</strong>. Recibirás formularios según este tipo.</p>
         <div class="terms-section">
             <h3>Términos y Condiciones</h3>
             <p>Al avanzar con tu inscripción, aceptas lo siguiente:</p>
@@ -32,4 +32,36 @@
         </form>
     </div>
 </div>
+<script>
+document.getElementById('termsForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!document.getElementById('terms').checked) {
+        alert('Debes aceptar los términos y condiciones');
+        return;
+    }
+
+    // Enviar el formulario mediante AJAX
+    fetch(this.action, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({terms: true})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.numero_seccion === 1) {
+            // Redirigir al siguiente paso del formulario
+            window.location.href = "{{ route('registration.form1') }}";
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ocurrió un error al procesar tu solicitud');
+    });
+});
+</script>
 @endsection

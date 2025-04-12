@@ -32,12 +32,12 @@ body {
 }
 
 .dashboard-container {
-    padding: 30px;
+    padding: 40px;
     background-color: var(--text-light);
     box-shadow: var(--shadow-soft);
     border-radius: 12px;
-    margin: 20px auto;
-    max-width: 1600px;
+    margin: 60px auto 20px auto; /* Aumenté el margin-top a 60px */
+    max-width: 1200px;
 }
 
 /* Refined progress tracker */
@@ -203,6 +203,227 @@ body {
     width: 60px;
     height: 2px;
     background-color: var(--primary);
+}
+
+/* Estilos para la sección de éxito con diseño simplificado y confeti repetitivo */ 
+#section-7 {
+    font-family: 'Poppins', 'Roboto', sans-serif;
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    position: relative;
+    overflow: hidden;
+}
+    
+#section-7 .form-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 50px 35px;
+    text-align: center;
+    position: relative;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+#section-7 .form-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+    
+/* Estilo para el ícono de manita con solo un círculo gris */
+#section-7 .form-container::before {
+    content: "👍";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    height: 90px;
+    background: #5A5A5A; /* Color gris para el círculo */
+    border-radius: 50%;
+    margin: 0 auto 25px;
+    color: white;
+    font-size: 40px;
+    box-shadow: 0 8px 20px rgba(90, 90, 90, 0.3);
+    position: relative;
+    z-index: 2;
+    animation: pulse 2s infinite;
+}
+    
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 8px 20px rgba(90, 90, 90, 0.3); }
+    50% { transform: scale(1.05); box-shadow: 0 12px 25px rgba(90, 90, 90, 0.4); }
+    100% { transform: scale(1); box-shadow: 0 8px 20px rgba(90, 90, 90, 0.3); }
+}
+    
+/* Mensaje de éxito principal */
+#section-7 .form-container p {
+    position: relative;
+    margin: 0;
+    padding-top: 20px;
+    font-size: 17px;
+    color: #555;
+    line-height: 1.7;
+}
+    
+/* Texto "¡ÉXITO!" */
+#section-7 .form-container p::before {
+    content: "¡ÉXITO!";
+    display: block;
+    font-size: 32px;
+    font-weight: 700;
+    color: #5A5A5A;
+    margin-bottom: 20px;
+    letter-spacing: 1.5px;
+}
+    
+/* Texto sobre los formularios completados */
+#section-7 .form-container p::after {
+    content: "Tus formularios han sido enviados correctamente";
+    display: block;
+    font-size: 16px;
+    color: #888;
+    margin-top: 12px;
+    font-weight: 300;
+}
+
+/* Confeti repetitivo con animación infinita */
+@keyframes confettiRain {
+    0% { 
+        transform: translateY(-20px) translateX(0) rotate(0deg); 
+        opacity: 0; 
+    }
+    10% { 
+        opacity: 1; 
+    }
+    90% { 
+        opacity: 1; 
+        transform: translateY(calc(100vh)) translateX(calc(var(--x-move) * 1px)) rotate(calc(var(--rotation) * 1deg)); 
+    }
+    100% { 
+        transform: translateY(calc(100vh + 20px)) translateX(calc(var(--x-move) * 1.2px)) rotate(calc(var(--rotation) * 1.2deg)); 
+        opacity: 0; 
+    }
+}
+
+.confetti {
+    position: absolute;
+    z-index: 3;
+    top: -20px;
+    opacity: 0;
+    --x-move: 0;
+    --rotation: 0;
+    /* Hacemos que la animación sea infinita */
+    animation: confettiRain var(--fall-duration, 4s) ease-in-out infinite;
+    /* Añadimos un retraso inicial para que no comiencen todos a la vez */
+    animation-delay: calc(var(--delay, 0s) - var(--fall-duration, 4s));
+}
+
+/* Creamos diferentes formas para el confeti */
+/* Círculos */
+#section-7 .confetti:nth-child(4n+1) {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    --x-move: -30;
+    --rotation: 360;
+}
+
+/* Rectángulos */
+#section-7 .confetti:nth-child(4n+2) {
+    width: 14px;
+    height: 7px;
+    border-radius: 2px;
+    --x-move: 20;
+    --rotation: 280;
+}
+
+/* Triángulos */
+#section-7 .confetti:nth-child(4n+3) {
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 14px solid transparent;
+    background: transparent !important;
+    --x-move: -15;
+    --rotation: 180;
+}
+
+/* Estrellas */
+#section-7 .confetti:nth-child(4n+4) {
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    --x-move: 40;
+    --rotation: 220;
+}
+
+/* Colores para el confeti */
+#section-7 .confetti:nth-child(5n+1) { background: #FF6B6B; --fall-duration: 4.5s; --delay: 0.2s; }
+#section-7 .confetti:nth-child(5n+2) { background: #4ECDC4; --fall-duration: 5.3s; --delay: 0.7s; }
+#section-7 .confetti:nth-child(5n+3) { background: #FFD166; --fall-duration: 4.8s; --delay: 1.2s; border-bottom-color: #FFD166; }
+#section-7 .confetti:nth-child(5n+4) { background: #FF9F1C; --fall-duration: 5.1s; --delay: 1.5s; }
+#section-7 .confetti:nth-child(5n+5) { background: #6E45E2; --fall-duration: 4.7s; --delay: 0.5s; }
+
+/* Posiciones aleatorias para el confeti */
+#section-7 .confetti:nth-child(1) { left: 7%; --delay: 0.5s; }
+#section-7 .confetti:nth-child(2) { left: 14%; --delay: 1.1s; }
+#section-7 .confetti:nth-child(3) { left: 21%; --delay: 0.3s; }
+#section-7 .confetti:nth-child(4) { left: 28%; --delay: 1.7s; }
+#section-7 .confetti:nth-child(5) { left: 35%; --delay: 0.8s; }
+#section-7 .confetti:nth-child(6) { left: 42%; --delay: 1.9s; }
+#section-7 .confetti:nth-child(7) { left: 49%; --delay: 0.4s; }
+#section-7 .confetti:nth-child(8) { left: 56%; --delay: 2.3s; }
+#section-7 .confetti:nth-child(9) { left: 63%; --delay: 0.9s; }
+#section-7 .confetti:nth-child(10) { left: 70%; --delay: 2.7s; }
+#section-7 .confetti:nth-child(11) { left: 77%; --delay: 1.4s; }
+#section-7 .confetti:nth-child(12) { left: 84%; --delay: 3.1s; }
+#section-7 .confetti:nth-child(13) { left: 91%; --delay: 2.0s; }
+#section-7 .confetti:nth-child(14) { left: 17%; --delay: 3.5s; }
+#section-7 .confetti:nth-child(15) { left: 38%; --delay: 0.6s; }
+#section-7 .confetti:nth-child(16) { left: 59%; --delay: 2.4s; }
+#section-7 .confetti:nth-child(17) { left: 80%; --delay: 1.2s; }
+#section-7 .confetti:nth-child(18) { left: 24%; --delay: 2.8s; }
+#section-7 .confetti:nth-child(19) { left: 45%; --delay: 1.5s; }
+#section-7 .confetti:nth-child(20) { left: 76%; --delay: 3.3s; }
+/* Añadimos más confeti para tener más densidad */
+#section-7 .confetti:nth-child(21) { left: 12%; --delay: 0.7s; }
+#section-7 .confetti:nth-child(22) { left: 32%; --delay: 1.3s; }
+#section-7 .confetti:nth-child(23) { left: 54%; --delay: 0.1s; }
+#section-7 .confetti:nth-child(24) { left: 68%; --delay: 2.1s; }
+#section-7 .confetti:nth-child(25) { left: 87%; --delay: 0.9s; }
+#section-7 .confetti:nth-child(26) { left: 22%; --delay: 2.5s; }
+#section-7 .confetti:nth-child(27) { left: 43%; --delay: 1.0s; }
+#section-7 .confetti:nth-child(28) { left: 67%; --delay: 3.0s; }
+#section-7 .confetti:nth-child(29) { left: 82%; --delay: 1.6s; }
+#section-7 .confetti:nth-child(30) { left: 9%; --delay: 2.9s; }
+    
+/* Animación de aparición del contenedor con brillo */
+@keyframes appear {
+    0% { 
+        opacity: 0; 
+        transform: translateY(40px); 
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+    
+#section-7 .form-container {
+    animation: appear 0.8s ease-out forwards;
+}
+
+/* Efecto de brillo alrededor del ícono cuando aparece */
+@keyframes glowEffect {
+    0% { box-shadow: 0 0 0 0 rgba(90, 90, 90, 0.1); }
+    50% { box-shadow: 0 0 30px 10px rgba(90, 90, 90, 0.2); }
+    100% { box-shadow: 0 0 0 0 rgba(90, 90, 90, 0.1); }
+}
+
+#section-7 .form-container::before {
+    animation: pulse 2s infinite, glowEffect 2s ease-in-out 0.2s;
 }
 
 /* Stylish input groups */

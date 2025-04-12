@@ -100,4 +100,7 @@ Route::get('/solicitante/data', [SolicitanteController::class, 'getSolicitanteDa
     Route::get('/set-password', [SetPasswordController::class, 'showSetForm'])->name('password.set.form');
 Route::post('/set-password', [SetPasswordController::class, 'setPassword'])->name('password.set');
 Route::middleware('auth')->get('/api/solicitante-data', [SolicitanteController::class, 'getSolicitanteData']);
+Route::post('/registration/form1', [SolicitanteController::class, 'proceedToForm1'])->name('registration.form1');
+Route::get('/registration/form1', [SolicitanteController::class, 'showForm1'])->name('registration.form1.view');
+Route::get('/registration', [SolicitanteController::class, 'showRegistrationIndex'])->name('registration.index');
 });
