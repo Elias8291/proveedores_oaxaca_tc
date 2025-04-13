@@ -1,63 +1,68 @@
-<div id="section-5" class="form-section" >
-    <div class="form-container">
-        <!-- Primera columna -->
-        <div class="form-column">
-            <div class="form-group">
-                <h4><i class="fas fa-user-tie"></i> Datos del Apoderado o Representante Legal</h4>
+<form id="formulario5">
+    <div id="section-5" class="form-section">
+        <div class="form-container">
+            <!-- Primera columna -->
+            <div class="form-column">
+                <div class="form-group">
+                    <h4><i class="fas fa-user-tie"></i> Datos del Apoderado o Representante Legal</h4>
+                </div>
+                <div class="form-group horizontal-group">
+                    <!-- Nombre del apoderado -->
+                    <div class="half-width formulario__grupo" id="grupo__nombre-apoderado">
+                        <label class="form-label" for="nombre-apoderado">Nombre</label>
+                        <input type="text" id="nombre-apoderado" name="nombre-apoderado" class="form-control" placeholder="Nombre completo del apoderado o representante legal">
+                        <p class="formulario__input-error">El nombre solo puede contener letras y espacios, máximo 100 caracteres.</p>
+                    </div>
+                    <!-- Número de Escritura -->
+                    <div class="half-width formulario__grupo" id="grupo__numero-escritura">
+                        <label class="form-label" for="numero-escritura">Número de Escritura</label>
+                        <input type="text" id="numero-escritura" name="numero-escritura" class="form-control" placeholder="Número de escritura">
+                        <p class="formulario__input-error">El número de escritura debe contener solo números, máximo 10 dígitos.</p>
+                    </div>
+                </div>
+                <div class="form-group horizontal-group">
+                    <!-- Nombre del Notario -->
+                    <div class="half-width formulario__grupo" id="grupo__nombre-notario">
+                        <label class="form-label" for="nombre-notario">Nombre del Notario</label>
+                        <input type="text" id="nombre-notario" name="nombre-notario" class="form-control" placeholder="Nombre del notario">
+                        <p class="formulario__input-error">El nombre del notario solo puede contener letras y espacios, máximo 100 caracteres.</p>
+                    </div>
+                    <!-- Número del Notario -->
+                    <div class="half-width formulario__grupo" id="grupo__numero-notario">
+                        <label class="form-label" for="numero-notario">Número del Notario</label>
+                        <input type="text" id="numero-notario" name="numero-notario" class="form-control" placeholder="Número del notario">
+                        <p class="formulario__input-error">El número del notario debe contener solo números, máximo 10 dígitos.</p>
+                    </div>
+                    <!-- Entidad Federativa -->
+                    <div class="half-width formulario__grupo" id="grupo__entidad-federativa">
+                        <label class="form-label" for="entidad-federativa">Entidad Federativa</label>
+                        <input type="text" id="entidad-federativa" name="entidad-federativa" class="form-control" placeholder="Entidad federativa">
+                        <p class="formulario__input-error">La entidad federativa solo puede contener letras y espacios, máximo 50 caracteres.</p>
+                    </div>
+                    <!-- Fecha de Escritura -->
+                    <div class="half-width formulario__grupo" id="grupo__fecha-escritura">
+                        <label class="form-label" for="fecha-escritura">Fecha</label>
+                        <input type="date" id="fecha-escritura" name="fecha-escritura" class="form-control">
+                        <p class="formulario__input-error">Por favor seleccione una fecha válida.</p>
+                    </div>
+                </div>
             </div>
-            <div class="form-group horizontal-group">
-                <!-- Nombre del apoderado -->
-                <div class="half-width">
-                    <label class="form-label" for="nombre-apoderado">Nombre</label>
-                    <input type="text" id="nombre-apoderado" name="nombre-apoderado" class="form-control" placeholder="Nombre completo del apoderado o representante legal">
+            <!-- Segunda columna -->
+            <div class="form-column">
+                <div class="form-group">
+                    <h4><i class="fas fa-book"></i> Datos de Inscripción en el Registro Público</h4>
                 </div>
-            
-                <!-- Número de Escritura -->
-                <div class="half-width">
-                    <label class="form-label" for="numero-escritura">Número de Escritura</label>
-                    <input type="text" id="numero-escritura" name="numero-escritura" class="form-control" placeholder="Número de escritura">
+                <div class="form-group formulario__grupo" id="grupo__numero-registro">
+                    <label class="form-label" for="numero-registro">Número de Registro o Folio Mercantil</label>
+                    <input type="text" id="numero-registro" name="numero-registro" class="form-control" placeholder="Número de registro o folio mercantil">
+                    <p class="formulario__input-error">El número de registro debe contener solo números, máximo 10 dígitos.</p>
                 </div>
-            </div>
-            <div class="form-group horizontal-group">
-    
-                <!-- Nombre del Notario -->
-                <div class="half-width">
-                    <label class="form-label" for="nombre-notario">Nombre del Notario</label>
-                    <input type="text" id="nombre-notario" name="nombre-notario" class="form-control" placeholder="Nombre del notario">
+                <div class="form-group formulario__grupo" id="grupo__fecha-inscripcion">
+                    <label class="form-label" for="fecha-inscripcion">Fecha de Inscripción</label>
+                    <input type="date" id="fecha-inscripcion" name="fecha-inscripcion" class="form-control">
+                    <p class="formulario__input-error">Por favor seleccione una fecha válida.</p>
                 </div>
-            
-                <!-- Número del Notario -->
-                <div class="half-width">
-                    <label class="form-label" for="numero-notario">Número del Notario</label>
-                    <input type="text" id="numero-notario" name="numero-notario" class="form-control" placeholder="Número del notario">
-                </div>
-            
-                <!-- Entidad Federativa -->
-                <div class="half-width">
-                    <label class="form-label" for="entidad-federativa">Entidad Federativa</label>
-                    <input type="text" id="entidad-federativa" name="entidad-federativa" class="form-control" placeholder="Entidad federativa">
-                </div>
-                <!-- Fecha de Constitución -->
-                <div class="half-width">
-                    <label class="form-label" for="fecha-escritura">Fecha</label>
-                    <input type="date" id="fecha-escritura" name="fecha-escritura" class="form-control">
-                </div>
-            </div>
-        </div>
-
-        <!-- Segunda columna -->
-        <div class="form-column">
-            <div class="form-group">
-                <h4><i class="fas fa-book"></i> Datos de Inscripción en el Registro Público</h4>
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="numero-registro">Número de Registro o Folio Mercantil</label>
-                <input type="text" id="numero-registro" name="numero-registro" class="form-control" placeholder="Número de registro o folio mercantil">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="fecha-inscripcion">Fecha de Inscripción</label>
-                <input type="date" id="fecha-inscripcion" name="fecha-inscripcion" class="form-control">
             </div>
         </div>
     </div>
-</div>
+</form>
