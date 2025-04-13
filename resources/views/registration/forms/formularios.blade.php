@@ -23,13 +23,13 @@
                     $tipoPersona = Auth::user()->solicitante->tipo_persona;
                     $steps = $tipoPersona === 'Física' ? [1, 2, 6, 7] : [1, 2, 3, 4, 5, 6, 7];
                     $stepTitles = [
-                        1 => 'Información',
-                        2 => 'Datos básicos',
-                        3 => 'Reclamación',
-                        4 => 'Detalles',
-                        5 => 'Documentos',
-                        6 => 'Revisión',
-                        7 => 'Confirmación'
+                        1 => 'Datos Generales',
+                        2 => 'Domicilio',
+                        3 => 'Datos de Constitución',
+                        4 => 'Accionistas',
+                        5 => 'Apoderado Legal',
+                        6 => 'Documentos',
+                        7 => 'Final'
                     ];
                 @endphp
                 @foreach ($steps as $index => $step)

@@ -1,0 +1,35 @@
+[33m8a835a6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: commit: cambios en vistas documentos , progreso,responsiv
+[33m374c331[m HEAD@{1}: commit: cambios en vistas para moral y fisica
+[33mbe4c8f0[m HEAD@{2}: merge origin/main: Fast-forward
+[33ma5adb6d[m HEAD@{3}: checkout: moving from main to main
+[33ma5adb6d[m HEAD@{4}: reset: moving to HEAD
+[33ma5adb6d[m HEAD@{5}: pull origin main: Fast-forward
+[33m67352d2[m HEAD@{6}: commit: correciones campos
+[33md7055f2[m HEAD@{7}: commit: correciones en inscripcion
+[33mcca9d2e[m HEAD@{8}: commit: correciones registro rfc y persona
+[33md06877a[m HEAD@{9}: commit (merge): migracciones y correciones campos
+[33m8249a9d[m HEAD@{10}: commit: Mis cambios locales guardados
+[33mcdfb658[m HEAD@{11}: commit: correcciones view
+[33ma2acd91[m HEAD@{12}: commit: correcciones vista sidebar
+[33m61d2bd0[m HEAD@{13}: commit: correcciones vistas
+[33m88f81e3[m HEAD@{14}: commit: correcciones vistas
+[33m5fa4030[m HEAD@{15}: pull origin main: Fast-forward
+[33mcb4925a[m HEAD@{16}: reset: moving to HEAD
+[33mcb4925a[m HEAD@{17}: commit: imagen
+[33m4d138c7[m HEAD@{18}: commit: bienvenidos, usuarios, separa css
+[33m732f2fe[m HEAD@{19}: reset: moving to main
+[33m732f2fe[m HEAD@{20}: pull origin main: Fast-forward
+[33m83ca54c[m HEAD@{21}: pull origin main: Fast-forward
+[33me3e97e2[m HEAD@{22}: commit: sat correcion algunas
+[33mf10ca94[m HEAD@{23}: commit: sat correcion algunas
+[33m29d0543[m HEAD@{24}: commit: sat correcion moral
+[33m918a0f4[m HEAD@{25}: pull origin main: Fast-forward
+[33m7bbebf9[m HEAD@{26}: commit: sat
+[33ma6cc66f[m HEAD@{27}: commit: tabla user
+[33m094a7d2[m HEAD@{28}: pull origin main --rebase: Fast-forward
+[33mc57cfc3[m HEAD@{29}: reset: moving to HEAD
+[33mc57cfc3[m HEAD@{30}: commit: welcome diseño
+[33m28613cb[m HEAD@{31}: commit: correcion .env
+[33mca18815[m HEAD@{32}: commit: correcion welcome
+[33m2d18d71[m HEAD@{33}: Branch: renamed refs/heads/master to refs/heads/main
+[33m2d18d71[m HEAD@{35}: commit (initial): primer commit

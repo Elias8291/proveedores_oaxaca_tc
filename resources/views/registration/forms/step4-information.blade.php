@@ -1,137 +1,147 @@
 <div class="form-section" id="form-step-4">
-    <div class="form-container">
-        <div class="form-column">
-            <div class="form-group">
-                <h4><i class="fas fa-users"></i> Socios o Accionistas (Persona Moral)</h4>
-            </div>
-            <div class="form-group">
-                <div class="table-container">
-                    <table class="socios-table" id="tabla-socios">
-                        <thead>
-                            <tr>
-                                <th>Apellido Paterno</th>
-                                <th>Apellido Materno</th>
-                                <th>Nombre(s)</th>
-                                <th>Porcentaje de Acciones</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Fila de ejemplo -->
-                            <tr>
-                                <td>
-                                    <input type="text" class="form-control" placeholder="Apellido Paterno">
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" placeholder="Apellido Materno">
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" placeholder="Nombre(s)">
-                                </td>
-                                <td>
-                                    <div class="input-with-suffix">
-                                        <input type="text" class="form-control porcentaje-input" placeholder="Ej: 50">
-                                        <span class="input-suffix">%</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn-delete eliminar-socio">
-                                        <i class="fas fa-trash"></i> Eliminar
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button type="button" id="agregar-socio" class="btn-add mt-2">
-                    <i class="fas fa-plus"></i> Agregar Socio
-                </button>
-            </div>
-        </div>
-    </div>
+  <div class="form-container">
+      <div class="form-column">
+          <div class="form-header">
+              <h4><i class="fas fa-users"></i> Socios o Accionistas (Persona Moral)</h4>
+              <p class="subtitle">Agrega los socios o accionistas de la empresa</p>
+              <div class="percentage-summary">
+                  <div class="progress-bar-container">
+                      <div class="progress-bar" id="percentage-bar"></div>
+                  </div>
+                  <span id="percentage-text">0% asignado</span>
+              </div>
+          </div>
+          
+          <div class="shareholders-container" id="shareholders-container">
+              <!-- Las tarjetas de accionistas se agregarán aquí dinámicamente -->
+          </div>
+          
+          <button type="button" id="add-shareholder" class="btn-add-shareholder">
+              <i class="fas fa-plus-circle"></i> Agregar Socio/Accionista
+          </button>
+      </div>
+  </div>
 </div>
 
 <script>
-
 document.addEventListener('DOMContentLoaded', () => {
-    const tablaSocios = document.getElementById('tabla-socios');
-    const agregarSocioBtn = document.getElementById('agregar-socio');
-  
-    // Function to add a new socio row
-    function agregarSocio() {
-      const tbody = tablaSocios.querySelector('tbody');
-      const newRow = document.createElement('tr');
-      newRow.innerHTML = `
-        <td>
-          <input type="text" class="form-control" placeholder="Apellido Paterno">
-        </td>
-        <td>
-          <input type="text" class="form-control" placeholder="Apellido Materno">
-        </td>
-        <td>
-          <input type="text" class="form-control" placeholder="Nombre(s)">
-        </td>
-        <td>
-          <div class="input-with-suffix">
-            <input type="text" class="form-control porcentaje-input" placeholder="Ej: 50">
-            <span class="input-suffix">%</span>
-          </div>
-        </td>
-        <td>
-          <button type="button" class="btn-delete eliminar-socio">
-            <i class="fas fa-trash"></i> Eliminar
-          </button>
-        </td>
-      `;
-      tbody.appendChild(newRow);
+    const container = document.getElementById('shareholders-container');
+    const addBtn = document.getElementById('add-shareholder');
+    const percentageBar = document.getElementById('percentage-bar');
+    const percentageText = document.getElementById('percentage-text');
+    
+    let shareholderCount = 0;
+    
+    // Función para agregar un nuevo accionista
+    function addShareholder() {
+        shareholderCount++;
+        const card = document.createElement('div');
+        card.className = 'shareholder-card';
+        card.innerHTML = `
+            <div class="shareholder-header">
+                <div class="shareholder-number">${shareholderCount}</div>
+                <button type="button" class="btn-delete-shareholder" title="Eliminar accionista">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="form-group-shareholder">
+                <label for="lastname1-${shareholderCount}">Apellido Paterno</label>
+                <input type="text" id="lastname1-${shareholderCount}" class="form-control-shareholder" placeholder="Ej: González">
+            </div>
+            <div class="form-group-shareholder">
+                <label for="lastname2-${shareholderCount}">Apellido Materno</label>
+                <input type="text" id="lastname2-${shareholderCount}" class="form-control-shareholder" placeholder="Ej: López">
+            </div>
+            <div class="form-group-shareholder">
+                <label for="name-${shareholderCount}">Nombre(s)</label>
+                <input type="text" id="name-${shareholderCount}" class="form-control-shareholder" placeholder="Ej: Juan Carlos">
+            </div>
+            <div class="form-group-shareholder">
+                <label for="percentage-${shareholderCount}">Porcentaje de Acciones</label>
+                <div class="percentage-input-container">
+                    <input type="number" id="percentage-${shareholderCount}" 
+                           class="form-control-shareholder percentage-input" 
+                           placeholder="Ej: 50" min="0" max="100">
+                    <span class="percentage-suffix">%</span>
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(card);
+        
+        // Enfocar el primer campo del nuevo accionista
+        const firstInput = card.querySelector('input');
+        if (firstInput) firstInput.focus();
+        
+        updatePercentageSummary();
     }
-  
-    // Event listener for adding a socio
-    agregarSocioBtn.addEventListener('click', agregarSocio);
-  
-    // Event listener for deleting a socio
-    tablaSocios.addEventListener('click', (e) => {
-      if (e.target.closest('.eliminar-socio')) {
-        const row = e.target.closest('tr');
-        const tbody = tablaSocios.querySelector('tbody');
-        if (tbody.children.length > 1) {
-          row.remove();
+    
+    // Función para eliminar un accionista
+    function deleteShareholder(card) {
+        if (container.children.length > 1) {
+            card.remove();
+            updateShareholderNumbers();
+            updatePercentageSummary();
         } else {
-          alert('Debe haber al menos un socio registrado.');
+            alert('Debe haber al menos un socio/accionista registrado.');
         }
-      }
-    });
-  
-    // Optional: Validate percentage inputs
-    tablaSocios.addEventListener('input', (e) => {
-      if (e.target.classList.contains('porcentaje-input')) {
-        const value = e.target.value;
-        if (value && !/^\d*$/.test(value)) {
-          e.target.value = value.replace(/[^0-9]/g, '');
-        }
-      }
-    });
-  
-    // Optional: Check total percentage (uncomment to enable)
-    /*
-    function checkTotalPercentage() {
-      const inputs = tablaSocios.querySelectorAll('.porcentaje-input');
-      let total = 0;
-      inputs.forEach(input => {
-        const value = parseFloat(input.value) || 0;
-        total += value;
-      });
-      if (total > 100) {
-        alert('El total de porcentajes no puede exceder el 100%.');
-      }
     }
-  
-    tablaSocios.addEventListener('change', (e) => {
-      if (e.target.classList.contains('porcentaje-input')) {
-        checkTotalPercentage();
-      }
+    
+    // Función para actualizar los números de los accionistas
+    function updateShareholderNumbers() {
+        const cards = container.querySelectorAll('.shareholder-card');
+        cards.forEach((card, index) => {
+            card.querySelector('.shareholder-number').textContent = index + 1;
+        });
+        shareholderCount = cards.length;
+    }
+    
+    // Función para calcular y mostrar el resumen de porcentajes
+    function updatePercentageSummary() {
+        const inputs = container.querySelectorAll('.percentage-input');
+        let total = 0;
+        
+        inputs.forEach(input => {
+            const value = parseFloat(input.value) || 0;
+            total += value;
+        });
+        
+        // Actualizar barra y texto
+        const percentage = Math.min(total, 100);
+        percentageBar.style.width = `${percentage}%`;
+        
+        if (total > 100) {
+            percentageText.textContent = `⚠️ ${total}% (Excede el 100%)`;
+            percentageText.style.color = '#dc3545';
+            percentageBar.style.background = '#dc3545';
+        } else {
+            percentageText.textContent = `${percentage}% asignado`;
+            percentageText.style.color = percentage === 100 ? '#28a745' : '#4e73df';
+            percentageBar.style.background = percentage === 100 ? '#28a745' : '#4e73df';
+        }
+    }
+    
+    // Event listeners
+    addBtn.addEventListener('click', addShareholder);
+    
+    container.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-delete-shareholder')) {
+            const card = e.target.closest('.shareholder-card');
+            deleteShareholder(card);
+        }
     });
-    */
-  });
-
+    
+    container.addEventListener('input', (e) => {
+        if (e.target.classList.contains('percentage-input')) {
+            // Validar que no se ingresen valores mayores a 100
+            if (parseInt(e.target.value) > 100) {
+                e.target.value = 100;
+            }
+            updatePercentageSummary();
+        }
+    });
+    
+    // Agregar primer accionista por defecto
+    addShareholder();
+});
   </Script>
