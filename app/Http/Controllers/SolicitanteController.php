@@ -15,10 +15,10 @@ class SolicitanteController extends Controller
 
         $solicitante = Solicitante::where('user_id', $user->id)->first();
         if ($solicitante->numero_seccion >= 1) {
-            return redirect()->route('registration.form1.view');
+            return redirect()->route('registration.formularios.formularios');
         }
 
-        return view('registration.index');
+        return view('registration.terminos_condiciones');
     }
 
     // Devuelve datos del solicitante en JSON
@@ -26,15 +26,21 @@ class SolicitanteController extends Controller
     {
         $user = Auth::user();
         if (!$user) return response()->json([], 401);
-
+    
         $solicitante = Solicitante::where('user_id', $user->id)->first();
-        return response()->json([
-            'curp' => $solicitante->curp,
+        
+        $data = [
             'tipo_persona' => $solicitante->tipo_persona,
             'razon_social' => $solicitante->razon_social,
             'email' => $solicitante->email,
             'rfc' => $user->rfc
-        ]);
+        ];
+        
+        if ($solicitante->tipo_persona == 'Física') {
+            $data['curp'] = $solicitante->curp;
+        }
+        
+        return response()->json($data);
     }
 
     // Avanza al formulario 1 tras aceptar términos
@@ -50,8 +56,6 @@ class SolicitanteController extends Controller
             $solicitante->numero_seccion = 1;
             $solicitante->save();
         }
-
-        return redirect()->route('registration.index');
     }
 
     // Muestra formulario 1
@@ -60,7 +64,7 @@ class SolicitanteController extends Controller
         $user = Auth::user();
         $solicitante = Solicitante::where('user_id', $user->id)->first();
         
-        return view('registration.forms.formularios', [
+        return view('registration.formularios.formularios', [
             'tipo_persona' => $solicitante ? $solicitante->tipo_persona : null
         ]);
     }
