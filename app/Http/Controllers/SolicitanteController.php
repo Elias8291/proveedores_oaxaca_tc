@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Solicitante;
@@ -58,6 +57,11 @@ class SolicitanteController extends Controller
     // Muestra formulario 1
     public function showForm1()
     {
-        return view('registration.forms.formularios');
+        $user = Auth::user();
+        $solicitante = Solicitante::where('user_id', $user->id)->first();
+        
+        return view('registration.forms.formularios', [
+            'tipo_persona' => $solicitante ? $solicitante->tipo_persona : null
+        ]);
     }
 }
