@@ -77,9 +77,9 @@ document.addEventListener('DOMContentLoaded', function() {
     cargarEstados();
 
     function cargarEstados() {
-        const select = document.getElementById('entidad_federativa_5');
+        const select = document.getElementById('entidad-federativa'); // Cambiado a entidad-federativa
         if (!select) {
-            console.error('No se encontró el elemento con ID entidad_federativa_5');
+            console.error('No se encontró el elemento con ID entidad-federativa');
             return;
         }
         if (select.options.length > 1) {

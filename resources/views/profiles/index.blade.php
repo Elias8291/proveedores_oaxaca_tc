@@ -24,16 +24,7 @@
                 </div>
             </div>
         </div>
-        <div class="user-stats">
-            <div class="points-display">
-                <div class="points-value">{{ auth()->user()->status === 'active' ? '1245' : '845' }}</div>
-                <div class="points-label">Puntos</div>
-            </div>
-            <div class="status-badges">
-                <span class="status-badge verified">Verificado</span>
-                <span class="status-badge active">Activo</span>
-            </div>
-        </div>
+       
     </div>
 
     <div class="tabs-container">
@@ -58,43 +49,16 @@
         <div class="content-grid">
             <div class="main-content">
                 <div class="status-card">
-                    <h3>¿Desea estatus "Premium" en 2023?</h3>
-                    <p>Reserve 7 servicios más o gaste <strong>$33,000</strong> antes del 31 de diciembre de 2023</p>
-                    
-                    <h4 class="recent-activity-title">Actividad Reciente</h4>
-                    <p class="activity-message">No tiene actividad en los últimos 30 días. Realice acciones para ganar puntos, obtener estatus y ventajas para su cuenta.</p>
-                    
-                    <div class="action-row">
-                        <button class="action-button">Ver mis acciones</button>
-                        <button class="action-button secondary">Ver promociones</button>
-                    </div>
+                   
                 </div>
             </div>
             <div class="stats-sidebar">
                 <div class="stats-category">
-                    <div class="category-icon hotel">
-                        <span class="icon-text">H</span>
-                    </div>
-                    <div class="category-details">
-                        <h4>Registros</h4>
-                        <div class="stats-value">
-                            <span class="value-number">1 Registro</span>
-                            <span class="value-date">Completado: {{ auth()->user()->updated_at->format('d-M-Y') }}</span>
-                        </div>
-                    </div>
+                   
                 </div>
                 
                 <div class="stats-category">
-                    <div class="category-icon money">
-                        <span class="icon-text">$</span>
-                    </div>
-                    <div class="category-details">
-                        <h4>Cantidad gastada</h4>
-                        <div class="stats-value">
-                            <span class="value-number">$15,000</span>
-                            <span class="value-date">Último: {{ auth()->user()->ultimo_acceso ? auth()->user()->ultimo_acceso->format('d-M-Y') : 'N/A' }}</span>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>
