@@ -3,14 +3,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const formulario1 = document.getElementById('formulario1');
     const formulario2 = document.getElementById('formulario2');
     const formulario3 = document.getElementById('formulario3');
-    if (!formulario1 && !formulario2 && !formulario3) return;
+    const formulario5 = document.getElementById('formulario5');
+    const formulario6 = document.getElementById('formulario6');
+    if (!formulario1 && !formulario2 && !formulario3 && !formulario5 && !formulario6) return;
 
     // Seleccionar todos los inputs
     const inputs = document.querySelectorAll(
         '#formulario1 input, #formulario1 select, ' +
         '#formulario2 input, #formulario2 select, ' +
-        '#formulario3 input, #formulario3 select'
+        '#formulario3 input, #formulario3 select, ' +
+        '#formulario5 input, #formulario5 select, ' +
+        '#formulario6 input, #formulario6 select'
     );
+
+    // Determinar el tipo de persona
+    const esPersonaFisica = document.getElementById('acta_nacimiento') || document.getElementById('curp');
+    const esPersonaMoral = document.getElementById('acta_constitutiva') || document.getElementById('modificaciones_acta') || document.getElementById('poder_notariado');
 
     // Expresiones regulares
     const expresiones = {
@@ -25,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         entre_calle: /^[a-zA-Z0-9À-ÿ\s]{0,100}$/,
         numero_escritura: /^\d{1,10}$/,
         nombre_notario: /^[a-zA-ZÀ-ÿ\s]{1,100}$/,
+        nombre_apoderado: /^[a-zA-ZÀ-ÿ\s]{1,100}$/,
         numero_notario: /^\d{1,10}$/,
         numero_registro: /^\d{1,10}$/
     };
@@ -41,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         entre_calle: 100,
         numero_escritura: 10,
         nombre_notario: 100,
+        nombre_apoderado: 100,
         numero_notario: 10,
         numero_registro: 10
     };
@@ -68,7 +78,21 @@ document.addEventListener('DOMContentLoaded', () => {
         fecha_constitucion: false,
         numero_notario: false,
         numero_registro: false,
-        fecha_inscripcion: false
+        fecha_inscripcion: false,
+        nombre_apoderado: false,
+        fecha_escritura: false,
+        constancia_situacion_fiscal: false,
+        identificacion_oficial: false,
+        curriculum: false,
+        comprobante_domicilio: false,
+        croquis_fotografias: false,
+        carta_poder: true,
+        acuse_recibo: false,
+        acta_nacimiento: esPersonaFisica ? false : true,
+        curp: esPersonaFisica ? false : true,
+        acta_constitutiva: esPersonaMoral ? false : true,
+        modificaciones_acta: esPersonaMoral ? true : true,
+        poder_notariado: esPersonaMoral ? false : true
     };
 
     // Funciones de validación
@@ -135,6 +159,96 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!/^[a-zA-Z0-9À-ÿ\s]$/.test(tecla)) {
                 e.preventDefault();
             }
+        }
+    };
+
+    // Validación de archivos
+    const validarArchivo = (input, campo) => {
+        const grupo = input.closest('.formulario__grupo');
+        if (!grupo) return;
+        const error = grupo.querySelector('.formulario__input-error');
+        const errorSize = grupo.querySelector('.formulario__input-error-size');
+        const status = grupo.querySelector('.file-status');
+        const statusIcon = status.querySelector('.status-icon');
+        const statusText = status.querySelector('.status-text');
+        const preview = grupo.querySelector('.file-preview');
+
+        // Marcar que el campo ha sido tocado
+        input.dataset.touched = 'true';
+
+        // Ocultar ambos mensajes de error inicialmente
+        error.classList.remove('formulario__input-error-activo');
+        if (errorSize) errorSize.classList.remove('formulario__input-error-activo');
+
+        // Determinar si el campo es obligatorio
+        let esRequerido = input.hasAttribute('required');
+        if (campo === 'acta_nacimiento' || campo === 'curp') {
+            esRequerido = esPersonaFisica;
+        } else if (campo === 'acta_constitutiva' || campo === 'poder_notariado') {
+            esRequerido = esPersonaMoral;
+        } else if (campo === 'modificaciones_acta') {
+            esRequerido = false;
+        }
+
+        if (input.files.length === 0 && esRequerido) {
+            grupo.classList.add('formulario__grupo-incorrecto');
+            grupo.classList.remove('formulario__grupo-correcto');
+            // Mostrar mensaje de error solo si el campo ha sido tocado
+            if (input.dataset.touched) {
+                error.classList.add('formulario__input-error-activo');
+            }
+            status.setAttribute('data-status', 'pending');
+            statusIcon.innerHTML = '<i class="fas fa-clock"></i>';
+            statusText.textContent = 'Pendiente';
+            preview.style.display = 'none';
+            window.campos[campo] = false;
+            return;
+        }
+
+        if (input.files.length === 0 && !esRequerido) {
+            grupo.classList.remove('formulario__grupo-incorrecto');
+            grupo.classList.add('formulario__grupo-correcto');
+            error.classList.remove('formulario__input-error-activo');
+            if (errorSize) errorSize.classList.remove('formulario__input-error-activo');
+            status.setAttribute('data-status', 'optional');
+            statusIcon.innerHTML = '<i class="fas fa-check"></i>';
+            statusText.textContent = 'Opcional';
+            preview.style.display = 'none';
+            window.campos[campo] = true;
+            return;
+        }
+
+        const archivo = input.files[0];
+        const maxSize = 10 * 1024 * 1024; // 10 MB en bytes
+        const esPDF = archivo.type === 'application/pdf';
+
+        if (esPDF && archivo.size <= maxSize) {
+            grupo.classList.remove('formulario__grupo-incorrecto');
+            grupo.classList.add('formulario__grupo-correcto');
+            error.classList.remove('formulario__input-error-activo');
+            if (errorSize) errorSize.classList.remove('formulario__input-error-activo');
+            status.setAttribute('data-status', 'completed');
+            statusIcon.innerHTML = '<i class="fas fa-check"></i>';
+            statusText.textContent = 'Completado';
+            preview.style.display = 'block';
+            window.campos[campo] = true;
+        } else {
+            grupo.classList.add('formulario__grupo-incorrecto');
+            grupo.classList.remove('formulario__grupo-correcto');
+            if (esPDF) {
+                // Archivo es PDF pero excede el tamaño
+                if (errorSize) errorSize.classList.add('formulario__input-error-activo');
+                error.classList.remove('formulario__input-error-activo');
+            } else {
+                // Archivo no es PDF
+                error.classList.add('formulario__input-error-activo');
+                if (errorSize) errorSize.classList.remove('formulario__input-error-activo');
+            }
+            status.setAttribute('data-status', 'error');
+            statusIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            statusText.textContent = 'Error';
+            preview.style.display = 'none';
+            window.campos[campo] = false;
         }
     };
 
@@ -234,7 +348,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 validarCampo(expresiones.nombre_notario, input, 'nombre_notario');
                 break;
             case 'entidad_federativa':
-                // Validate that a non-empty option is selected
                 validarCampoSimple(input.value !== '', input, 'entidad_federativa');
                 break;
             case 'fecha_constitucion':
@@ -251,30 +364,114 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'fecha_inscripcion':
                 validarCampoSimple(input.value !== '', input, 'fecha_inscripcion');
                 break;
+
+            // Formulario 5
+            case 'nombre-apoderado':
+                convertirMayusculas(input);
+                limitarCaracteres(input, limites.nombre_apoderado);
+                validarCampo(expresiones.nombre_apoderado, input, 'nombre_apoderado');
+                break;
+            case 'numero-escritura':
+                limitarCaracteres(input, limites.numero_escritura);
+                validarCampo(expresiones.numero_escritura, input, 'numero_escritura');
+                break;
+            case 'nombre-notario':
+                convertirMayusculas(input);
+                limitarCaracteres(input, limites.nombre_notario);
+                validarCampo(expresiones.nombre_notario, input, 'nombre_notario');
+                break;
+            case 'numero-notario':
+                limitarCaracteres(input, limites.numero_notario);
+                validarCampo(expresiones.numero_notario, input, 'numero_notario');
+                break;
+            case 'entidad-federativa':
+                validarCampoSimple(input.value !== '', input, 'entidad_federativa');
+                break;
+            case 'fecha-escritura':
+                validarCampoSimple(input.value !== '', input, 'fecha_escritura');
+                break;
+            case 'numero-registro':
+                limitarCaracteres(input, limites.numero_registro);
+                validarCampo(expresiones.numero_registro, input, 'numero_registro');
+                break;
+            case 'fecha-inscripcion':
+                validarCampoSimple(input.value !== '', input, 'fecha_inscripcion');
+                break;
+
+            // Formulario 6
+            case 'constancia_situacion_fiscal':
+                validarArchivo(input, 'constancia_situacion_fiscal');
+                break;
+            case 'identificacion_oficial':
+                validarArchivo(input, 'identificacion_oficial');
+                break;
+            case 'curriculum':
+                validarArchivo(input, 'curriculum');
+                break;
+            case 'comprobante_domicilio':
+                validarArchivo(input, 'comprobante_domicilio');
+                break;
+            case 'croquis_fotografias':
+                validarArchivo(input, 'croquis_fotografias');
+                break;
+            case 'carta_poder':
+                validarArchivo(input, 'carta_poder');
+                break;
+            case 'acuse_recibo':
+                validarArchivo(input, 'acuse_recibo');
+                break;
+            case 'acta_nacimiento':
+                validarArchivo(input, 'acta_nacimiento');
+                break;
+            case 'curp':
+                validarArchivo(input, 'curp');
+                break;
+            case 'acta_constitutiva':
+                validarArchivo(input, 'acta_constitutiva');
+                break;
+            case 'modificaciones_acta':
+                validarArchivo(input, 'modificaciones_acta');
+                break;
+            case 'poder_notariado':
+                validarArchivo(input, 'poder_notariado');
+                break;
         }
     };
 
     // Asignar eventos a todos los inputs
     inputs.forEach(input => {
         if (input.type !== 'hidden') {
-            input.addEventListener('keyup', validarFormulario);
-            input.addEventListener('blur', validarFormulario);
-            input.addEventListener('change', validarFormulario);
-            input.addEventListener('input', validarFormulario);
+            if (input.type === 'file') {
+                input.addEventListener('change', validarFormulario);
+                // Evento blur para validar campos obligatorios al perder el foco
+                input.addEventListener('blur', () => {
+                    if (!input.dataset.touched) {
+                        input.dataset.touched = 'true';
+                        validarFormulario({ target: input });
+                    }
+                });
+            } else {
+                input.addEventListener('keyup', validarFormulario);
+                input.addEventListener('blur', validarFormulario);
+                input.addEventListener('change', validarFormulario);
+                input.addEventListener('input', validarFormulario);
+            }
 
             // Filtros de caracteres
             if (
                 input.name === 'contacto_nombre' ||
                 input.name === 'contacto_cargo' ||
-                input.name === 'nombre_notario'
+                input.name === 'nombre_notario' ||
+                input.name === 'nombre-apoderado'
             ) {
                 input.addEventListener('keydown', e => filtrarCaracteres(e, 'soloLetras'));
             } else if (
                 input.name === 'contacto_telefono' ||
                 input.name === 'contacto_telefono_2' ||
                 input.name === 'numero_escritura' ||
-                input.name === 'numero_notario' ||
-                input.name === 'numero_registro'
+                input.name === 'numero-notario' ||
+                input.name === 'numero-registro' ||
+                input.name === 'numero-escritura'
             ) {
                 input.addEventListener('keydown', e => filtrarCaracteres(e, 'soloNumeros'));
             } else if (
@@ -288,6 +485,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-
-   
 });
