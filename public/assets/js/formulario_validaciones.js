@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         nombre_notario: /^[a-zA-ZÀ-ÿ\s]{1,100}$/,
         nombre_apoderado: /^[a-zA-ZÀ-ÿ\s]{1,100}$/,
         numero_notario: /^\d{1,10}$/,
-        numero_registro: /^\d{1,10}$/
+        numero_registro: /^\d{1,10}$/,
+        codigo_postal: /^\d{5}$/
     };
 
     // Límites de caracteres
@@ -108,64 +109,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Validar sección completa
     const validarSeccion = (seccionId) => {
+        console.log('Estado de campos antes de validar:', window.campos);
         const campos = camposSeccion[seccionId] || [];
         let isValid = true;
         campos.forEach(campo => {
             if (!window.campos[campo]) {
-                isValid = false;
                 const input = document.querySelector(`[name="${campo}"]`);
+                console.log(`Campo inválido en sección ${seccionId}: ${campo}, Valor: ${input ? input.value : 'No encontrado'}`);
+                isValid = false;
                 if (input) {
                     input.dispatchEvent(new Event('change'));
                     input.dispatchEvent(new Event('blur'));
                 }
             }
         });
+        console.log(`Sección ${seccionId} válida: ${isValid}`);
         return isValid;
     };
 
     // Funciones de validación
     const validarCampo = (expresion, input, campo) => {
         const grupo = input.closest('.form-group') || input.closest('.formulario__grupo');
-        if (!grupo) return;
-        const error = grupo.querySelector('.formulario__input-error');
-    
-        // Caso especial para contacto_web
+        const error = grupo ? grupo.querySelector('.formulario__input-error') : null;
+
         if (campo === 'contacto_web' && input.value.trim() === '') {
-            grupo.classList.remove('formulario__grupo-incorrecto');
-            grupo.classList.remove('formulario__grupo-correcto'); // No marcar como correcto
-            error.classList.remove('formulario__input-error-activo');
-            window.campos[campo] = true; // Permitir que el formulario pase si está vacío (opcional)
+            if (grupo) {
+                grupo.classList.remove('formulario__grupo-incorrecto');
+                grupo.classList.remove('formulario__grupo-correcto');
+                if (error) error.classList.remove('formulario__input-error-activo');
+            }
+            window.campos[campo] = true;
             return;
         }
-    
-        // Validación normal para otros casos
-        if (expresion.test(input.value)) {
-            grupo.classList.remove('formulario__grupo-incorrecto');
-            grupo.classList.add('formulario__grupo-correcto');
-            error.classList.remove('formulario__input-error-activo');
+
+        if (expresion.test(input.value.trim())) {
+            if (grupo) {
+                grupo.classList.remove('formulario__grupo-incorrecto');
+                grupo.classList.add('formulario__grupo-correcto');
+                if (error) error.classList.remove('formulario__input-error-activo');
+            }
             window.campos[campo] = true;
         } else {
-            grupo.classList.add('formulario__grupo-incorrecto');
-            grupo.classList.remove('formulario__grupo-correcto');
-            error.classList.add('formulario__input-error-activo');
+            if (grupo) {
+                grupo.classList.add('formulario__grupo-incorrecto');
+                grupo.classList.remove('formulario__grupo-correcto');
+                if (error) error.classList.add('formulario__input-error-activo');
+            }
             window.campos[campo] = false;
         }
     };
 
     const validarCampoSimple = (condicion, input, campo) => {
         const grupo = input.closest('.form-group') || input.closest('.formulario__grupo');
-        if (!grupo) return;
-        const error = grupo.querySelector('.formulario__input-error');
+        const error = grupo ? grupo.querySelector('.formulario__input-error') : null;
 
         if (condicion) {
-            grupo.classList.remove('formulario__grupo-incorrecto');
-            grupo.classList.add('formulario__grupo-correcto');
-            error.classList.remove('formulario__input-error-activo');
+            if (grupo) {
+                grupo.classList.remove('formulario__grupo-incorrecto');
+                grupo.classList.add('formulario__grupo-correcto');
+                if (error) error.classList.remove('formulario__input-error-activo');
+            }
             window.campos[campo] = true;
         } else {
-            grupo.classList.add('formulario__grupo-incorrecto');
-            grupo.classList.remove('formulario__grupo-correcto');
-            error.classList.add('formulario__input-error-activo');
+            if (grupo) {
+                grupo.classList.add('formulario__grupo-incorrecto');
+                grupo.classList.remove('formulario__grupo-correcto');
+                if (error) error.classList.add('formulario__input-error-activo');
+            }
             window.campos[campo] = false;
         }
     };
@@ -321,6 +331,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
 
             // Formulario 2
+            case 'codigo_postal':
+                console.log('Validando codigo_postal:', input.value);
+                validarCampo(expresiones.codigo_postal, input, 'codigo_postal');
+                break;
             case 'colonia':
                 validarCampoSimple(input.value !== '', input, 'colonia');
                 break;
@@ -358,12 +372,48 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'entre_calle_1':
                 convertirMayusculas(input);
                 limitarCaracteres(input, limites.entre_calle);
-                validarCampo(expresiones.entre_calle, input, 'entre_calle_1');
+                if (input.value === '' || expresiones.entre_calle.test(input.value)) {
+                    const grupo = input.closest('.form-group');
+                    if (grupo) {
+                        grupo.classList.remove('formulario__grupo-incorrecto');
+                        grupo.classList.add('formulario__grupo-correcto');
+                        const error = grupo.querySelector('.formulario__input-error');
+                        if (error) error.classList.remove('formulario__input-error-activo');
+                        window.campos.entre_calle_1 = true;
+                    }
+                } else {
+                    const grupo = input.closest('.form-group');
+                    if (grupo) {
+                        grupo.classList.add('formulario__grupo-incorrecto');
+                        grupo.classList.remove('formulario__grupo-correcto');
+                        const error = grupo.querySelector('.formulario__input-error');
+                        if (error) error.classList.add('formulario__input-error-activo');
+                        window.campos.entre_calle_1 = false;
+                    }
+                }
                 break;
             case 'entre_calle_2':
                 convertirMayusculas(input);
                 limitarCaracteres(input, limites.entre_calle);
-                validarCampo(expresiones.entre_calle, input, 'entre_calle_2');
+                if (input.value === '' || expresiones.entre_calle.test(input.value)) {
+                    const grupo = input.closest('.form-group');
+                    if (grupo) {
+                        grupo.classList.remove('formulario__grupo-incorrecto');
+                        grupo.classList.add('formulario__grupo-correcto');
+                        const error = grupo.querySelector('.formulario__input-error');
+                        if (error) error.classList.remove('formulario__input-error-activo');
+                        window.campos.entre_calle_2 = true;
+                    }
+                } else {
+                    const grupo = input.closest('.form-group');
+                    if (grupo) {
+                        grupo.classList.add('formulario__grupo-incorrecto');
+                        grupo.classList.remove('formulario__grupo-correcto');
+                        const error = grupo.querySelector('.formulario__input-error');
+                        if (error) error.classList.add('formulario__input-error-activo');
+                        window.campos.entre_calle_2 = false;
+                    }
+                }
                 break;
 
             // Formulario 3
@@ -469,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Asignar eventos a todos los inputs
     inputs.forEach(input => {
-        if (input.type !== 'hidden' && input.name !== 'actividad') {
+        if (input.name !== 'actividad') {
             if (input.type === 'file') {
                 input.addEventListener('change', validarFormulario);
                 input.addEventListener('blur', () => {
@@ -478,6 +528,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         validarFormulario({ target: input });
                     }
                 });
+            } else if (input.type === 'hidden') {
+                input.addEventListener('change', validarFormulario);
             } else {
                 input.addEventListener('keyup', validarFormulario);
                 input.addEventListener('blur', validarFormulario);
