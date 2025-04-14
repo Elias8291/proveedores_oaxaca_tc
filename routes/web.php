@@ -1,106 +1,119 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SectorController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SetPasswordController;
+use App\Http\Controllers\SectorController;
 use App\Http\Controllers\SolicitanteController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EstadoController;
+/*
+|--------------------------------------------------------------------------
+| Rutas Web
+|--------------------------------------------------------------------------
+|
+| Aquí se definen las rutas web de la aplicación, organizadas por tipo:
+| - Públicas: Accesibles sin autenticación.
+| - Autenticadas: Requieren autenticación (middleware 'auth').
+| - Formularios: Relacionadas con el registro y formularios.
+| - APIs: Endpoints para datos dinámicos.
+|
+*/
 
-// Middleware para verificar si el usuario está autenticado
-Route::middleware(['web'])->group(function () {
-    // Ruta principal
+// Middleware 'web' para todas las rutas
+Route::middleware('web')->group(function () {
+    /*
+    |--------------------------------------------------------------------------
+    | Rutas Públicas
+    |--------------------------------------------------------------------------
+    */
     Route::get('/', function () {
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
-        
-        $response = response()->view('welcome');
-        $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-        $response->header('Pragma', 'no-cache');
-        $response->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
-        return $response;
-    });
-    Route::get('/api/sectores', [SectorController::class, 'getSectores']);
-    Route::get('/api/sectores/{sector}/actividades', [SectorController::class, 'getActividades']);
+        return response()->view('welcome')
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
+    })->name('home');
 
     Route::get('/login', function () {
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
-        
-        $response = response()->view('auth.login');
-        $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-        $response->header('Pragma', 'no-cache');
-        $response->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
         return redirect('/');
     })->name('login');
 
-    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    // Ruta de dashboard protegida
-    Route::get('/dashboard', function () {
-        if (!Auth::check()) {
-            return redirect('/');
-        }
-        $response = response()->view('index.index');
-        $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-        $response->header('Pragma', 'no-cache');
-        $response->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
-        return $response;
-    })->name('dashboard')->middleware('auth');
 
-    // Ruta de usuarios
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    /*
+    |--------------------------------------------------------------------------
+    | Rutas Autenticadas
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('auth')->group(function () {
+        Route::get('/dashboard', function () {
+            return response()->view('index.index')
+                ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+                ->header('Pragma', 'no-cache')
+                ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
+        })->name('dashboard');
 
-    Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+        Route::get('/profiles', [ProfileController::class, 'index'])->name('profiles.index');
 
-    // Ruta de inscripción
-    Route::get('/registration', function () {
-        if (!Auth::check()) {
-            return redirect('/');
-        }
-        $response = response()->view('registration.index');
-        $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-        $response->header('Pragma', 'no-cache');
-        $response->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
-        return $response;
-    })->name('registration.index')->middleware('auth');
-    Route::get('/tramites', [SolicitanteController::class, 'showForm'])
-    ->name('tramites.form')
-    ->middleware('auth'); // Ensures only authenticated users can access
+        /*
+        |--------------------------------------------------------------------------
+        | Rutas de Formularios y Registro
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/registration', [SolicitanteController::class, 'showRegistrationIndex'])->name('registration.index');
 
-// Optional: If you need an API route for fetching solicitante data
-Route::get('/solicitante/data', [SolicitanteController::class, 'getSolicitanteData'])
-    ->name('solicitante.data')
-    ->middleware('auth');
-    // Ruta para el formulario 1
-    Route::post('/registration/formularios', function (Request $request) {
-        if (!Auth::check()) {
-            return redirect('/');
-        }
-        $request->validate([
-            'terms' => 'accepted',
-        ]);
-        $response = response()->view('registration.forms.formularios');
-        $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-        $response->header('Pragma', 'no-cache');
-        $response->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
-        return $response;
-    })->name('registration.form1')->middleware('auth');
-    Route::get('/profiles', [ProfileController::class, 'index'])->name('profiles.index');
-    Route::post('/registro', [RegisterController::class, 'register'])->name('register');
-    Route::middleware('auth:api')->get('/solicitante', [SolicitanteController::class, 'getSolicitante']);
-    Route::get('/set-password', [SetPasswordController::class, 'showSetForm'])->name('password.set.form');
-Route::post('/set-password', [SetPasswordController::class, 'setPassword'])->name('password.set');
-Route::middleware('auth')->get('/api/solicitante-data', [SolicitanteController::class, 'getSolicitanteData']);
-Route::post('/registration/form1', [SolicitanteController::class, 'proceedToForm1'])->name('registration.form1');
-Route::get('/registration/form1', [SolicitanteController::class, 'showForm1'])->name('registration.form1.view');
-Route::get('/registration', [SolicitanteController::class, 'showRegistrationIndex'])->name('registration.index');
+        // Ruta para el formulario principal
+        Route::get('/registration/form1', [SolicitanteController::class, 'showForm1'])->name('registration.form1.view');
+        Route::post('/registration/form1', [SolicitanteController::class, 'proceedToForm1'])->name('registration.form1.post');
+
+        Route::get('/tramites', [SolicitanteController::class, 'showForm'])->name('tramites.form');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Rutas de Configuración de Cuenta
+        |--------------------------------------------------------------------------
+        */
+        Route::post('/registro', [RegisterController::class, 'register'])->name('register');
+        Route::get('/set-password', [SetPasswordController::class, 'showSetForm'])->name('password.set.form');
+        Route::post('/set-password', [SetPasswordController::class, 'setPassword'])->name('password.set');
+        Route::get('/registration/form1', [SectorController::class, 'showRegistrationForm'])
+            ->name('registration.form1.view');
+
+        Route::get('/sectores', [SectorController::class, 'getSectores'])
+            ->name('sectores.index');
+
+        Route::get('sectores/{sector}/actividades', [SectorController::class, 'getActividadesPorSector']);
+
+        Route::get('/solicitante/direccion-data', [SolicitanteController::class, 'getDireccionData'])->middleware('auth');
+        Route::get('/registro', [App\Http\Controllers\EstadoController::class, 'index'])->name('registro.form');
+        Route::get('/estados', [EstadoController::class, 'getEstadosForForm'])->name('estados.get');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Rutas API
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/solicitante/data', [SolicitanteController::class, 'getSolicitanteData'])->name('solicitante.data');
+        Route::get('/api/solicitante-data', [SolicitanteController::class, 'getSolicitanteData'])->name('api.solicitante.data');
+    });
+
+    Route::middleware('auth:api')->get('/solicitante', [SolicitanteController::class, 'getSolicitante'])->name('api.solicitante');
 });

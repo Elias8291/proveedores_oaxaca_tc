@@ -1,75 +1,112 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const formulario = document.getElementById('formulario1');
-    if (!formulario) return;
+    // Inicializar formularios
+    const formulario1 = document.getElementById('formulario1');
+    const formulario2 = document.getElementById('formulario2');
+    const formulario3 = document.getElementById('formulario3');
+    if (!formulario1 && !formulario2 && !formulario3) return;
 
-    const inputs = document.querySelectorAll('#formulario1 input, #formulario1 select');
+    // Seleccionar todos los inputs
+    const inputs = document.querySelectorAll(
+        '#formulario1 input, #formulario1 select, ' +
+        '#formulario2 input, #formulario2 select, ' +
+        '#formulario3 input, #formulario3 select'
+    );
+
+    // Expresiones regulares
     const expresiones = {
-        nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/,
-        correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-        telefono: /^\d{10}$/,
-        web: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
-        cargo: /^[a-zA-ZÀ-ÿ\s]{1,50}$/
+        contacto_nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/,
+        contacto_cargo: /^[a-zA-ZÀ-ÿ\s]{1,50}$/,
+        contacto_telefono: /^\d{10}$/,
+        contacto_correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+        contacto_web: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$|^$/,
+        calle: /^[a-zA-Z0-9À-ÿ\s]{1,100}$/,
+        numero_exterior: /^[a-zA-Z0-9]{1,10}$/,
+        numero_interior: /^[a-zA-Z0-9]{0,10}$/,
+        entre_calle: /^[a-zA-Z0-9À-ÿ\s]{0,100}$/,
+        numero_escritura: /^\d{1,10}$/,
+        nombre_notario: /^[a-zA-ZÀ-ÿ\s]{1,100}$/,
+        numero_notario: /^\d{1,10}$/,
+        numero_registro: /^\d{1,10}$/
     };
 
+    // Límites de caracteres
     const limites = {
         contacto_nombre: 40,
+        contacto_cargo: 50,
         contacto_telefono: 10,
-        contacto_telefono_2: 10,
         contacto_web: 100,
-        contacto_cargo: 50
+        calle: 100,
+        numero_exterior: 10,
+        numero_interior: 10,
+        entre_calle: 100,
+        numero_escritura: 10,
+        nombre_notario: 100,
+        numero_notario: 10,
+        numero_registro: 10
     };
 
+    // Estado de los campos
     window.campos = {
-        contacto_nombre: false,
+        sectores: false,
+        actividad: false,
         contacto_telefono: false,
-        contacto_telefono_2: false,
-        contacto_correo: false,
         contacto_web: true,
+        contacto_nombre: false,
         contacto_cargo: false,
-        sector: false,
-        actividades_comerciales: false
+        contacto_correo: false,
+        contacto_telefono_2: true,
+        codigo_postal: false,
+        colonia: false,
+        calle: false,
+        numero_exterior: false,
+        numero_interior: true,
+        entre_calle_1: true,
+        entre_calle_2: true,
+        numero_escritura: false,
+        nombre_notario: false,
+        entidad_federativa: false,
+        fecha_constitucion: false,
+        numero_notario: false,
+        numero_registro: false,
+        fecha_inscripcion: false
     };
 
-    // Objeto para almacenar los nombres de las actividades seleccionadas
-    let actividadesNombres = {};
+    // Funciones de validación
+    const validarCampo = (expresion, input, campo) => {
+        const grupo = input.closest('.form-group') || input.closest('.formulario__grupo');
+        if (!grupo) return;
+        const error = grupo.querySelector('.formulario__input-error');
 
-   // Update these validation functions in your existing JS file
+        if (expresion.test(input.value)) {
+            grupo.classList.remove('formulario__grupo-incorrecto');
+            grupo.classList.add('formulario__grupo-correcto');
+            error.classList.remove('formulario__input-error-activo');
+            window.campos[campo] = true;
+        } else {
+            grupo.classList.add('formulario__grupo-incorrecto');
+            grupo.classList.remove('formulario__grupo-correcto');
+            error.classList.add('formulario__input-error-activo');
+            window.campos[campo] = false;
+        }
+    };
 
-const validarCampo = (expresion, input, campo) => {
-    const grupo = input.closest('.form-group');
-    if (!grupo) return;
-    const error = grupo.querySelector('.formulario__input-error');
-    
-    if (expresion.test(input.value)) {
-        grupo.classList.remove('formulario__grupo-incorrecto');
-        grupo.classList.add('formulario__grupo-correcto');
-        error.classList.remove('formulario__input-error-activo');
-        window.campos[campo] = true;
-    } else {
-        grupo.classList.add('formulario__grupo-incorrecto');
-        grupo.classList.remove('formulario__grupo-correcto');
-        error.classList.add('formulario__input-error-activo');
-        window.campos[campo] = false;
-    }
-};
+    const validarCampoSimple = (condicion, input, campo) => {
+        const grupo = input.closest('.form-group') || input.closest('.formulario__grupo');
+        if (!grupo) return;
+        const error = grupo.querySelector('.formulario__input-error');
 
-const validarCampoSimple = (condicion, input, campo) => {
-    const grupo = input.closest('.form-group');
-    if (!grupo) return;
-    const error = grupo.querySelector('.formulario__input-error');
-    
-    if (condicion) {
-        grupo.classList.remove('formulario__grupo-incorrecto');
-        grupo.classList.add('formulario__grupo-correcto');
-        error.classList.remove('formulario__input-error-activo');
-        window.campos[campo] = true;
-    } else {
-        grupo.classList.add('formulario__grupo-incorrecto');
-        grupo.classList.remove('formulario__grupo-correcto');
-        error.classList.add('formulario__input-error-activo');
-        window.campos[campo] = false;
-    }
-};
+        if (condicion) {
+            grupo.classList.remove('formulario__grupo-incorrecto');
+            grupo.classList.add('formulario__grupo-correcto');
+            error.classList.remove('formulario__input-error-activo');
+            window.campos[campo] = true;
+        } else {
+            grupo.classList.add('formulario__grupo-incorrecto');
+            grupo.classList.remove('formulario__grupo-correcto');
+            error.classList.add('formulario__input-error-activo');
+            window.campos[campo] = false;
+        }
+    };
 
     const limitarCaracteres = (input, max) => {
         if (input.value.length > max) {
@@ -94,113 +131,130 @@ const validarCampoSimple = (condicion, input, campo) => {
             if (!/^\d$/.test(tecla)) {
                 e.preventDefault();
             }
-        } else if (tipo === 'correo') {
-            if (!/^[a-zA-Z0-9_.+-@]$/.test(tecla)) {
-                e.preventDefault();
-            }
-        } else if (tipo === 'web') {
-            if (!/^[a-zA-Z0-9.:/\-?=&]$/.test(tecla)) {
+        } else if (tipo === 'letrasNumeros') {
+            if (!/^[a-zA-Z0-9À-ÿ\s]$/.test(tecla)) {
                 e.preventDefault();
             }
         }
     };
 
+    // Validación de formularios
     const validarFormulario = e => {
         const input = e.target;
+        const isRequired = input.hasAttribute('required');
+
         switch (input.name) {
-            case 'contacto_nombre':
-                convertirMayusculas(input);
-                limitarCaracteres(input, limites.contacto_nombre);
-                validarCampo(expresiones.nombre, input, 'contacto_nombre');
+            // Formulario 1
+            case 'sectores':
+                validarCampoSimple(input.value !== '', input, 'sectores');
+                break;
+            case 'actividad':
+                validarCampoSimple(input.value !== '', input, 'actividad');
                 break;
             case 'contacto_telefono':
                 limitarCaracteres(input, limites.contacto_telefono);
-                validarCampo(expresiones.telefono, input, 'contacto_telefono');
-                break;
-            case 'contacto_telefono_2':
-                limitarCaracteres(input, limites.contacto_telefono_2);
-                validarCampo(expresiones.telefono, input, 'contacto_telefono_2');
-                break;
-            case 'contacto_correo':
-                validarCampo(expresiones.correo, input, 'contacto_correo');
+                validarCampo(expresiones.contacto_telefono, input, 'contacto_telefono');
                 break;
             case 'contacto_web':
                 limitarCaracteres(input, limites.contacto_web);
-                input.value === '' ? validarCampoSimple(true, input, 'contacto_web') : validarCampo(expresiones.web, input, 'contacto_web');
+                validarCampo(expresiones.contacto_web, input, 'contacto_web');
+                break;
+            case 'contacto_nombre':
+                convertirMayusculas(input);
+                limitarCaracteres(input, limites.contacto_nombre);
+                validarCampo(expresiones.contacto_nombre, input, 'contacto_nombre');
                 break;
             case 'contacto_cargo':
                 convertirMayusculas(input);
                 limitarCaracteres(input, limites.contacto_cargo);
-                validarCampo(expresiones.cargo, input, 'contacto_cargo');
+                validarCampo(expresiones.contacto_cargo, input, 'contacto_cargo');
                 break;
-            case 'sector':
-                validarCampoSimple(input.value !== '', input, 'sector');
+            case 'contacto_correo':
+                validarCampo(expresiones.contacto_correo, input, 'contacto_correo');
                 break;
-        }
-    };
+            case 'contacto_telefono_2':
+                limitarCaracteres(input, limites.contacto_telefono);
+                validarCampo(expresiones.contacto_telefono, input, 'contacto_telefono_2');
+                break;
 
-    window.validarActividades = () => {
-        const actividadesInput = document.getElementById('actividades_comerciales_input');
-        const grupo = document.querySelector('.actividades-contenedor');
-        const error = grupo?.querySelector('.formulario__input-error');
-        const actividadesSeleccionadas = $('#actividades_seleccionadas .actividad-item').length;
-
-        if (actividadesInput && grupo && error) {
-            if (actividadesSeleccionadas > 0 && actividadesInput.value) {
-                grupo.classList.remove('formulario__grupo-incorrecto');
-                grupo.classList.add('formulario__grupo-correcto');
-                error.classList.remove('formulario__input-error-activo');
-                window.campos['actividades_comerciales'] = true;
-            } else {
-                grupo.classList.add('formulario__grupo-incorrecto');
-                grupo.classList.remove('formulario__grupo-correcto');
-                error.classList.add('formulario__input-error-activo');
-                window.campos['actividades_comerciales'] = false;
-            }
-        }
-    };
-
-    // Función para agregar actividad seleccionada
-    const agregarActividadSeleccionada = (id, nombre) => {
-        if ($('#actividades_seleccionadas .empty-message').length) {
-            $('#actividades_seleccionadas').empty();
-        }
-        $('#actividades_seleccionadas').append(
-            `<div class="actividad-item" id="actividad_${id}"><span>${nombre}</span><button type="button" class="remove-actividad" data-id="${id}"><i class="fas fa-times"></i></button><input type="hidden" name="actividades[]" value="${id}"></div>`
-        );
-        actividadesNombres[id] = nombre; // Almacenar el nombre
-        actualizarActividadesInput();
-        validarActividades();
-    };
-
-    // Función para actualizar el campo oculto
-    const actualizarActividadesInput = () => {
-        const actividades = [];
-        $('input[name="actividades[]"]').each(function() {
-            actividades.push($(this).val());
-        });
-        $('#actividades_comerciales_input').val(actividades.join(','));
-    };
-
-    // Función para restaurar actividades seleccionadas
-    const restaurarActividades = () => {
-        const actividadesGuardadas = $('#actividades_comerciales_input').val();
-        if (actividadesGuardadas) {
-            const actividadesIds = actividadesGuardadas.split(',');
-            $('#actividades_seleccionadas').empty();
-            actividadesIds.forEach(id => {
-                if (actividadesNombres[id]) {
-                    agregarActividadSeleccionada(id, actividadesNombres[id]);
+            // Formulario 2
+            case 'colonia':
+                validarCampoSimple(input.value !== '', input, 'colonia');
+                break;
+            case 'calle':
+                convertirMayusculas(input);
+                limitarCaracteres(input, limites.calle);
+                validarCampo(expresiones.calle, input, 'calle');
+                break;
+            case 'numero_exterior':
+                limitarCaracteres(input, limites.numero_exterior);
+                validarCampo(expresiones.numero_exterior, input, 'numero_exterior');
+                break;
+            case 'numero_interior':
+                limitarCaracteres(input, limites.numero_interior);
+                if (input.value === '' || expresiones.numero_interior.test(input.value)) {
+                    const grupo = input.closest('.form-group');
+                    if (grupo) {
+                        grupo.classList.remove('formulario__grupo-incorrecto');
+                        grupo.classList.add('formulario__grupo-correcto');
+                        const error = grupo.querySelector('.formulario__input-error');
+                        if (error) error.classList.remove('formulario__input-error-activo');
+                        window.campos.numero_interior = true;
+                    }
+                } else {
+                    const grupo = input.closest('.form-group');
+                    if (grupo) {
+                        grupo.classList.add('formulario__grupo-incorrecto');
+                        grupo.classList.remove('formulario__grupo-correcto');
+                        const error = grupo.querySelector('.formulario__input-error');
+                        if (error) error.classList.add('formulario__input-error-activo');
+                        window.campos.numero_interior = false;
+                    }
                 }
-            });
-            validarActividades();
-        } else {
-            $('#actividades_seleccionadas').html(
-                '<div class="empty-message">No hay actividades seleccionadas</div>'
-            );
+                break;
+            case 'entre_calle_1':
+                convertirMayusculas(input);
+                limitarCaracteres(input, limites.entre_calle);
+                validarCampo(expresiones.entre_calle, input, 'entre_calle_1');
+                break;
+            case 'entre_calle_2':
+                convertirMayusculas(input);
+                limitarCaracteres(input, limites.entre_calle);
+                validarCampo(expresiones.entre_calle, input, 'entre_calle_2');
+                break;
+
+            // Formulario 3
+            case 'numero_escritura':
+                limitarCaracteres(input, limites.numero_escritura);
+                validarCampo(expresiones.numero_escritura, input, 'numero_escritura');
+                break;
+            case 'nombre_notario':
+                convertirMayusculas(input);
+                limitarCaracteres(input, limites.nombre_notario);
+                validarCampo(expresiones.nombre_notario, input, 'nombre_notario');
+                break;
+            case 'entidad_federativa':
+                // Validate that a non-empty option is selected
+                validarCampoSimple(input.value !== '', input, 'entidad_federativa');
+                break;
+            case 'fecha_constitucion':
+                validarCampoSimple(input.value !== '', input, 'fecha_constitucion');
+                break;
+            case 'numero_notario':
+                limitarCaracteres(input, limites.numero_notario);
+                validarCampo(expresiones.numero_notario, input, 'numero_notario');
+                break;
+            case 'numero_registro':
+                limitarCaracteres(input, limites.numero_registro);
+                validarCampo(expresiones.numero_registro, input, 'numero_registro');
+                break;
+            case 'fecha_inscripcion':
+                validarCampoSimple(input.value !== '', input, 'fecha_inscripcion');
+                break;
         }
     };
 
+    // Asignar eventos a todos los inputs
     inputs.forEach(input => {
         if (input.type !== 'hidden') {
             input.addEventListener('keyup', validarFormulario);
@@ -208,81 +262,32 @@ const validarCampoSimple = (condicion, input, campo) => {
             input.addEventListener('change', validarFormulario);
             input.addEventListener('input', validarFormulario);
 
-            if (input.name === 'contacto_nombre' || input.name === 'contacto_cargo') {
+            // Filtros de caracteres
+            if (
+                input.name === 'contacto_nombre' ||
+                input.name === 'contacto_cargo' ||
+                input.name === 'nombre_notario'
+            ) {
                 input.addEventListener('keydown', e => filtrarCaracteres(e, 'soloLetras'));
-            } else if (input.name === 'contacto_telefono' || input.name === 'contacto_telefono_2') {
+            } else if (
+                input.name === 'contacto_telefono' ||
+                input.name === 'contacto_telefono_2' ||
+                input.name === 'numero_escritura' ||
+                input.name === 'numero_notario' ||
+                input.name === 'numero_registro'
+            ) {
                 input.addEventListener('keydown', e => filtrarCaracteres(e, 'soloNumeros'));
-            } else if (input.name === 'contacto_correo') {
-                input.addEventListener('keydown', e => filtrarCaracteres(e, 'correo'));
-            } else if (input.name === 'contacto_web') {
-                input.addEventListener('keydown', e => filtrarCaracteres(e, 'web'));
+            } else if (
+                input.name === 'calle' ||
+                input.name === 'entre_calle_1' ||
+                input.name === 'entre_calle_2' ||
+                input.name === 'numero_exterior' ||
+                input.name === 'numero_interior'
+            ) {
+                input.addEventListener('keydown', e => filtrarCaracteres(e, 'letrasNumeros'));
             }
         }
     });
 
-    const actividadComercial = document.getElementById('actividad_comercial');
-    if (actividadComercial) {
-        actividadComercial.addEventListener('change', () => {
-            const actividadId = actividadComercial.value;
-            const actividadNombre = actividadComercial.options[actividadComercial.selectedIndex].text;
-            if (actividadId && !$(`#actividad_${actividadId}`).length) {
-                agregarActividadSeleccionada(actividadId, actividadNombre);
-                actividadComercial.value = '';
-            }
-            setTimeout(validarActividades, 0);
-        });
-    }
-
-    // Restaurar actividades al cargar el formulario
-    restaurarActividades();
-
-    // Evento change del sector
-    $('#sector').change(function() {
-        const sectorId = $(this).val();
-        if (sectorId) {
-            $.ajax({
-                url: '/api/sectores/' + sectorId + '/actividades',
-                type: 'GET',
-                dataType: 'json',
-                beforeSend: function() {
-                    $('#actividad_comercial').prop('disabled', true).html(
-                        '<option value="">Cargando actividades...</option>');
-                },
-                success: function(data) {
-                    $('#actividad_comercial').empty().append(
-                        '<option value="">Seleccione una actividad</option>');
-                    $.each(data, function(index, actividad) {
-                        $('#actividad_comercial').append($('<option>', {
-                            value: actividad.id,
-                            text: actividad.nombre
-                        }));
-                    });
-                    $('#actividad_comercial').prop('disabled', false);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error al cargar actividades:', error);
-                    $('#actividad_comercial').prop('disabled', false).html(
-                        '<option value="">Error al cargar actividades</option>');
-                }
-            });
-        } else {
-            $('#actividad_comercial').prop('disabled', true).html(
-                '<option value="">Primero seleccione un sector</option>');
-        }
-        validarCampoSimple(sectorId !== '', this, 'sector');
-        validarActividades();
-    });
-
-    // Manejo de eliminación de actividades
-    $(document).on('click', '.remove-actividad', function() {
-        const id = $(this).data('id');
-        $(this).parent().remove();
-        delete actividadesNombres[id];
-        actualizarActividadesInput();
-        if ($('#actividades_seleccionadas').children().length === 0) {
-            $('#actividades_seleccionadas').html(
-                '<div class="empty-message">No hay actividades seleccionadas</div>');
-        }
-        validarActividades();
-    });
+   
 });

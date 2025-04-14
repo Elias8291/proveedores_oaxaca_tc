@@ -33,11 +33,12 @@
                         <input type="text" id="numero-notario" name="numero-notario" class="form-control" placeholder="Número del notario">
                         <p class="formulario__input-error">El número del notario debe contener solo números, máximo 10 dígitos.</p>
                     </div>
-                    <!-- Entidad Federativa -->
-                    <div class="half-width formulario__grupo" id="grupo__entidad-federativa">
-                        <label class="form-label" for="entidad-federativa">Entidad Federativa</label>
-                        <input type="text" id="entidad-federativa" name="entidad-federativa" class="form-control" placeholder="Entidad federativa">
-                        <p class="formulario__input-error">La entidad federativa solo puede contener letras y espacios, máximo 50 caracteres.</p>
+                    <div style="flex: 1;">
+                        <label class="form-label" for="entidad_federativa_5">Entidad Federativa</label>
+                        <select id="entidad_federativa_5" name="entidad_federativa" class="form-control">
+                            <option value="">Seleccione un estado</option>
+                        </select>
+                        <p class="formulario__input-error">Por favor, seleccione una entidad federativa.</p>
                     </div>
                     <!-- Fecha de Escritura -->
                     <div class="half-width formulario__grupo" id="grupo__fecha-escritura">
@@ -66,3 +67,45 @@
         </div>
     </div>
 </form>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Cargar estados al cargar la página
+    cargarEstados();
+
+    function cargarEstados() {
+        const select = document.getElementById('entidad_federativa_5');
+        if (!select) {
+            console.error('No se encontró el elemento con ID entidad_federativa_5');
+            return;
+        }
+        if (select.options.length > 1) {
+            console.log('Los estados ya están cargados');
+            return; // Ya están cargados
+        }
+
+        fetch('/estados')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Limpiar opciones excepto la primera
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+
+                // Agregar estados
+                data.forEach(estado => {
+                    const option = document.createElement('option');
+                    option.value = estado.id;
+                    option.textContent = estado.nombre;
+                    select.appendChild(option);
+                });
+                console.log('Estados cargados exitosamente');
+            })
+            .catch(error => console.error('Error al cargar estados:', error));
+    }
+});
+</script>
