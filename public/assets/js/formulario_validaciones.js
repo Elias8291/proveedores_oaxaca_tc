@@ -58,9 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Estado de los campos
     window.campos = {
         sectores: false,
-        actividad: false,
+        actividad: true,
         contacto_telefono: false,
-        contacto_web: true,
+        contacto_web: false,
         contacto_nombre: false,
         contacto_cargo: false,
         contacto_correo: false,
@@ -95,12 +95,50 @@ document.addEventListener('DOMContentLoaded', () => {
         poder_notariado: esPersonaMoral ? false : true
     };
 
+    // Definir campos por sección
+    const camposSeccion = {
+        1: ['sectores', 'contacto_nombre', 'contacto_cargo', 'contacto_telefono', 'contacto_correo', 'contacto_web', 'contacto_telefono_2'],
+        2: ['codigo_postal', 'colonia', 'calle', 'numero_exterior', 'numero_interior', 'entre_calle_1', 'entre_calle_2'],
+        3: ['numero_escritura', 'nombre_notario', 'entidad_federativa', 'fecha_constitucion', 'numero_notario', 'numero_registro', 'fecha_inscripcion'],
+        4: [],
+        5: ['nombre_apoderado', 'numero_escritura', 'nombre_notario', 'entidad_federativa', 'fecha_escritura', 'numero_notario', 'numero_registro', 'fecha_inscripcion'],
+        6: ['constancia_situacion_fiscal', 'identificacion_oficial', 'curriculum', 'comprobante_domicilio', 'croquis_fotografias', 'carta_poder', 'acuse_recibo', 'acta_nacimiento', 'curp', 'acta_constitutiva', 'modificaciones_acta', 'poder_notariado'],
+        7: []
+    };
+
+    // Validar sección completa
+    const validarSeccion = (seccionId) => {
+        const campos = camposSeccion[seccionId] || [];
+        let isValid = true;
+        campos.forEach(campo => {
+            if (!window.campos[campo]) {
+                isValid = false;
+                const input = document.querySelector(`[name="${campo}"]`);
+                if (input) {
+                    input.dispatchEvent(new Event('change'));
+                    input.dispatchEvent(new Event('blur'));
+                }
+            }
+        });
+        return isValid;
+    };
+
     // Funciones de validación
     const validarCampo = (expresion, input, campo) => {
         const grupo = input.closest('.form-group') || input.closest('.formulario__grupo');
         if (!grupo) return;
         const error = grupo.querySelector('.formulario__input-error');
-
+    
+        // Caso especial para contacto_web
+        if (campo === 'contacto_web' && input.value.trim() === '') {
+            grupo.classList.remove('formulario__grupo-incorrecto');
+            grupo.classList.remove('formulario__grupo-correcto'); // No marcar como correcto
+            error.classList.remove('formulario__input-error-activo');
+            window.campos[campo] = true; // Permitir que el formulario pase si está vacío (opcional)
+            return;
+        }
+    
+        // Validación normal para otros casos
         if (expresion.test(input.value)) {
             grupo.classList.remove('formulario__grupo-incorrecto');
             grupo.classList.add('formulario__grupo-correcto');
@@ -173,14 +211,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const statusText = status.querySelector('.status-text');
         const preview = grupo.querySelector('.file-preview');
 
-        // Marcar que el campo ha sido tocado
         input.dataset.touched = 'true';
 
-        // Ocultar ambos mensajes de error inicialmente
         error.classList.remove('formulario__input-error-activo');
         if (errorSize) errorSize.classList.remove('formulario__input-error-activo');
 
-        // Determinar si el campo es obligatorio
         let esRequerido = input.hasAttribute('required');
         if (campo === 'acta_nacimiento' || campo === 'curp') {
             esRequerido = esPersonaFisica;
@@ -193,7 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (input.files.length === 0 && esRequerido) {
             grupo.classList.add('formulario__grupo-incorrecto');
             grupo.classList.remove('formulario__grupo-correcto');
-            // Mostrar mensaje de error solo si el campo ha sido tocado
             if (input.dataset.touched) {
                 error.classList.add('formulario__input-error-activo');
             }
@@ -219,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const archivo = input.files[0];
-        const maxSize = 10 * 1024 * 1024; // 10 MB en bytes
+        const maxSize = 10 * 1024 * 1024;
         const esPDF = archivo.type === 'application/pdf';
 
         if (esPDF && archivo.size <= maxSize) {
@@ -236,11 +270,9 @@ document.addEventListener('DOMContentLoaded', () => {
             grupo.classList.add('formulario__grupo-incorrecto');
             grupo.classList.remove('formulario__grupo-correcto');
             if (esPDF) {
-                // Archivo es PDF pero excede el tamaño
                 if (errorSize) errorSize.classList.add('formulario__input-error-activo');
                 error.classList.remove('formulario__input-error-activo');
             } else {
-                // Archivo no es PDF
                 error.classList.add('formulario__input-error-activo');
                 if (errorSize) errorSize.classList.remove('formulario__input-error-activo');
             }
@@ -261,9 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Formulario 1
             case 'sectores':
                 validarCampoSimple(input.value !== '', input, 'sectores');
-                break;
-            case 'actividad':
-                validarCampoSimple(input.value !== '', input, 'actividad');
                 break;
             case 'contacto_telefono':
                 limitarCaracteres(input, limites.contacto_telefono);
@@ -440,10 +469,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Asignar eventos a todos los inputs
     inputs.forEach(input => {
-        if (input.type !== 'hidden') {
+        if (input.type !== 'hidden' && input.name !== 'actividad') {
             if (input.type === 'file') {
                 input.addEventListener('change', validarFormulario);
-                // Evento blur para validar campos obligatorios al perder el foco
                 input.addEventListener('blur', () => {
                     if (!input.dataset.touched) {
                         input.dataset.touched = 'true';
@@ -457,7 +485,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.addEventListener('input', validarFormulario);
             }
 
-            // Filtros de caracteres
             if (
                 input.name === 'contacto_nombre' ||
                 input.name === 'contacto_cargo' ||
@@ -484,5 +511,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.addEventListener('keydown', e => filtrarCaracteres(e, 'letrasNumeros'));
             }
         }
+    });
+
+    // Manejar el evento de submit para cada formulario
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const seccionId = parseInt(form.id.replace('formulario', ''));
+            if (validarSeccion(seccionId)) {
+                window.formNavigation.goToNextSection();
+            }
+        });
     });
 });

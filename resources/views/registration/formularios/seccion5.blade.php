@@ -35,13 +35,7 @@
                     </div>
                 </div>
                 <div class="form-group horizontal-group">
-                    <div class="half-width form-group" id="formulario__grupo--entidad-federativa">
-                        <label class="form-label" for="entidad-federativa">Entidad Federativa</label>
-                        <select id="entidad-federativa" name="entidad-federativa" class="form-control">
-                            <option value="">Seleccione un estado</option>
-                        </select>
-                        <p class="formulario__input-error">Por favor, seleccione una entidad federativa.</p>
-                    </div>
+                  
                     <div class="half-width form-group" id="formulario__grupo--fecha-escritura">
                         <label class="form-label" for="fecha-escritura">Fecha de Escritura</label>
                         <input type="date" id="fecha-escritura" name="fecha-escritura" class="form-control">

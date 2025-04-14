@@ -47,8 +47,8 @@
                 <p class="formulario__input-error">El teléfono debe contener exactamente 10 dígitos numéricos.</p>
             </div>
             <div class="half-width form-group" id="formulario__grupo--contacto_web">
-                <label class="form-label" for="contacto_web">Página Web</label>
-                <input type="url" id="contacto_web" name="contacto_web" class="form-control" placeholder="https://www.empresa.com">
+                <label class="form-label" for="contacto_web">Página Web (opcional)</label>
+                <input type="url" id="contacto_web" name="contacto_web" class="form-control" placeholder="https://www.ejemplo.com">
                 <p class="formulario__input-error">La URL debe ser válida (ej. https://www.empresa.com) o dejar en blanco.</p>
             </div>
         </div>
@@ -56,7 +56,7 @@
         <span>Persona encargada de recibir solicitudes y requerimientos</span>
         <div class="form-group" id="formulario__grupo--contacto_nombre">
             <label class="form-label" for="contacto_nombre">Nombre Completo</label>
-            <input type="text" id="contacto_nombre" name="contacto_nombre" class="form-control" value="{{ Auth::user()->solicitante->razon_social ?? '' }}">
+            <input type="text" id="contacto_nombre" name="contacto_nombre" class="form-control">
             <p class="formulario__input-error">El nombre debe contener solo letras y espacios, máximo 40 caracteres.</p>
         </div>
         <div class="form-group" id="formulario__grupo--contacto_cargo">
@@ -66,7 +66,7 @@
         </div>
         <div class="form-group" id="formulario__grupo--contacto_correo">
             <label class="form-label" for="contacto_correo">Correo Electrónico</label>
-            <input type="email" id="contacto_correo" name="contacto_correo" class="form-control" value="{{ Auth::user()->solicitante->email ?? '' }}">
+            <input type="email" id="contacto_correo" name="contacto_correo" class="form-control">
             <p class="formulario__input-error">El correo debe tener un formato válido (ej. usuario@dominio.com).</p>
         </div>
         <div class="form-group" id="formulario__grupo--contacto_telefono_2">
@@ -77,107 +77,89 @@
     </div>
 </form>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const sectorSelect = document.getElementById('sectores');
-    const actividadSelect = document.getElementById('actividad');
-    const actividadesContainer = document.getElementById('actividades-seleccionadas');
-    const actividadesSeleccionadas = new Set();
-    let actividadesDisponibles = []; // Almacenaremos todas las actividades del sector
+    document.addEventListener('DOMContentLoaded', function() {
+        const sectorSelect = document.getElementById('sectores');
+        const actividadSelect = document.getElementById('actividad');
+        const actividadesContainer = document.getElementById('actividades-seleccionadas');
+        const actividadesSeleccionadas = new Set();
+        let actividadesDisponibles = []; // Almacenaremos todas las actividades del sector
 
-    // Evento cuando cambia el sector
-    sectorSelect.addEventListener('change', function() {
-        const sectorId = this.value;
-        
-        if (sectorId) {
-            // Limpiar actividades anteriores
-            actividadSelect.innerHTML = '<option value="">Seleccione una actividad</option>';
-            actividadesDisponibles = [];
-            
-            // Hacer petición AJAX para obtener las actividades del sector seleccionado
-            fetch(`/sectores/${sectorId}/actividades`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.data.length > 0) {
-                        actividadesDisponibles = data.data; // Guardamos todas las actividades
-                        updateActividadesDropdown(); // Actualizamos el dropdown
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al cargar actividades:', error);
-                });
-        } else {
-            actividadSelect.innerHTML = '<option value="">Seleccione un sector primero</option>';
-            actividadesDisponibles = [];
-        }
-    });
+        // Evento cuando cambia el sector
+        sectorSelect.addEventListener('change', function() {
+            const sectorId = this.value;
 
-    // Función para actualizar las opciones del dropdown de actividades
-    function updateActividadesDropdown() {
-        // Limpiar el select
-        actividadSelect.innerHTML = '<option value="">Seleccione una actividad</option>';
-        
-        // Agregar solo las actividades que no estén seleccionadas
-        actividadesDisponibles.forEach(actividad => {
-            if (!actividadesSeleccionadas.has(actividad.id.toString())) {
-                const option = document.createElement('option');
-                option.value = actividad.id;
-                option.textContent = actividad.nombre;
-                actividadSelect.appendChild(option);
+            if (sectorId) {
+                // Limpiar actividades anteriores
+                actividadSelect.innerHTML = '<option value="">Seleccione una actividad</option>';
+                actividadesDisponibles = [];
+
+                // Hacer petición AJAX para obtener las actividades del sector seleccionado
+                fetch(`/sectores/${sectorId}/actividades`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.data.length > 0) {
+                            actividadesDisponibles = data.data; // Guardamos todas las actividades
+                            updateActividadesDropdown(); // Actualizamos el dropdown
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar actividades:', error);
+                    });
+            } else {
+                actividadSelect.innerHTML = '<option value="">Seleccione un sector primero</option>';
+                actividadesDisponibles = [];
             }
         });
-    }
 
-    // Evento cuando se selecciona una actividad
-    actividadSelect.addEventListener('change', function() {
-        const selectedValue = actividadSelect.value;
-        const selectedText = actividadSelect.options[actividadSelect.selectedIndex].text;
+        // Función para actualizar las opciones del dropdown de actividades
+        function updateActividadesDropdown() {
+            // Limpiar el select
+            actividadSelect.innerHTML = '<option value="">Seleccione una actividad</option>';
 
-        if (selectedValue && !actividadesSeleccionadas.has(selectedValue)) {
-            actividadesSeleccionadas.add(selectedValue);
+            // Agregar solo las actividades que no estén seleccionadas
+            actividadesDisponibles.forEach(actividad => {
+                if (!actividadesSeleccionadas.has(actividad.id.toString())) {
+                    const option = document.createElement('option');
+                    option.value = actividad.id;
+                    option.textContent = actividad.nombre;
+                    actividadSelect.appendChild(option);
+                }
+            });
+        }
 
-            const actividadItem = document.createElement('div');
-            actividadItem.classList.add('actividad-item');
-            actividadItem.dataset.value = selectedValue;
-            actividadItem.innerHTML = `
+        // Evento cuando se selecciona una actividad
+        actividadSelect.addEventListener('change', function() {
+            const selectedValue = actividadSelect.value;
+            const selectedText = actividadSelect.options[actividadSelect.selectedIndex].text;
+
+            if (selectedValue && !actividadesSeleccionadas.has(selectedValue)) {
+                actividadesSeleccionadas.add(selectedValue);
+
+                const actividadItem = document.createElement('div');
+                actividadItem.classList.add('actividad-item');
+                actividadItem.dataset.value = selectedValue;
+                actividadItem.innerHTML = `
                 <span class="actividad-texto">${selectedText}</span>
                 <span class="remove-actividad">×</span>
             `;
-            actividadesContainer.appendChild(actividadItem);
+                actividadesContainer.appendChild(actividadItem);
 
-            // Evento para eliminar actividad
-            actividadItem.querySelector('.remove-actividad').addEventListener('click', function() {
-                actividadesSeleccionadas.delete(selectedValue);
-                actividadItem.remove();
-                validateActividades();
-                updateActividadesDropdown(); // Actualizar el dropdown cuando se elimina una actividad
-            });
+                // Evento para eliminar actividad
+                actividadItem.querySelector('.remove-actividad').addEventListener('click', function() {
+                    actividadesSeleccionadas.delete(selectedValue);
+                    actividadItem.remove();
+                    validateActividades();
+                    updateActividadesDropdown
+                (); // Actualizar el dropdown cuando se elimina una actividad
+                });
 
-            // Resetear el select y actualizar opciones
-            actividadSelect.value = '';
-            updateActividadesDropdown();
-        }
+                // Resetear el select y actualizar opciones
+                actividadSelect.value = '';
+                updateActividadesDropdown();
+            }
+        });
 
-        validateActividades();
+
+
     });
-
-    // Validación de actividades
-    function validateActividades() {
-        const errorElement = document.querySelector(
-            '#formulario__grupo--actividades .formulario__input-error');
-        if (actividadesSeleccionadas.size === 0) {
-            errorElement.style.display = 'block';
-        } else {
-            errorElement.style.display = 'none';
-        }
-    }
-
-    // Validar al enviar el formulario
-    document.getElementById('formulario1').addEventListener('submit', function(e) {
-        if (actividadesSeleccionadas.size === 0) {
-            e.preventDefault();
-            validateActividades();
-            alert('Debe seleccionar al menos una actividad.');
-        }
-    });
-});
 </script>

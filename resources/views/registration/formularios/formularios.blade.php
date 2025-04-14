@@ -38,16 +38,58 @@
                     </div>
                 @endforeach
             </div>
-            @if (in_array(1, $secciones)) <div id="seccion1" class="form-seccion" style="display: block;">@include('registration.formularios.seccion1')</div> @endif
-            @if (in_array(2, $secciones)) <div id="seccion2" class="form-seccion" style="display: none;">@include('registration.formularios.seccion2')</div> @endif
-            @if (in_array(3, $secciones)) <div id="seccion3" class="form-seccion" style="display: none;">@include('registration.formularios.seccion3')</div> @endif
-            @if (in_array(4, $secciones)) <div id="seccion4" class="form-seccion" style="display: none;">@include('registration.formularios.seccion4')</div> @endif
-            @if (in_array(5, $secciones)) <div id="seccion5" class="form-seccion" style="display: none;">@include('registration.formularios.seccion5')</div> @endif
-            @if (in_array(6, $secciones)) <div id="seccion6" class="form-seccion" style="display: none;">@include('registration.formularios.seccion6')</div> @endif
-            @if (in_array(7, $secciones)) <div id="seccion7" class="form-seccion" style="display: none;">@include('registration.formularios.seccion7')</div> @endif
+            @if (in_array(1, $secciones))
+                <div id="seccion1" class="form-seccion" style="display: block;">
+                    <form id="formulario1">
+                        @include('registration.formularios.seccion1')
+                    </form>
+                </div>
+            @endif
+            @if (in_array(2, $secciones))
+                <div id="seccion2" class="form-seccion" style="display: none;">
+                    <form id="formulario2">
+                        @include('registration.formularios.seccion2')
+                    </form>
+                </div>
+            @endif
+            @if (in_array(3, $secciones))
+                <div id="seccion3" class="form-seccion" style="display: none;">
+                    <form id="formulario3">
+                        @include('registration.formularios.seccion3')
+                    </form>
+                </div>
+            @endif
+            @if (in_array(4, $secciones))
+                <div id="seccion4" class="form-seccion" style="display: none;">
+                    <form id="formulario4">
+                        @include('registration.formularios.seccion4')
+                    </form>
+                </div>
+            @endif
+            @if (in_array(5, $secciones))
+                <div id="seccion5" class="form-seccion" style="display: none;">
+                    <form id="formulario5">
+                        @include('registration.formularios.seccion5')
+                    </form>
+                </div>
+            @endif
+            @if (in_array(6, $secciones))
+                <div id="seccion6" class="form-seccion" style="display: none;">
+                    <form id="formulario6">
+                        @include('registration.formularios.seccion6')
+                    </form>
+                </div>
+            @endif
+            @if (in_array(7, $secciones))
+                <div id="seccion7" class="form-seccion" style="display: none;">
+                    <form id="formulario7">
+                        @include('registration.formularios.seccion7')
+                    </form>
+                </div>
+            @endif
             <div class="navigation-buttons">
-                <button id="btnAnterior" style="display: none;">Anterior</button>
-                <button id="btnSiguiente">Siguiente</button>
+                <button type="button" id="btnAnterior" style="display: none;">Anterior</button>
+                <button type="submit" id="btnSiguiente" form="formulario1">Siguiente</button>
             </div>
         </div>
     </div>
@@ -62,6 +104,31 @@
         let seccionActual = 1;
         const totalSecciones = secciones.length;
         const seccionMapping = @json($secciones);
+        const btnSiguiente = document.getElementById('btnSiguiente');
+        const btnAnterior = document.getElementById('btnAnterior');
+
+        window.formNavigation = {
+            goToNextSection: function() {
+                if (seccionActual < totalSecciones) {
+                    seccionActual++;
+                    actualizarProgreso();
+                    scrollToTop();
+                } else {
+                    const form = document.getElementById(`formulario${seccionMapping[seccionActual - 1]}`);
+                    form.submit();
+                }
+            },
+            goToPreviousSection: function() {
+                if (seccionActual > 1) {
+                    seccionActual--;
+                    actualizarProgreso();
+                    scrollToTop();
+                }
+            },
+            getCurrentSection: function() {
+                return seccionMapping[seccionActual - 1];
+            }
+        };
 
         function actualizarProgreso() {
             for (let i = 0; i < secciones.length; i++) {
@@ -82,34 +149,31 @@
                     seccionElement.style.display = (seccionMapping[seccionActual - 1] === i) ? 'block' : 'none';
                 }
             }
-            document.getElementById('btnAnterior').style.display = seccionActual === 1 ? 'none' : 'block';
-            document.getElementById('btnSiguiente').textContent = seccionActual === totalSecciones ? 'Finalizar' : 'Siguiente';
+            btnAnterior.style.display = seccionActual === 1 ? 'none' : 'block';
+            btnSiguiente.textContent = seccionActual === totalSecciones ? 'Finalizar' : 'Siguiente';
+            btnSiguiente.setAttribute('form', `formulario${seccionMapping[seccionActual - 1]}`);
         }
 
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function siguienteSeccion() {
-            if (seccionActual < totalSecciones) {
-                seccionActual++;
-                actualizarProgreso();
-                scrollToTop();
-            } else {
-                alert('Formulario completado');
-            }
-        }
+        btnSiguiente.addEventListener('click', function(e) {
+            e.preventDefault();
+            const currentForm = document.getElementById(`formulario${seccionMapping[seccionActual - 1]}`);
+            const inputs = currentForm.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.type !== 'hidden' && input.name !== 'actividad') {
+                    input.dispatchEvent(new Event('change'));
+                    input.dispatchEvent(new Event('blur'));
+                }
+            });
+            currentForm.dispatchEvent(new Event('submit')); // Trigger form submission
+        });
 
-        function seccionAnterior() {
-            if (seccionActual > 1) {
-                seccionActual--;
-                actualizarProgreso();
-                scrollToTop();
-            }
-        }
-
-        document.getElementById('btnSiguiente').addEventListener('click', siguienteSeccion);
-        document.getElementById('btnAnterior').addEventListener('click', seccionAnterior);
+        btnAnterior.addEventListener('click', function() {
+            window.formNavigation.goToPreviousSection();
+        });
 
         for (let i = 0; i < secciones.length; i++) {
             secciones[i].addEventListener('click', function() {
