@@ -21,8 +21,15 @@ export async function scrapeSATData(qrUrl) {
             nombre = "",
             apellidoPaterno = "",
             apellidoMaterno = "",
-            rfc = "";
+            rfc = "",
+            cp = "",
+            colonia = "",
+            nombreVialidad = "",
+            numeroExterior = "",
+            numeroInterior = "",
+            tipoPersona = "";
 
+        // Extract RFC from various possible locations
         doc.querySelectorAll(".ui-li.ui-li-static.ui-body-c").forEach((el) => {
             const rfcMatch = el.textContent.match(/RFC:\s*([A-Z0-9]+)/i);
             if (rfcMatch && rfcMatch[1]) rfc = rfcMatch[1];
@@ -45,6 +52,7 @@ export async function scrapeSATData(qrUrl) {
             if (directMatch && directMatch[1]) rfc = directMatch[1];
         }
 
+        // Extract other fields from table rows
         doc.querySelectorAll('[data-role="listview"]').forEach(
             (section, index) => {
                 const title =
@@ -81,6 +89,14 @@ export async function scrapeSATData(qrUrl) {
                             if (/apellido materno/i.test(label))
                                 apellidoMaterno = value;
                             if (/rfc/i.test(label)) rfc = value;
+                            if (/código postal|cp/i.test(label)) cp = value;
+                            if (/colonia/i.test(label)) colonia = value;
+                            if (/nombre de la vialidad|calle|vialidad/i.test(label))
+                                nombreVialidad = value;
+                            if (/número exterior|numero exterior|no exterior/i.test(label))
+                                numeroExterior = value;
+                            if (/número interior|numero interior|no interior/i.test(label))
+                                numeroInterior = value;
                             sectionData.fields.push({ label, value });
                         }
                     }
@@ -89,10 +105,54 @@ export async function scrapeSATData(qrUrl) {
             }
         );
 
+        // Construct nombreCompleto
         const nombreCompleto = [nombre, apellidoPaterno, apellidoMaterno]
             .filter((part) => part && part.trim())
             .join(" ");
-        return { extractedData, email, razonSocial, nombreCompleto, rfc };
+
+        // Determine tipoPersona, finalNombre, and adjust razonSocial
+        let finalNombre = "";
+        if (rfc.length === 12) {
+            tipoPersona = "Moral";
+            finalNombre = razonSocial;
+        } else if (rfc.length === 13) {
+            tipoPersona = "Física";
+            finalNombre = nombreCompleto;
+            razonSocial = nombreCompleto; // Set razonSocial to nombreCompleto for persona física
+        } else {
+            tipoPersona = "Desconocido";
+            finalNombre = "";
+        }
+
+        // Log all requested fields
+        console.log({
+            rfc,
+            cp,
+            correo_electronico: email,
+            colonia,
+            nombre: finalNombre,
+            razonSocial,
+            nombreVialidad,
+            numeroExterior,
+            numeroInterior,
+            tipoPersona,
+        });
+
+        // Return all data
+        return {
+            extractedData,
+            email,
+            razonSocial,
+            nombre: finalNombre,
+            nombreCompleto,
+            rfc,
+            cp,
+            colonia,
+            nombreVialidad,
+            numeroExterior,
+            numeroInterior,
+            tipoPersona,
+        };
     } catch (error) {
         throw new Error(
             `No se pudo obtener la información del SAT: ${error.message}`
@@ -105,9 +165,19 @@ export function showSATDataModal(satData, qrUrl) {
         className: "modal-overlay sat-modal",
         html: `<div class="modal-container"><div class="modal-header"><h3>Información del SAT</h3><div class="header-actions"><button class="icon-btn link-btn" onclick="window.open('${qrUrl}', '_blank')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></button><button class="icon-btn close-modal">×</button></div></div><div class="modal-body">${
             satData.rfc
-                ? `<div class="rfc-display"><strong>RFC:</strong> ${satData.rfc} (${
-                      satData.rfc.length === 12 ? "Moral" : satData.rfc.length === 13 ? "Física" : "Longitud inválida"
-                  })</div>`
+                ? `<div class="rfc-display"><strong>RFC:</strong> ${satData.rfc} (${satData.tipoPersona})</div>`
+                : ""
+        }${
+            satData.nombre
+                ? `<div class="name-display"><strong>Nombre:</strong> ${satData.nombre}</div>`
+                : ""
+        }${
+            satData.razonSocial
+                ? `<div class="razon-social-display"><strong>Razón Social:</strong> ${satData.razonSocial}</div>`
+                : ""
+        }${
+            satData.correo_electronico
+                ? `<div class="email-display"><strong>Correo:</strong> ${satData.correo_electronico}</div>`
                 : ""
         }${
             satData.extractedData.length === 0
@@ -131,6 +201,6 @@ export function showSATDataModal(satData, qrUrl) {
 
 document.head.appendChild(
     Object.assign(document.createElement("style"), {
-        textContent: `.email-display{padding:10px;margin:10px 0;background:#f5f5f5;border-radius:4px}.name-display{padding:10px;margin:10px 0;background:#f5f5f5;border-radius:4px}.rfc-display{padding:10px;margin:10px 0;background:#f8f8f8;border-radius:4px;font-size:16px;border-left:4px solid #2196F3}`,
+        textContent: `.email-display{padding:10px;margin:10px 0;background:#f5f5f5;border-radius:4px}.name-display{padding:10px;margin:10px 0;background:#f5f5f5;border-radius:4px}.razon-social-display{padding:10px;margin:10px 0;background:#f5f5f5;border-radius:4px}.rfc-display{padding:10px;margin:10px 0;background:#f8f8f8;border-radius:4px;font-size:16px;border-left:4px solid #2196F3}`,
     })
 );

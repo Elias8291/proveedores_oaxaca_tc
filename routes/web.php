@@ -102,6 +102,9 @@ Route::middleware('web')->group(function () {
         Route::get('/solicitante/direccion-data', [SolicitanteController::class, 'getDireccionData'])->middleware('auth');
         Route::get('/registro', [App\Http\Controllers\EstadoController::class, 'index'])->name('registro.form');
         Route::get('/estados', [EstadoController::class, 'getEstadosForForm'])->name('estados.get');
+        Route::get('/solicitantes/index', function () {
+            return view('solicitantes.index');
+        })->name('solicitantes.index');
     });
 
     /*

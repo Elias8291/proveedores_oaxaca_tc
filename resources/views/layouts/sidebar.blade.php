@@ -73,6 +73,19 @@
                 <div class="menu-text">Revisión</div>
             </a>
         </div>
+        <div class="menu-item {{ request()->is('solicitantes*') ? 'active' : '' }}">
+            <a href="{{ route('solicitantes.index') }}" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:8px">
+                <div class="menu-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <div class="menu-text">Tramitantes</div>
+            </a>
+        </div>
         <div class="menu-item {{ request()->is('transparencia*') ? 'active' : '' }}">
             <a href="#" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:8px">
                 <div class="menu-icon">
