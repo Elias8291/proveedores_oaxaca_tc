@@ -82,14 +82,21 @@
         const actividadSelect = document.getElementById('actividad');
         const actividadesContainer = document.getElementById('actividades-seleccionadas');
         const actividadesSeleccionadas = new Set();
-        let actividadesDisponibles = []; // Almacenaremos todas las actividades del sector
+        let actividadesDisponibles = [];
+        let actividadesIds = []; // Array para almacenar los IDs de actividades seleccionadas
 
         // Evento cuando cambia el sector
         sectorSelect.addEventListener('change', function() {
             const sectorId = this.value;
 
+            // Limpiar actividades seleccionadas y array de IDs
+            actividadesSeleccionadas.clear();
+            actividadesIds = [];
+            console.log('Actividades IDs:', actividadesIds); // Mostrar arreglo vacío en consola
+            actividadesContainer.innerHTML = ''; // Limpiar contenedor de actividades
+
             if (sectorId) {
-                // Limpiar actividades anteriores
+                // Limpiar dropdown de actividades
                 actividadSelect.innerHTML = '<option value="">Seleccione una actividad</option>';
                 actividadesDisponibles = [];
 
@@ -109,6 +116,9 @@
                 actividadSelect.innerHTML = '<option value="">Seleccione un sector primero</option>';
                 actividadesDisponibles = [];
             }
+
+            // Validar actividades después de limpiar
+            validateActividades();
         });
 
         // Función para actualizar las opciones del dropdown de actividades
@@ -134,32 +144,45 @@
 
             if (selectedValue && !actividadesSeleccionadas.has(selectedValue)) {
                 actividadesSeleccionadas.add(selectedValue);
+                actividadesIds.push(selectedValue); // Agregar ID al arreglo
+                console.log('Actividades IDs:', actividadesIds); // Mostrar arreglo en consola
 
                 const actividadItem = document.createElement('div');
                 actividadItem.classList.add('actividad-item');
                 actividadItem.dataset.value = selectedValue;
                 actividadItem.innerHTML = `
-                <span class="actividad-texto">${selectedText}</span>
-                <span class="remove-actividad">×</span>
-            `;
+                    <span class="actividad-texto">${selectedText}</span>
+                    <span class="remove-actividad">×</span>
+                `;
                 actividadesContainer.appendChild(actividadItem);
 
                 // Evento para eliminar actividad
                 actividadItem.querySelector('.remove-actividad').addEventListener('click', function() {
                     actividadesSeleccionadas.delete(selectedValue);
+                    actividadesIds = actividadesIds.filter(id => id !== selectedValue); // Eliminar ID del arreglo
+                    console.log('Actividades IDs:', actividadesIds); // Mostrar arreglo actualizado
                     actividadItem.remove();
                     validateActividades();
-                    updateActividadesDropdown
-                (); // Actualizar el dropdown cuando se elimina una actividad
+                    updateActividadesDropdown();
                 });
 
                 // Resetear el select y actualizar opciones
                 actividadSelect.value = '';
                 updateActividadesDropdown();
             }
+
+            // Validar actividades después de agregar
+            validateActividades();
         });
 
-
-
+        // Función para validar actividades
+        function validateActividades() {
+            const errorElement = document.querySelector('#formulario__grupo--actividades .formulario__input-error');
+            if (actividadesSeleccionadas.size === 0) {
+                errorElement.style.display = 'block';
+            } else {
+                errorElement.style.display = 'none';
+            }
+        }
     });
 </script>

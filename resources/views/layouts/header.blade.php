@@ -11,9 +11,7 @@
             </svg>
         </div>
         <div class="user-profile">
-            <div class="user-avatar">
-                {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-            </div>
+            <div class="user-avatar pattern-avatar"> {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}     </div>
             <div class="user-name">
                 @php
                     $nameParts = explode(' ', Auth::user()->name);
@@ -46,3 +44,58 @@
         </div>
     </div>
 </header>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Dividimos el alfabeto en 4 partes (A-Z tiene 26 letras)
+    const alphabetGroups = {
+        group1: ['A', 'B', 'C', 'D', 'E', 'F'], // 6 letras
+        group2: ['G', 'H', 'I', 'J', 'K', 'L'], // 6 letras
+        group3: ['M', 'N', 'O', 'P', 'Q', 'R'], // 6 letras
+        group4: ['S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'] // 8 letras
+    };
+    
+    // Selecciona todos los avatares con la clase user-avatar
+    const avatars = document.querySelectorAll('.user-avatar');
+    
+    avatars.forEach(avatar => {
+        // Obtener las primeras dos letras del nombre del usuario
+        const initials = avatar.textContent.trim();
+        const firstLetter = initials.charAt(0).toUpperCase();
+        
+        // Eliminar todas las clases de color anteriores
+        avatar.classList.remove('avatar-group1', 'avatar-first-group1', 'avatar-group2', 
+                              'avatar-first-group2', 'avatar-group3', 'avatar-first-group3', 
+                              'avatar-group4', 'avatar-first-group4');
+        
+        // Añadir la clase gradient-effect para un efecto sutil
+        avatar.classList.add('gradient-effect');
+        
+        // Asignar la clase de color según la letra inicial
+        if (alphabetGroups.group1.includes(firstLetter)) {
+            if (firstLetter === 'A') {
+                avatar.classList.add('avatar-first-group1');
+            } else {
+                avatar.classList.add('avatar-group1');
+            }
+        } else if (alphabetGroups.group2.includes(firstLetter)) {
+            if (firstLetter === 'G') {
+                avatar.classList.add('avatar-first-group2');
+            } else {
+                avatar.classList.add('avatar-group2');
+            }
+        } else if (alphabetGroups.group3.includes(firstLetter)) {
+            if (firstLetter === 'M') {
+                avatar.classList.add('avatar-first-group3');
+            } else {
+                avatar.classList.add('avatar-group3');
+            }
+        } else if (alphabetGroups.group4.includes(firstLetter)) {
+            if (firstLetter === 'S') {
+                avatar.classList.add('avatar-first-group4');
+            } else {
+                avatar.classList.add('avatar-group4');
+            }
+        }
+    });
+});
+    </script>
