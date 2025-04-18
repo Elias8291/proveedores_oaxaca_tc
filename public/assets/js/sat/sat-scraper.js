@@ -159,23 +159,10 @@ export async function scrapeSATData(qrUrl) {
         );
     }
 }
-
 export function showSATDataModal(satData, qrUrl) {
     createModal({
         className: "modal-overlay sat-modal",
         html: `<div class="modal-container"><div class="modal-header"><h3>Información del SAT</h3><div class="header-actions"><button class="icon-btn link-btn" onclick="window.open('${qrUrl}', '_blank')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></button><button class="icon-btn close-modal">×</button></div></div><div class="modal-body">${
-            satData.rfc
-                ? `<div class="rfc-display"><strong>RFC:</strong> ${satData.rfc} (${satData.tipoPersona})</div>`
-                : ""
-        }${
-            satData.nombre
-                ? `<div class="name-display"><strong>Nombre:</strong> ${satData.nombre}</div>`
-                : ""
-        }${
-            satData.razonSocial
-                ? `<div class="razon-social-display"><strong>Razón Social:</strong> ${satData.razonSocial}</div>`
-                : ""
-        }${
             satData.correo_electronico
                 ? `<div class="email-display"><strong>Correo:</strong> ${satData.correo_electronico}</div>`
                 : ""
@@ -184,10 +171,14 @@ export function showSATDataModal(satData, qrUrl) {
                 ? "<p>No se encontraron datos en la página del SAT.</p>"
                 : satData.extractedData
                       .map(
-                          (s) =>
+                          (s, index) =>
                               `<div class="sat-section"><h4>${
                                   s.sectionName
-                              }</h4><div class="table-responsive"><table><tbody>${s.fields
+                              }</h4><div class="table-responsive"><table><tbody>${
+                                  index === 0 && satData.rfc
+                                      ? `<tr><th>RFC</th><td>${satData.rfc}</td></tr>`
+                                      : ""
+                              }${s.fields
                                   .map(
                                       (f) =>
                                           `<tr><th>${f.label}</th><td>${f.value}</td></tr>`
@@ -198,7 +189,6 @@ export function showSATDataModal(satData, qrUrl) {
         }</div><div class="modal-footer"><button class="small-btn outline" id="closeModalBtn">Cerrar</button></div></div>`,
     });
 }
-
 document.head.appendChild(
     Object.assign(document.createElement("style"), {
         textContent: `.email-display{padding:10px;margin:10px 0;background:#f5f5f5;border-radius:4px}.name-display{padding:10px;margin:10px 0;background:#f5f5f5;border-radius:4px}.razon-social-display{padding:10px;margin:10px 0;background:#f5f5f5;border-radius:4px}.rfc-display{padding:10px;margin:10px 0;background:#f8f8f8;border-radius:4px;font-size:16px;border-left:4px solid #2196F3}`,
