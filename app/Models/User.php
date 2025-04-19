@@ -6,11 +6,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Notifications\SetPasswordNotification; 
+use App\Notifications\PasswordSetupNotification;
+
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable;
-    use HasRoles;
+    use Notifiable, HasRoles;
 
     protected $fillable = [
         'created_at',
@@ -45,7 +45,31 @@ class User extends Authenticatable implements MustVerifyEmail
         return 'rfc';
     }
 
-    // Optional: Helper methods for status
+    // Sobrescribir el método notify para evitar interacciones con password_reset_tokens
+    public function notify($instance)
+    {
+        return $this->notifyNow($instance);
+    }
+
+    // Personalizar la notificación de verificación de correo
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new PasswordSetupNotification($this->verification_token));
+    }
+
+    // Método para enviar la notificación de configuración de contraseña
+    public function sendPasswordSetNotification()
+    {
+        $this->notify(new PasswordSetupNotification($this->verification_token));
+    }
+
+    // Relación con Solicitante
+    public function solicitante()
+    {
+        return $this->hasOne(Solicitante::class, 'user_id');
+    }
+
+    // Métodos auxiliares para el estado
     public function isActive()
     {
         return $this->status === 'active';
@@ -61,7 +85,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->status === 'suspended';
     }
 
-    // Optional: Scope for querying by status
+    // Scopes para consultar por estado
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
@@ -75,14 +99,5 @@ class User extends Authenticatable implements MustVerifyEmail
     public function scopeSuspended($query)
     {
         return $query->where('status', 'suspended');
-    }
-    public function solicitante()
-    {
-        return $this->hasOne(Solicitante::class, 'user_id');
-    }
-
-     public function sendPasswordSetNotification()
-    {
-        $this->notify(new SetPasswordNotification($this->verification_token));
     }
 }

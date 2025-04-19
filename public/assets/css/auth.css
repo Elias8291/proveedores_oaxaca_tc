@@ -1238,6 +1238,239 @@ input:checked+.toggle-slider:before {
     }
 }
 
+
+/* Elegant Modal Styling */
+.modal {
+    align-items: center;
+    background-color: rgba(33, 33, 33, 0.7);
+    backdrop-filter: blur(8px);
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    opacity: 0;
+    overflow-y: auto;
+    padding: 20px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    visibility: hidden;
+    z-index: 1050;
+  }
+  
+  /* Ensure modal displays as flex when visible */
+  .modal[style*="display: block"] {
+    display: flex !important;
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .modal-content {
+    animation: elevateIn 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+    border-radius: 16px;
+    box-shadow: 
+      0 10px 30px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(0, 0, 0, 0.05),
+      0 25px 65px rgba(157, 36, 73, 0.1);
+    margin: auto;
+    max-width: 480px;
+    overflow: hidden;
+    padding: 28px 30px;
+    position: relative;
+    transform: translateY(0);
+    width: 100%;
+  }
+  
+  .modal-close {
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.04);
+    border: none;
+    border-radius: 50%;
+    color: #777;
+    cursor: pointer;
+    display: flex;
+    font-size: 22px;
+    height: 34px;
+    justify-content: center;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    transition: all 0.25s ease;
+    width: 34px;
+    z-index: 2;
+  }
+  
+  .modal-close:hover {
+    background-color: rgba(157, 36, 73, 0.1);
+    color: var(--primary-color);
+    transform: rotate(90deg);
+  }
+  
+  #modalTitle {
+    color: var(--primary-color);
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    margin-bottom: 16px;
+    padding-right: 30px;
+    position: relative;
+    text-align: center;
+  }
+  
+  #modalTitle::after {
+    background: linear-gradient(90deg, transparent, var(--primary-color) 50%, transparent);
+    bottom: -8px;
+    content: '';
+    height: 1px;
+    left: 35%;
+    opacity: 0.3;
+    position: absolute;
+    width: 30%;
+  }
+  
+  #modalMessage {
+    color: var(--text-light);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.6;
+    margin: 0 auto 28px;
+    max-width: 360px;
+    opacity: 0.85;
+    text-align: center;
+  }
+  
+  #modalOkBtn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border: none;
+    border-radius: 50px;
+    box-shadow: 
+      0 4px 10px rgba(157, 36, 73, 0.2),
+      0 0 0 1px rgba(157, 36, 73, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    color: white;
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin: 0 auto;
+    max-width: 220px;
+    padding: 12px 30px;
+    position: relative;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+  }
+  
+  #modalOkBtn:hover {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+    box-shadow: 
+      0 7px 14px rgba(157, 36, 73, 0.3),
+      0 0 0 1px rgba(157, 36, 73, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+  }
+  
+  #modalOkBtn:active {
+    box-shadow: 
+      0 2px 6px rgba(157, 36, 73, 0.3),
+      0 0 0 1px rgba(157, 36, 73, 0.2),
+      inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    transform: translateY(1px);
+  }
+  
+  /* Animation when modal appears */
+  @keyframes elevateIn {
+    0% {
+      box-shadow: 
+        0 0 0 rgba(0, 0, 0, 0),
+        0 0 0 rgba(157, 36, 73, 0);
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    100% {
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(0, 0, 0, 0.05),
+        0 25px 65px rgba(157, 36, 73, 0.1);
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  /* Modal Animation - Enter/Exit */
+  @keyframes fadeIn {
+    from {
+      backdrop-filter: blur(0);
+      opacity: 0;
+    }
+    to {
+      backdrop-filter: blur(8px);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeOut {
+    from {
+      backdrop-filter: blur(8px);
+      opacity: 1;
+    }
+    to {
+      backdrop-filter: blur(0);
+      opacity: 0;
+    }
+  }
+  
+  .modal.opening {
+    animation: fadeIn 0.4s forwards cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  
+  .modal.closing {
+    animation: fadeOut 0.3s forwards cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  
+  /* Pulse effect on button hover */
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(157, 36, 73, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(157, 36, 73, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(157, 36, 73, 0);
+    }
+  }
+  
+  #modalOkBtn:hover {
+    animation: pulse 1.5s infinite;
+  }
+  
+  /* Responsive Styles for Modal */
+  @media (max-width: 576px) {
+    .modal-content {
+      border-radius: 14px;
+      padding: 24px 20px;
+    }
+    
+    #modalTitle {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    
+    #modalMessage {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    
+    #modalOkBtn {
+      font-size: 13px;
+      padding: 10px 20px;
+    }
+  }
 @media (max-width: 768px) {
     .container {
         flex-direction: column;

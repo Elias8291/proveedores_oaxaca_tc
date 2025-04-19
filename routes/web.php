@@ -49,7 +49,7 @@ Route::middleware('web')->group(function () {
 
     // Public Registration Route
     Route::post('/register', [SolicitanteController::class, 'register'])->name('register');
-
+  
     /*
     |--------------------------------------------------------------------------
     | Authenticated Routes

@@ -66,5 +66,15 @@
             @include('auth.register')
         </div>
     </div>
+
+</div>
+
+<div class="modal" id="registrationModal" style="display: none;" role="dialog" aria-labelledby="modalTitle">
+    <div class="modal-content">
+        <span class="modal-close" id="modalCloseBtn" aria-label="Cerrar">×</span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalMessage">Ups, algo salió mal. Inténtalo de nuevo.</p>
+        <button class="btn" id="modalOkBtn">Aceptar</button>
+    </div>
 </div>
 @endsection

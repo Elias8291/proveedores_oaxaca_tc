@@ -99,135 +99,156 @@
                 </div>
             </div>
         </div>
-    
+      
         <button type="button" class="btn" id="registerBtn">Registrarse</button>
     </div>
+@push('scripts')
+<script type="module">
+    const step1 = document.getElementById('registerFormStep1');
+    const step2 = document.getElementById('registerFormStep2');
+    const nextBtn = document.getElementById('nextToStep2Btn');
+    const backBtnStep2 = document.getElementById('backFromRegisterStep2Btn');
+    const backBtnStep1 = document.getElementById('backFromRegisterStep1Btn');
+    const fileInput = document.getElementById('register-file');
+    const registerBtn = document.getElementById('registerBtn');
+    const registerForm = document.getElementById('registerForm');
+    const modal = document.getElementById('registrationModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalOkBtn = document.getElementById('modalOkBtn');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
 
-    @push('scripts')
-    <script type="module">
-        const step1 = document.getElementById('registerFormStep1');
-        const step2 = document.getElementById('registerFormStep2');
-        const nextBtn = document.getElementById('nextToStep2Btn');
-        const backBtnStep2 = document.getElementById('backFromRegisterStep2Btn');
-        const backBtnStep1 = document.getElementById('backFromRegisterStep1Btn');
-        const fileInput = document.getElementById('register-file');
-        const registerBtn = document.getElementById('registerBtn');
-        const registerForm = document.getElementById('registerForm');
-    
-        nextBtn.addEventListener('click', () => {
-            const file = fileInput.files[0];
-            if (file) {
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('El archivo excede el tamaño máximo de 5MB.');
-                    return;
-                }
-                step1.classList.remove('active');
-                step2.classList.add('active');
-                document.dispatchEvent(new CustomEvent('processPDF', { detail: file }));
+    // Function to show modal
+    function showModal(title, message, isSuccess = true) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modal.style.display = 'block';
+        modalTitle.style.color = isSuccess ? '#2e7d32' : '#d32f2f'; // Green for success, red for error
+        modalOkBtn.focus();
+    }
+
+    // Function to hide modal
+    function hideModal() {
+        modal.style.display = 'none';
+    }
+
+    // Modal close and OK button handlers
+    modalOkBtn.addEventListener('click', hideModal);
+    modalCloseBtn.addEventListener('click', hideModal);
+
+    nextBtn.addEventListener('click', () => {
+        const file = fileInput.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                showModal('Error', 'El archivo excede el tamaño máximo de 5MB.', false);
+                return;
+            }
+            step1.classList.remove('active');
+            step2.classList.add('active');
+            document.dispatchEvent(new CustomEvent('processPDF', { detail: file }));
+        } else {
+            showModal('Error', 'Por favor, sube un archivo PDF.', false);
+        }
+    });
+
+    backBtnStep2.addEventListener('click', () => {
+        step2.classList.remove('active');
+        step1.classList.add('active');
+    });
+
+    backBtnStep1.addEventListener('click', () => {
+        window.history.back();
+    });
+
+    document.getElementById('viewExampleBtnStep1').addEventListener('click', () => {
+        window.open('{{ asset('assets/pdf/ejemplo_sat.pdf') }}', '_blank');
+    });
+
+    registerBtn.addEventListener('click', () => {
+        const formData = new FormData(registerForm);
+        const nombre = document.getElementById('nombre').textContent.trim();
+        const rfc = document.getElementById('rfc').textContent.trim();
+        let tipoPersona = document.getElementById('tipo-persona').textContent.trim();
+        const codigoPostal = document.getElementById('cp').textContent.trim();
+        const email = document.getElementById('email-input').value.trim();
+
+        // Normalize tipo_persona
+        tipoPersona = tipoPersona.toLowerCase() === 'física' ? 'Física' : tipoPersona.toLowerCase() === 'moral' ? 'Moral' : tipoPersona;
+
+        // Validate codigo_postal
+        const codigoPostalInt = parseInt(codigoPostal, 10);
+        if (isNaN(codigoPostalInt)) {
+            showModal('Error', 'El código postal debe ser un número válido.', false);
+            return;
+        }
+
+        // Validate email
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showModal('Error', 'Por favor, ingrese un correo electrónico válido.', false);
+            return;
+        }
+
+        // Validate tipo_persona
+        if (!['Física', 'Moral'].includes(tipoPersona)) {
+            showModal('Error', 'El tipo de persona debe ser "Física" o "Moral".', false);
+            return;
+        }
+
+        // Append normalized data to FormData
+        formData.append('nombre', nombre);
+        formData.append('rfc', rfc);
+        formData.append('tipo_persona', tipoPersona);
+        formData.append('codigo_postal', codigoPostalInt);
+        formData.append('email', email);
+
+        // Get CSRF token
+        let token;
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        if (metaTag) {
+            token = metaTag.getAttribute('content');
+        } else {
+            token = '{{ csrf_token() }}';
+            console.warn('CSRF meta tag not found, using fallback token');
+        }
+
+        if (!token) {
+            showModal('Error', 'No se encontró el token CSRF. Por favor, recarga la página.', false);
+            return;
+        }
+
+        fetch('{{ route('register') }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || `HTTP error! Status: ${response.status}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                showModal('Éxito', data.message || 'Registro exitoso. Por favor, inicia sesión para continuar.', true);
+                modalOkBtn.onclick = () => {
+                    hideModal();
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    }
+                };
             } else {
-                alert('Por favor, sube un archivo PDF.');
+                showModal('Error', data.message || 'Error al registrar. Por favor, intenta de nuevo.', false);
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showModal('Error', error.message || 'Error al registrar. Por favor, intenta de nuevo.', false);
         });
-    
-        backBtnStep2.addEventListener('click', () => {
-            step2.classList.remove('active');
-            step1.classList.add('active');
-        });
-    
-        backBtnStep1.addEventListener('click', () => {
-            window.history.back();
-        });
-    
-        document.getElementById('viewExampleBtnStep1').addEventListener('click', () => {
-            window.open('{{ asset('assets/pdf/ejemplo_sat.pdf') }}', '_blank');
-        });
-    
-        registerBtn.addEventListener('click', () => {
-            const formData = new FormData(registerForm);
-            const nombre = document.getElementById('nombre').textContent.trim();
-            const rfc = document.getElementById('rfc').textContent.trim();
-            let tipoPersona = document.getElementById('tipo-persona').textContent.trim();
-            const codigoPostal = document.getElementById('cp').textContent.trim();
-            const email = document.getElementById('email-input').value.trim();
-    
-            // Normalize tipo_persona to match database enum (Física or Moral)
-            tipoPersona = tipoPersona.toLowerCase() === 'física' ? 'Física' : tipoPersona.toLowerCase() === 'moral' ? 'Moral' : tipoPersona;
-    
-            // Convert codigo_postal to integer
-            const codigoPostalInt = parseInt(codigoPostal, 10);
-            if (isNaN(codigoPostalInt)) {
-                alert('El código postal debe ser un número válido.');
-                return;
-            }
-    
-            // Validate email (if required)
-            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                alert('Por favor, ingrese un correo electrónico válido.');
-                return;
-            }
-    
-            // Validate tipo_persona
-            if (!['Física', 'Moral'].includes(tipoPersona)) {
-                alert('El tipo de persona debe ser "Física" o "Moral".');
-                return;
-            }
-    
-            // Append normalized data to FormData
-            formData.append('nombre', nombre);
-            formData.append('rfc', rfc);
-            formData.append('tipo_persona', tipoPersona);
-            formData.append('codigo_postal', codigoPostalInt);
-            formData.append('email', email);
-    
-            // Debug: Log form data
-            for (let [key, value] of formData.entries()) {
-                console.log(`${key}: ${value}`);
-            }
-    
-            // Get CSRF token with fallback
-            let token;
-            const metaTag = document.querySelector('meta[name="csrf-token"]');
-            if (metaTag) {
-                token = metaTag.getAttribute('content');
-            } else {
-                token = '{{ csrf_token() }}';
-                console.warn('CSRF meta tag not found, using fallback token');
-            }
-    
-            if (!token) {
-                alert('Error: No se encontró el token CSRF. Por favor, recarga la página.');
-                return;
-            }
-    
-            fetch('{{ route('register') }}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': token,
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => {
-                console.log('Status:', response.status);
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        console.log('Response Body:', text);
-                        throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    window.location.href = data.redirect;
-                } else {
-                    alert('Error al registrar: ' + (data.message || 'Por favor, intenta de nuevo.'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al registrar: ' + error.message);
-            });
-        });
-    </script>
-    @endpush
+    });
+</script>
+@endpush
