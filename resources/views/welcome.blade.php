@@ -49,7 +49,7 @@
 
     <div class="right-section">
         <div class="forms-container">
-            <div class="form-page welcome-form" id="welcomeForm">
+            <div class="form-page welcome-form active" id="welcomeForm">
                 <img src="{{ asset('assets/images/welcome/administration-secretariat-logo.png') }}" alt="Logo" class="logo-img">
                 <h1 class="welcome-title-animation">Bienvenido</h1>
                 <p class="welcome-subtitle">Padrón de Proveedores de Oaxaca</p>
@@ -64,9 +64,9 @@
             @include('auth.login')
             @include('auth.forgot-password')
             @include('auth.register')
+            @include('auth.set-password')
         </div>
     </div>
-
 </div>
 
 <div class="modal" id="registrationModal" style="display: none;" role="dialog" aria-labelledby="modalTitle">
@@ -77,4 +77,5 @@
         <button class="btn" id="modalOkBtn">Aceptar</button>
     </div>
 </div>
+
 @endsection

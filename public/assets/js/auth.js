@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const forgotForm = document.getElementById('forgotForm');
     const registerFormStep1 = document.getElementById('registerFormStep1');
     const registerFormStep2 = document.getElementById('registerFormStep2');
+    const passwordForm = document.getElementById('passwordForm');
 
     const navButtons = {
         goToLoginBtn: 'loginForm',
@@ -15,7 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
         backFromForgotBtn: 'loginForm',
         backFromRegisterStep1Btn: 'welcomeForm',
         backFromRegisterStep2Btn: 'registerFormStep1',
-        nextToStep2Btn: 'registerFormStep2'
+        nextToStep2Btn: 'registerFormStep2',
+        backFromPasswordFormBtn: 'loginForm'
     };
 
     function cleanFileUpload() {
@@ -31,21 +33,68 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function resetForm(formElement) {
         if (!formElement) return;
+
+        // Reset all input fields
         const inputs = formElement.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
             if (input.type === 'checkbox' || input.type === 'radio') {
                 input.checked = false;
-            } else {
+            } else if (input.type !== 'hidden') { // Skip hidden inputs like CSRF token
                 input.value = '';
             }
         });
+
+        // Remove error messages and error classes
+        const errorMessages = formElement.querySelectorAll('.error-message, .alert-danger, .invalid-feedback');
+        errorMessages.forEach(error => error.remove());
+        const errorInputs = formElement.querySelectorAll('.error, .is-invalid');
+        errorInputs.forEach(input => input.classList.remove('error', 'is-invalid'));
+
+        // Form-specific resets
         if (formElement.id === 'registerFormStep1' || formElement.id === 'registerFormStep2') {
-            ['pdf-name', 'pdf-rfc', 'pdf-date', 'pdf-regimen', 'pdf-qr-url'].forEach(id => {
+            // Clear PDF data fields
+            ['pdf-name', 'pdf-rfc', 'pdf-date', 'pdf-regimen', 'pdf-qr-url', 'nombre', 'tipo-persona', 'rfc', 'cp', 'direccion'].forEach(id => {
                 const element = document.getElementById(id);
                 if (element) element.textContent = '';
             });
+            // Reset email input in registerFormStep2
+            const emailInput = document.getElementById('email-input');
+            if (emailInput) emailInput.value = '';
+            // Reset warning badge and document status
+            const warningBadge = document.getElementById('warning-badge');
+            if (warningBadge) warningBadge.style.display = 'none';
+            const documentStatus = document.getElementById('document-status');
+            if (documentStatus) documentStatus.textContent = 'DOCUMENTO';
             cleanFileUpload();
         }
+
+        if (formElement.id === 'passwordForm') {
+            // Clear password inputs
+            const passwordInputs = formElement.querySelectorAll('input[type="password"]');
+            passwordInputs.forEach(input => input.value = '');
+            // Remove session error messages
+            const sessionErrors = formElement.querySelectorAll('.alert.alert-danger');
+            sessionErrors.forEach(error => error.remove());
+        }
+
+        if (formElement.id === 'loginForm') {
+            // Clear login inputs
+            const loginInputs = formElement.querySelectorAll('input[type="email"], input[type="password"]');
+            loginInputs.forEach(input => input.value = '');
+        }
+
+        if (formElement.id === 'forgotForm') {
+            // Clear email input
+            const emailInput = formElement.querySelector('input[type="email"]');
+            if (emailInput) emailInput.value = '';
+        }
+    }
+
+    function resetAllForms() {
+        const allForms = [welcomeForm, loginForm, forgotForm, registerFormStep1, registerFormStep2, passwordForm];
+        allForms.forEach(form => {
+            if (form) resetForm(form);
+        });
     }
 
     function hasLoginErrors() {
@@ -53,8 +102,25 @@ document.addEventListener('DOMContentLoaded', function() {
         return errorElements.length > 0;
     }
 
+    function hasPasswordResetToken() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.has('token');
+    }
+
     function initializeForms() {
-        if (hasLoginErrors()) {
+        // Remove active class from all forms
+        const allForms = [welcomeForm, loginForm, forgotForm, registerFormStep1, registerFormStep2, passwordForm];
+        allForms.forEach(form => {
+            if (form) form.classList.remove('active', 'slide-in');
+        });
+
+        // Reset all forms to ensure clean state
+        resetAllForms();
+
+        // Activate the appropriate form
+        if (hasPasswordResetToken()) {
+            activateForm(passwordForm);
+        } else if (hasLoginErrors()) {
             activateForm(loginForm);
         } else {
             activateForm(welcomeForm);
@@ -67,10 +133,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentActive) {
             if (isBackNavigation) {
                 resetForm(currentActive);
-                const errorMessages = currentActive.querySelectorAll('.error-message, .alert-danger');
-                errorMessages.forEach(error => error.remove());
-                const errorInputs = currentActive.querySelectorAll('.error');
-                errorInputs.forEach(input => input.classList.remove('error'));
+                // Reset all forms if navigating to welcomeForm
+                if (formToShow.id === 'welcomeForm') {
+                    resetAllForms();
+                }
             }
             currentActive.classList.remove('active', 'slide-in', 'fade-in', 'flip-in');
             currentActive.classList.add('slide-out');
@@ -104,8 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (buttonId === 'nextToStep2Btn') {
                         const fileInput = document.getElementById('register-file');
                         if (!fileInput || fileInput.files.length === 0) {
-                            alert('Por favor, sube un archivo PDF.');
-                            return;
+                            return; // Prevent navigation if no file is uploaded
                         }
                         const event = new CustomEvent('processPDF', { detail: fileInput.files[0] });
                         document.dispatchEvent(event);
@@ -138,6 +203,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.state && e.state.form) {
             const targetForm = document.getElementById(navButtons[e.state.form]);
             activateForm(targetForm, true);
+        } else if (hasPasswordResetToken()) {
+            activateForm(passwordForm, true);
         } else {
             activateForm(welcomeForm, true);
         }

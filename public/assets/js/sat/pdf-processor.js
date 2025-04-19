@@ -135,9 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     nextBtn?.addEventListener('click', async () => {
         const file = fileInput?.files[0];
-        if (!file) return alert('Please upload a PDF file.');
+        if (!file) return;
         if (file.size > 5 * 1024 * 1024) return alert('File exceeds the maximum size of 5MB.');
-
+    
         const loading = createModal({ html: createSpinner() });
         try {
             const pdfData = await extractQRCodeFromPDF(file);
@@ -151,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.removeChild(loading);
         }
     });
-
     backBtnStep2?.addEventListener('click', () => {
         step2.classList.remove('active');
         step1.classList.add('active');
