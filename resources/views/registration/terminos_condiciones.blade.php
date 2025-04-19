@@ -8,7 +8,7 @@
     <div class="registration-section">
         <h1>Inscripción al Padrón de Proveedores</h1>
         <p>Antes de continuar con tu registro en el padrón de proveedores de Oaxaca, por favor revisa y acepta los siguientes términos y condiciones:</p>
-        <p>Tipo de solicitante: <strong>{{ Auth::user()->solicitante->tipo_persona }}</strong>. Recibirás formularios según este tipo.</p>
+        <p>Tipo de solicitante: <strong>{{ Auth::user()->solicitante->tipo_persona ?? 'No definido' }}</strong>. Recibirás formularios según este tipo.</p>
         <div class="terms-section">
             <h3>Términos y Condiciones</h3>
             <p>Al avanzar con tu inscripción, aceptas lo siguiente:</p>
@@ -22,11 +22,14 @@
             </p>
             <p>Al aceptar estos términos, podrás continuar con el registro y formar parte de nuestra red de proveedores en Oaxaca.</p>
         </div>
-        <form action="{{ route('registration.form1') }}" method="POST">
+        <form action="{{ route('registration.accept-terms') }}" method="POST">
             @csrf
             <div class="form-group">
                 <input type="checkbox" id="terms" name="terms" required>
                 <label for="terms">He leído y acepto los términos y condiciones</label>
+                @error('terms')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
             <button type="submit" class="btn-submit">Continuar con el Registro</button>
         </form>

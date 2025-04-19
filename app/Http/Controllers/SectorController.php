@@ -16,12 +16,11 @@ class SectorController extends Controller
         $sectores = Sector::with('actividades')
                         ->orderBy('nombre')
                         ->get();
-
+    
         return view('registration.formularios.formularios', [
             'sectores' => $sectores,
         ]);
     }
-
     /**
      * Obtiene todos los sectores (para API)
      */
