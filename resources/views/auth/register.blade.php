@@ -102,6 +102,7 @@
                 <p><strong id="label-nombre"></strong> <span id="nombre"></span></p>
                 <p><strong>TIPO DE PERSONA:</strong> <span id="tipo-persona"></span></p>
                 <p><strong>RFC:</strong> <span id="rfc"></span></p>
+                <p id="curp-section" style="display: none;"><strong>CURP:</strong> <span id="curp"></span></p>
                 <p><strong>CÓDIGO POSTAL:</strong> <span id="cp"></span></p>
                 <div class="address-section">
                     <p><strong>DIRECCIÓN:</strong> <span id="direccion"></span></p>
@@ -122,160 +123,172 @@
     </div>
 
     <button type="button" class="btn" id="registerBtn">Registrarse</button>
-</div>
-@push('scripts')
-    <script type="module">
-        const step1 = document.getElementById('registerFormStep1');
-        const step2 = document.getElementById('registerFormStep2');
-        const nextBtn = document.getElementById('nextToStep2Btn');
-        const backBtnStep2 = document.getElementById('backFromRegisterStep2Btn');
-        const backBtnStep1 = document.getElementById('backFromRegisterStep1Btn');
-        const fileInput = document.getElementById('register-file');
-        const registerBtn = document.getElementById('registerBtn');
-        const registerForm = document.getElementById('registerForm');
-        const modal = document.getElementById('registrationModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalMessage = document.getElementById('modalMessage');
-        const modalOkBtn = document.getElementById('modalOkBtn');
-        const modalCloseBtn = document.getElementById('modalCloseBtn');
+</div>@push('scripts')
+<script type="module">
+    const step1 = document.getElementById('registerFormStep1');
+    const step2 = document.getElementById('registerFormStep2');
+    const nextBtn = document.getElementById('nextToStep2Btn');
+    const backBtnStep2 = document.getElementById('backFromRegisterStep2Btn');
+    const backBtnStep1 = document.getElementById('backFromRegisterStep1Btn');
+    const fileInput = document.getElementById('register-file');
+    const registerBtn = document.getElementById('registerBtn');
+    const registerForm = document.getElementById('registerForm');
+    const modal = document.getElementById('registrationModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalOkBtn = document.getElementById('modalOkBtn');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
 
-        // Function to show modal
-        function showModal(title, message, isSuccess = true) {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-            modal.style.display = 'block';
-            modalTitle.style.color = isSuccess ? '#2e7d32' : '#d32f2f'; // Green for success, red for error
-            modalOkBtn.focus();
+    // Function to show modal
+    function showModal(title, message, isSuccess = true) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modal.style.display = 'block';
+        modalTitle.style.color = isSuccess ? '#2e7d32' : '#d32f2f'; // Green for success, red for error
+        modalOkBtn.focus();
+    }
+
+    // Function to hide modal
+    function hideModal() {
+        modal.style.display = 'none';
+    }
+
+    // Modal close and OK button handlers
+    modalOkBtn.addEventListener('click', hideModal);
+    modalCloseBtn.addEventListener('click', hideModal);
+
+    nextBtn.addEventListener('click', () => {
+        const file = fileInput.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                showModal('Error', 'El archivo excede el tamaño máximo de 5MB.', false);
+                return;
+            }
+            step1.classList.remove('active');
+            step2.classList.add('active');
+            document.dispatchEvent(new CustomEvent('processPDF', {
+                detail: file
+            }));
+        } else {
+            showModal('Error', 'Por favor, sube un archivo PDF.', false);
+        }
+    });
+
+    backBtnStep2.addEventListener('click', () => {
+        step2.classList.remove('active');
+        step1.classList.add('active');
+    });
+
+    backBtnStep1.addEventListener('click', () => {
+        window.history.back();
+    });
+
+    document.getElementById('viewExampleBtnStep1').addEventListener('click', () => {
+        window.open('{{ asset('assets/pdf/ejemplo_sat.pdf') }}', '_blank');
+    });
+
+    registerBtn.addEventListener('click', () => {
+        const formData = new FormData(registerForm);
+        const nombre = document.getElementById('nombre').textContent.trim();
+        const rfc = document.getElementById('rfc').textContent.trim();
+        let tipoPersona = document.getElementById('tipo-persona').textContent.trim();
+        const codigoPostal = document.getElementById('cp').textContent.trim();
+        const email = document.getElementById('email-input').value.trim();
+        const curp = document.getElementById('curp')?.textContent.trim() || '';
+
+        // Normalize tipo_persona
+        tipoPersona = tipoPersona.toLowerCase() === 'física' ? 'Física' : tipoPersona.toLowerCase() === 'moral' ? 'Moral' : tipoPersona;
+
+        // Validate codigo_postal
+        const codigoPostalInt = parseInt(codigoPostal, 10);
+        if (isNaN(codigoPostalInt)) {
+            showModal('Error', 'El código postal debe ser un número válido.', false);
+            return;
         }
 
-        // Function to hide modal
-        function hideModal() {
-            modal.style.display = 'none';
+        // Validate email
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showModal('Error', 'Por favor, ingrese un correo electrónico válido.', false);
+            return;
         }
 
-        // Modal close and OK button handlers
-        modalOkBtn.addEventListener('click', hideModal);
-        modalCloseBtn.addEventListener('click', hideModal);
+        // Validate tipo_persona
+        if (!['Física', 'Moral'].includes(tipoPersona)) {
+            showModal('Error', 'El tipo de persona debe ser "Física" o "Moral".', false);
+            return;
+        }
 
-        nextBtn.addEventListener('click', () => {
-            const file = fileInput.files[0];
-            if (file) {
-                if (file.size > 5 * 1024 * 1024) {
-                    showModal('Error', 'El archivo excede el tamaño máximo de 5MB.', false);
-                    return;
+        // Validate CURP for Persona Física
+        if (tipoPersona === 'Física' && curp) {
+            // Basic CURP validation: 18 characters, alphanumeric
+            if (!/^[A-Z0-9]{18}$/.test(curp)) {
+                showModal('Error', 'El CURP debe ser una cadena alfanumérica de 18 caracteres.', false);
+                return;
+            }
+        }
+
+        // Append normalized data to FormData
+        formData.append('nombre', nombre);
+        formData.append('rfc', rfc);
+        formData.append('tipo_persona', tipoPersona);
+        formData.append('codigo_postal', codigoPostalInt);
+        formData.append('email', email);
+        // Append CURP only for Persona Física and if it exists
+        if (tipoPersona === 'Física' && curp) {
+            formData.append('curp', curp);
+        }
+
+        // Get CSRF token
+        let token;
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        if (metaTag) {
+            token = metaTag.getAttribute('content');
+        } else {
+            token = '{{ csrf_token() }}';
+            console.warn('CSRF meta tag not found, using fallback token');
+        }
+
+        if (!token) {
+            showModal('Error', 'No se encontró el token CSRF. Por favor, recarga la página.', false);
+            return;
+        }
+
+        fetch('{{ route('register') }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json'
                 }
-                step1.classList.remove('active');
-                step2.classList.add('active');
-                document.dispatchEvent(new CustomEvent('processPDF', {
-                    detail: file
-                }));
-            } else {
-                showModal('Error', 'Por favor, sube un archivo PDF.', false);
-            }
-        });
-
-        backBtnStep2.addEventListener('click', () => {
-            step2.classList.remove('active');
-            step1.classList.add('active');
-        });
-
-        backBtnStep1.addEventListener('click', () => {
-            window.history.back();
-        });
-
-        document.getElementById('viewExampleBtnStep1').addEventListener('click', () => {
-            window.open('{{ asset('assets/pdf/ejemplo_sat.pdf') }}', '_blank');
-        });
-
-        registerBtn.addEventListener('click', () => {
-            const formData = new FormData(registerForm);
-            const nombre = document.getElementById('nombre').textContent.trim();
-            const rfc = document.getElementById('rfc').textContent.trim();
-            let tipoPersona = document.getElementById('tipo-persona').textContent.trim();
-            const codigoPostal = document.getElementById('cp').textContent.trim();
-            const email = document.getElementById('email-input').value.trim();
-
-            // Normalize tipo_persona
-            tipoPersona = tipoPersona.toLowerCase() === 'física' ? 'Física' : tipoPersona.toLowerCase() ===
-                'moral' ? 'Moral' : tipoPersona;
-
-            // Validate codigo_postal
-            const codigoPostalInt = parseInt(codigoPostal, 10);
-            if (isNaN(codigoPostalInt)) {
-                showModal('Error', 'El código postal debe ser un número válido.', false);
-                return;
-            }
-
-            // Validate email
-            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showModal('Error', 'Por favor, ingrese un correo electrónico válido.', false);
-                return;
-            }
-
-            // Validate tipo_persona
-            if (!['Física', 'Moral'].includes(tipoPersona)) {
-                showModal('Error', 'El tipo de persona debe ser "Física" o "Moral".', false);
-                return;
-            }
-
-            // Append normalized data to FormData
-            formData.append('nombre', nombre);
-            formData.append('rfc', rfc);
-            formData.append('tipo_persona', tipoPersona);
-            formData.append('codigo_postal', codigoPostalInt);
-            formData.append('email', email);
-
-            // Get CSRF token
-            let token;
-            const metaTag = document.querySelector('meta[name="csrf-token"]');
-            if (metaTag) {
-                token = metaTag.getAttribute('content');
-            } else {
-                token = '{{ csrf_token() }}';
-                console.warn('CSRF meta tag not found, using fallback token');
-            }
-
-            if (!token) {
-                showModal('Error', 'No se encontró el token CSRF. Por favor, recarga la página.', false);
-                return;
-            }
-
-            fetch('{{ route('register') }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': token,
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.message || `HTTP error! Status: ${response.status}`);
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        showModal('Éxito', data.message ||
-                            'Registro exitoso. Por favor, inicia sesión para continuar.', true);
-                        modalOkBtn.onclick = () => {
-                            hideModal();
-                            if (data.redirect) {
-                                window.location.href = data.redirect;
-                            }
-                        };
-                    } else {
-                        showModal('Error', data.message || 'Error al registrar. Por favor, intenta de nuevo.',
-                            false);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showModal('Error', error.message || 'Error al registrar. Por favor, intenta de nuevo.',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || `HTTP error! Status: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showModal('Éxito', data.message ||
+                        'Registro exitoso. Por favor, inicia sesión para continuar.', true);
+                    modalOkBtn.onclick = () => {
+                        hideModal();
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    };
+                } else {
+                    showModal('Error', data.message || 'Error al registrar. Por favor, intenta de nuevo.',
                         false);
-                });
-        });
-    </script>
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showModal('Error', error.message || 'Error al registrar. Por favor, intenta de nuevo.',
+                    false);
+            });
+    });
+</script>
 @endpush

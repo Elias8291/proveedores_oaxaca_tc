@@ -14,6 +14,7 @@ class Direccion extends Model
 
     // Atributos que se pueden llenar masivamente
     protected $fillable = [
+        'codigo_postal',
         'asentamiento_id',
         'calle',
         'numero_exterior',
@@ -21,7 +22,6 @@ class Direccion extends Model
         'entre_calle_1',
         'entre_calle_2',
     ];
-
     // Atributos con valores por defecto
     protected $attributes = [
         'numero_interior' => null,

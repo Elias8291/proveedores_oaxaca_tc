@@ -30,11 +30,21 @@ export async function scrapeSATData(qrUrl) {
             numeroExterior: '',
             numeroInterior: '',
             tipoPersona: '',
+            curp: null, // Initialize CURP as null
         };
 
         // Extract RFC
         const rfcMatch = html.match(/RFC:\s*([A-Z0-9]+)/i);
         if (rfcMatch) data.rfc = rfcMatch[1];
+
+        // Determine tipoPersona early to control CURP extraction
+        if (data.rfc.length === 12) {
+            data.tipoPersona = 'Moral';
+        } else if (data.rfc.length === 13) {
+            data.tipoPersona = 'Física';
+        } else {
+            data.tipoPersona = 'Desconocido';
+        }
 
         // Extract fields from listview sections
         doc.querySelectorAll('[data-role="listview"]').forEach((section, index) => {
@@ -64,6 +74,8 @@ export async function scrapeSATData(qrUrl) {
                 if (/nombre de la vialidad|calle|vialidad/i.test(label)) data.nombreVialidad = value;
                 if (/número exterior|numero exterior|no exterior/i.test(label)) data.numeroExterior = value;
                 if (/número interior|numero interior|no interior/i.test(label)) data.numeroInterior = value;
+                // Only extract CURP for Persona Física
+                if (data.tipoPersona === 'Física' && /curp/i.test(label)) data.curp = value;
 
                 sectionData.fields.push({ label, value });
             });
@@ -76,17 +88,13 @@ export async function scrapeSATData(qrUrl) {
             .filter(Boolean)
             .join(' ');
 
-        // Determine tipoPersona and finalNombre
+        // Set finalNombre and razonSocial based on tipoPersona
         data.finalNombre = '';
-        if (data.rfc.length === 12) {
-            data.tipoPersona = 'Moral';
+        if (data.tipoPersona === 'Moral') {
             data.finalNombre = data.razonSocial;
-        } else if (data.rfc.length === 13) {
-            data.tipoPersona = 'Física';
+        } else if (data.tipoPersona === 'Física') {
             data.finalNombre = data.nombreCompleto;
             data.razonSocial = data.nombreCompleto;
-        } else {
-            data.tipoPersona = 'Desconocido';
         }
 
         return data;
@@ -112,7 +120,6 @@ export function showSATDataModal(satData, qrUrl) {
                 </div>
             </div>
             <div class="modal-body">
-                ${satData.email ? `<div class="email-display"><strong>Correo:</strong> ${satData.email}</div>` : ''}
                 ${
                     satData.extractedData.length === 0
                         ? '<p>No se encontraron datos en la página del SAT.</p>'
@@ -125,6 +132,7 @@ export function showSATDataModal(satData, qrUrl) {
                                             <table>
                                                 <tbody>
                                                     ${index === 0 && satData.rfc ? `<tr><th>RFC</th><td>${satData.rfc}</td></tr>` : ''}
+                                                    ${index === 0 && satData.curp && satData.tipoPersona === 'Física' ? `<tr><th>CURP</th><td>${satData.curp}</td></tr>` : ''}
                                                     ${s.fields.map((f) => `<tr><th>${f.label}</th><td>${f.value}</td></tr>`).join('')}
                                                 </tbody>
                                             </table>

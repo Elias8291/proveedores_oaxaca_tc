@@ -93,6 +93,17 @@ function updatePDFDataPreview(pdfData, satData) {
         }
     });
 
+    // Handle CURP for Persona Física
+    const curpSection = document.getElementById('curp-section');
+    const curpSpan = document.getElementById('curp');
+    if (satData.tipoPersona === 'Física' && satData.curp) {
+        curpSpan.textContent = satData.curp.toUpperCase() || 'No disponible';
+        curpSection.style.display = 'block'; // Show CURP section
+    } else {
+        curpSpan.textContent = ''; // Clear CURP
+        curpSection.style.display = 'none'; // Hide CURP section
+    }
+
     // Enable SAT data button and attach event listener
     const viewSatDataBtn = document.getElementById('viewSatDataBtn');
     if (viewSatDataBtn) {
