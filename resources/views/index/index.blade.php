@@ -14,10 +14,29 @@
             <h2 id="greeting">Buenos días, {{ auth()->user()->name }}</h2>
             <p class="welcome-subtitle">¿Cómo va tu día? 🌟</p>
             <p class="welcome-description">Bienvenido al sistema de registro de proveedores del gobierno de Oaxaca.</p>   
-            <button class="register-button">
-                <span>Comenzar tu inscripción</span>
-                <i class="fas fa-arrow-right"></i>
-            </button>
+            
+            <!-- Conditionally show the button for users with the 'solicitante' role -->
+             <!-- Conditionally show the button for users with the 'solicitante' role -->
+             @if(auth()->user()->hasRole('solicitante'))
+             @php
+                 $solicitante = App\Models\Solicitante::where('user_id', auth()->user()->id)->first();
+                 $buttonText = $solicitante && $solicitante->numero_seccion > 0 ? 'Continuar registro' : 'Comenzar tu inscripción';
+                 $sectionNumber = $solicitante ? $solicitante->numero_seccion : 0;
+             @endphp
+             <button class="register-button" onclick="window.location.href='{{ route('registration.index') }}'">
+                 <span>{{ $buttonText }}</span>
+                 <i class="fas fa-arrow-right"></i>
+             </button>
+             <p class="section-progress">Sección {{ $sectionNumber }}/7</p>
+         @endif
+            <!-- Alternative: Custom role check if not using Spatie -->
+            <!-- @if(auth()->user()->role === 'solicitante') -->
+            <!-- <button class="register-button"> -->
+            <!--     <span>Comenzar tu inscripción</span> -->
+            <!--     <i class="fas fa-arrow-right"></i> -->
+            <!-- </button> -->
+            <!-- @endif -->
+
             <div class="discover-section">
                 <h3 class="section-heading">Descubre Proveedores de Oaxaca</h3>
                 <div class="cards-container-vertical">

@@ -6,12 +6,14 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
-        User::updateOrCreate(
+        // Create or update Elias Abisai
+        $elias = User::updateOrCreate(
             ['email' => 'eliasrj824@gmail.com'],
             [
                 'name' => 'Elias Abisai Ramos Jacinto', 
@@ -25,6 +27,11 @@ class UserSeeder extends Seeder
                 'status' => 'active',
             ]
         );
+
+        // Assign revisor_1 role to Elias
+        $elias->assignRole('revisor_1');
+
+        // Create or update Telcel user
         User::updateOrCreate(
             ['email' => 'telcel' . Str::random(5) . '@example.com'],
             [
@@ -39,6 +46,8 @@ class UserSeeder extends Seeder
                 'status' => 'active',
             ]
         );
+
+        // Create or update Jacqueline
         User::updateOrCreate(
             ['email' => 'jacquempd@gmail.com'],
             [
@@ -54,6 +63,7 @@ class UserSeeder extends Seeder
             ]
         );
     }
+
     private function generateRandomRFC(): string
     {
         $letters = strtoupper(Str::random(4));
