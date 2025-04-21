@@ -2,6 +2,7 @@ import { createModal } from './utils.js';
 
 // Scrape SAT data from the provided QR URL
 export async function scrapeSATData(qrUrl) {
+    console.log('scrapeSATData called with:', qrUrl); // Debug log
     try {
         const response = await fetch(qrUrl, {
             headers: {
@@ -15,7 +16,6 @@ export async function scrapeSATData(qrUrl) {
         const html = await response.text();
         const doc = new DOMParser().parseFromString(html, 'text/html');
 
-        // Initialize data variables
         const data = {
             extractedData: [],
             email: '',
@@ -30,14 +30,12 @@ export async function scrapeSATData(qrUrl) {
             numeroExterior: '',
             numeroInterior: '',
             tipoPersona: '',
-            curp: null, // Initialize CURP as null
+            curp: null,
         };
 
-        // Extract RFC
         const rfcMatch = html.match(/RFC:\s*([A-Z0-9]+)/i);
         if (rfcMatch) data.rfc = rfcMatch[1];
 
-        // Determine tipoPersona early to control CURP extraction
         if (data.rfc.length === 12) {
             data.tipoPersona = 'Moral';
         } else if (data.rfc.length === 13) {
@@ -46,7 +44,6 @@ export async function scrapeSATData(qrUrl) {
             data.tipoPersona = 'Desconocido';
         }
 
-        // Extract fields from listview sections
         doc.querySelectorAll('[data-role="listview"]').forEach((section, index) => {
             const title =
                 section.querySelector('[data-role="list-divider"]')?.textContent.trim() ||
@@ -62,7 +59,6 @@ export async function scrapeSATData(qrUrl) {
                 const value = valueCell.textContent.trim();
                 if (!label || !value || value.includes('$(function') || sectionData.fields.some((f) => f.label === label)) return;
 
-                // Assign values to data object
                 if (/correo|email/i.test(label)) data.email = value;
                 if (/denominación|razón social/i.test(label)) data.razonSocial = value;
                 if (label.toLowerCase() === 'nombre') data.nombre = value;
@@ -74,7 +70,6 @@ export async function scrapeSATData(qrUrl) {
                 if (/nombre de la vialidad|calle|vialidad/i.test(label)) data.nombreVialidad = value;
                 if (/número exterior|numero exterior|no exterior/i.test(label)) data.numeroExterior = value;
                 if (/número interior|numero interior|no interior/i.test(label)) data.numeroInterior = value;
-                // Only extract CURP for Persona Física
                 if (data.tipoPersona === 'Física' && /curp/i.test(label)) data.curp = value;
 
                 sectionData.fields.push({ label, value });
@@ -83,12 +78,10 @@ export async function scrapeSATData(qrUrl) {
             if (sectionData.fields.length) data.extractedData.push(sectionData);
         });
 
-        // Construct nombreCompleto
         data.nombreCompleto = [data.nombre, data.apellidoPaterno, data.apellidoMaterno]
             .filter(Boolean)
             .join(' ');
 
-        // Set finalNombre and razonSocial based on tipoPersona
         data.finalNombre = '';
         if (data.tipoPersona === 'Moral') {
             data.finalNombre = data.razonSocial;
@@ -97,14 +90,55 @@ export async function scrapeSATData(qrUrl) {
             data.razonSocial = data.nombreCompleto;
         }
 
+        console.log('scrapeSATData result:', data); // Debug log
         return data;
     } catch (error) {
+        console.error('scrapeSATData error:', error);
         throw new Error(`Failed to fetch SAT data: ${error.message}`);
     }
 }
 
 // Display SAT data in a modal
 export function showSATDataModal(satData, qrUrl) {
+    console.log('showSATDataModal called with:', { satData, qrUrl }); // Debug log
+    if (!satData || !qrUrl) {
+        console.error('Invalid arguments in showSATDataModal:', { satData, qrUrl });
+        throw new Error('Invalid SAT data or QR URL');
+    }
+
+    // Break down the template literal for clarity
+    const modalBodyContent = satData.extractedData.length === 0
+        ? '<p>No se encontraron datos en la página del SAT.</p>'
+        : satData.extractedData
+              .map((section, index) => {
+                  const rows = section.fields.map(field => {
+                      return `<tr><th>${field.label}</th><td>${field.value}</td></tr>`;
+                  }).join('');
+
+                  const rfcRow = index === 0 && satData.rfc
+                      ? `<tr><th>RFC</th><td>${satData.rfc}</td></tr>`
+                      : '';
+                  const curpRow = index === 0 && satData.curp && satData.tipoPersona === 'Física'
+                      ? `<tr><th>CURP</th><td>${satData.curp}</td></tr>`
+                      : '';
+
+                  return `
+                      <div class="sat-section">
+                          <h4>${section.sectionName}</h4>
+                          <div class="table-responsive">
+                              <table>
+                                  <tbody>
+                                      ${rfcRow}
+                                      ${curpRow}
+                                      ${rows}
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  `;
+              })
+              .join('');
+
     const modalHtml = `
         <div class="modal-container">
             <div class="modal-header">
@@ -120,33 +154,20 @@ export function showSATDataModal(satData, qrUrl) {
                 </div>
             </div>
             <div class="modal-body">
-                ${
-                    satData.extractedData.length === 0
-                        ? '<p>No se encontraron datos en la página del SAT.</p>'
-                        : satData.extractedData
-                              .map(
-                                  (s, index) => `
-                                    <div class="sat-section">
-                                        <h4>${s.sectionName}</h4>
-                                        <div class="table-responsive">
-                                            <table>
-                                                <tbody>
-                                                    ${index === 0 && satData.rfc ? `<tr><th>RFC</th><td>${satData.rfc}</td></tr>` : ''}
-                                                    ${index === 0 && satData.curp && satData.tipoPersona === 'Física' ? `<tr><th>CURP</th><td>${satData.curp}</td></tr>` : ''}
-                                                    ${s.fields.map((f) => `<tr><th>${f.label}</th><td>${f.value}</td></tr>`).join('')}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                  `
-                              )
-                              .join('')
-                }
+                ${modalBodyContent}
             </div>
             <div class="modal-footer">
                 <button class="small-btn outline" id="closeModalBtn">Cerrar</button>
             </div>
         </div>
     `;
-    createModal({ className: 'modal-overlay sat-modal', html: modalHtml });
+
+    try {
+        console.log('Creating modal with HTML:', modalHtml.substring(0, 100) + '...'); // Debug log
+        createModal({ className: 'modal-overlay sat-modal', html: modalHtml });
+        console.log('Modal created successfully');
+    } catch (error) {
+        console.error('Error creating modal:', error);
+        throw new Error(`Failed to create modal: ${error.message}`);
+    }
 }

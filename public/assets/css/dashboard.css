@@ -869,6 +869,85 @@ img {
     border-radius: 50%;
     background: white;
 }
+
+/* Estilo elegante y compacto para la sección de subir constancia */
+#constancia-upload-section {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius);
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+#constancia-upload-section h4 {
+    color: var(--color-primary);
+    margin-bottom: 14px;
+    font-weight: var(--font-weight-medium);
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+}
+
+#constancia-upload-section h4 i {
+    margin-right: 8px;
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+#formulario__grupo--constancia label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-text-light);
+    font-weight: var(--font-weight-normal);
+    font-size: 0.9rem;
+}
+
+#constancia_upload {
+    padding: 10px;
+    background-color: var(--neutral-light);
+    width: 100%;
+    transition: var(--transition);
+    cursor: pointer;
+    border: none;
+    border-radius: calc(var(--border-radius) - 2px);
+}
+
+#constancia_upload:hover {
+    background-color: rgba(244, 241, 234, 0.7);
+}
+
+#constancia_upload:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 1px rgba(157, 36, 73, 0.2);
+}
+
+#constancia_upload::file-selector-button {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 7px 15px;
+    border-radius: calc(var(--border-radius) - 4px);
+    cursor: pointer;
+    font-weight: var(--font-weight-medium);
+    margin-right: 10px;
+    font-size: 0.85rem;
+    transition: background-color 0.2s;
+}
+
+#constancia_upload::file-selector-button:hover {
+    background-color: var(--primary-dark);
+}
+
+#formulario__grupo--constancia .formulario__input-error {
+    color: var(--color-danger);
+    font-size: 0.8em;
+    margin-top: 8px;
+    display: none;
+    padding: 6px 8px;
+    background-color: rgba(239, 68, 68, 0.05);
+    border-radius: calc(var(--border-radius) - 5px);
+}
 /* Media Queries */
 @media screen and (max-width: 992px) {
     .menu-toggle {

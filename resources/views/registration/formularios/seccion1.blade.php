@@ -1,5 +1,17 @@
-
 <form id="formulario1">
+    <!-- Sección para subir Constancia de Situación Fiscal, visible solo para revisor_1 -->
+    @if (Auth::user()->hasRole('revisor_1'))
+        <div class="form-section" id="constancia-upload-section">
+            <h4><i class="fas fa-file-pdf"></i> Subir Constancia de Situación Fiscal</h4>
+            <div class="form-group full-width" id="formulario__grupo--constancia">
+                <label class="form-label" for="constancia_upload">Seleccionar Constancia de Situación Fiscal (PDF)</label>
+                <input type="file" id="constancia_upload" name="constancia_upload" class="form-control" accept="application/pdf" required>
+                <p class="formulario__input-error">Debe seleccionar un archivo en formato PDF.</p>
+            </div>
+        </div>
+    @endif
+
+    <!-- Resto del formulario -->
     <div class="form-section" id="form-step-1">
         <h4><i class="fas fa-building"></i> Datos Generales</h4>
         <div class="form-group horizontal-group">
@@ -90,6 +102,27 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Validación para el campo de subida de Constancia de Situación Fiscal
+        const constanciaInput = document.getElementById('constancia_upload');
+        if (constanciaInput) {
+            constanciaInput.addEventListener('change', function() {
+                const file = this.files[0];
+                const errorElement = document.querySelector('#formulario__grupo--constancia .formulario__input-error');
+
+                if (file) {
+                    if (file.type !== 'application/pdf') {
+                        errorElement.style.display = 'block';
+                        this.value = ''; // Limpiar archivo inválido
+                    } else {
+                        errorElement.style.display = 'none';
+                    }
+                } else {
+                    errorElement.style.display = 'block';
+                }
+            });
+        }
+
+        // Código existente para sectores y actividades
         const sectorSelect = document.getElementById('sectores');
         const actividadSelect = document.getElementById('actividad');
         const actividadesContainer = document.getElementById('actividades-seleccionadas');
