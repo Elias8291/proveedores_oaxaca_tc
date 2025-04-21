@@ -45,31 +45,26 @@ class User extends Authenticatable implements MustVerifyEmail
         return 'rfc';
     }
 
-    // Sobrescribir el método notify para evitar interacciones con password_reset_tokens
     public function notify($instance)
     {
         return $this->notifyNow($instance);
     }
 
-    // Personalizar la notificación de verificación de correo
     public function sendEmailVerificationNotification()
     {
         $this->notify(new PasswordSetupNotification($this->verification_token));
     }
 
-    // Método para enviar la notificación de configuración de contraseña
     public function sendPasswordSetNotification()
     {
         $this->notify(new PasswordSetupNotification($this->verification_token));
     }
 
-    // Relación con Solicitante
     public function solicitante()
     {
         return $this->hasOne(Solicitante::class, 'user_id');
     }
 
-    // Métodos auxiliares para el estado
     public function isActive()
     {
         return $this->status === 'active';
@@ -85,7 +80,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->status === 'suspended';
     }
 
-    // Scopes para consultar por estado
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
@@ -100,4 +94,5 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $query->where('status', 'suspended');
     }
+
 }

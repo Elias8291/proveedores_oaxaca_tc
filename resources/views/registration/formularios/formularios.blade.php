@@ -19,8 +19,11 @@
             </div>
             <div class="progress-tracker" id="progressTracker">
                 @php
-                    $tipoPersona = Auth::user()->solicitante->tipo_persona;
-                    $secciones = $tipoPersona === 'Física' ? [1, 2, 6, 7] : [1, 2, 3, 4, 5, 6, 7];
+                    // Determine sections based on user role
+                    $user = Auth::user();
+                    $isRevisor = $user->hasRole('revisor_1');
+                    $tipoPersona = $isRevisor ? null : ($user->solicitante->tipo_persona ?? null);
+                    $secciones = $isRevisor ? [1, 2, 3, 4, 5, 6, 7] : ($tipoPersona === 'Física' ? [1, 2, 6, 7] : [1, 2, 3, 4, 5, 6, 7]);
                     $titulosSecciones = [
                         1 => 'Datos Generales',
                         2 => 'Domicilio',

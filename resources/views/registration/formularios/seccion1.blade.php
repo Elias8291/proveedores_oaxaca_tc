@@ -1,14 +1,25 @@
+
 <form id="formulario1">
     <div class="form-section" id="form-step-1">
         <h4><i class="fas fa-building"></i> Datos Generales</h4>
         <div class="form-group horizontal-group">
             <div class="half-width">
                 <label class="form-label data-label">Tipo de Proveedor</label>
-                <span class="data-field">{{ Auth::user()->solicitante->tipo_persona ?? 'No disponible' }}</span>
+                @if (Auth::user()->hasRole('solicitante'))
+                    <span class="data-field">{{ Auth::user()->solicitante->tipo_persona ?? 'No disponible' }}</span>
+                @else
+                    <input type="text" name="tipo_persona" id="tipo_persona" class="form-control" placeholder="Ej. Física o Moral" required maxlength="20">
+                    <p class="formulario__input-error">El tipo de proveedor debe ser 'Física' o 'Moral'.</p>
+                @endif
             </div>
             <div class="half-width">
                 <label class="form-label data-label">RFC</label>
-                <span class="data-field">{{ Auth::user()->rfc ?? 'No disponible' }}</span>
+                @if (Auth::user()->hasRole('solicitante'))
+                    <span class="data-field">{{ Auth::user()->rfc ?? 'No disponible' }}</span>
+                @else
+                    <input type="text" name="rfc" id="rfc" class="form-control" placeholder="Ej. XAXX010101000" required maxlength="13" pattern="[A-Z0-9]{12,13}">
+                    <p class="formulario__input-error">El RFC debe tener 12 o 13 caracteres alfanuméricos.</p>
+                @endif
             </div>
         </div>
         <div class="form-group full-width" id="formulario__grupo--sectores">
@@ -31,10 +42,10 @@
         <div class="form-group full-width" id="actividades-seleccionadas-container">
             <label class="form-label">Actividades Seleccionadas</label>
             <div id="actividades-seleccionadas" class="actividades-container">
-                <!-- Hardcoded activity removed -->
+                <!-- Actividades seleccionadas se añadirán aquí dinámicamente -->
             </div>
         </div>
-        @if (Auth::user()->solicitante && Auth::user()->solicitante->tipo_persona == 'Física')
+        @if (Auth::user()->hasRole('solicitante') && Auth::user()->solicitante && Auth::user()->solicitante->tipo_persona == 'Física')
             <div class="form-group">
                 <label class="form-label data-label">CURP</label>
                 <span class="data-field">{{ Auth::user()->solicitante->curp ?? 'No disponible' }}</span>
@@ -43,7 +54,7 @@
         <div class="horizontal-group">
             <div class="half-width form-group" id="formulario__grupo--contacto_telefono">
                 <label class="form-label" for="contacto_telefono">Teléfono de Contacto</label>
-                <input type="tel" id="contacto_telefono" name="contacto_telefono" class="form-control">
+                <input type="tel" id="contacto_telefono" name="contacto_telefono" class="form-control" required pattern="[0-9]{10}">
                 <p class="formulario__input-error">El teléfono debe contener exactamente 10 dígitos numéricos.</p>
             </div>
             <div class="half-width form-group" id="formulario__grupo--contacto_web">
@@ -56,26 +67,27 @@
         <span>Persona encargada de recibir solicitudes y requerimientos</span>
         <div class="form-group" id="formulario__grupo--contacto_nombre">
             <label class="form-label" for="contacto_nombre">Nombre Completo</label>
-            <input type="text" id="contacto_nombre" name="contacto_nombre" class="form-control">
+            <input type="text" id="contacto_nombre" name="contacto_nombre" class="form-control" required maxlength="40" pattern="[A-Za-z\s]+">
             <p class="formulario__input-error">El nombre debe contener solo letras y espacios, máximo 40 caracteres.</p>
         </div>
         <div class="form-group" id="formulario__grupo--contacto_cargo">
             <label class="form-label" for="contacto_cargo">Cargo o Puesto</label>
-            <input type="text" id="contacto_cargo" name="contacto_cargo" class="form-control">
+            <input type="text" id="contacto_cargo" name="contacto_cargo" class="form-control" required maxlength="50" pattern="[A-Za-z\s]+">
             <p class="formulario__input-error">El cargo debe contener solo letras y espacios, máximo 50 caracteres.</p>
         </div>
         <div class="form-group" id="formulario__grupo--contacto_correo">
             <label class="form-label" for="contacto_correo">Correo Electrónico</label>
-            <input type="email" id="contacto_correo" name="contacto_correo" class="form-control">
+            <input type="email" id="contacto_correo" name="contacto_correo" class="form-control" required>
             <p class="formulario__input-error">El correo debe tener un formato válido (ej. usuario@dominio.com).</p>
         </div>
         <div class="form-group" id="formulario__grupo--contacto_telefono_2">
             <label class="form-label" for="contacto_telefono_2">Teléfono de Contacto 2</label>
-            <input type="tel" id="contacto_telefono_2" name="contacto_telefono_2" class="form-control">
+            <input type="tel" id="contacto_telefono_2" name="contacto_telefono_2" class="form-control" required pattern="[0-9]{10}">
             <p class="formulario__input-error">El teléfono debe contener exactamente 10 dígitos numéricos.</p>
         </div>
     </div>
 </form>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const sectorSelect = document.getElementById('sectores');
@@ -83,30 +95,25 @@
         const actividadesContainer = document.getElementById('actividades-seleccionadas');
         const actividadesSeleccionadas = new Set();
         let actividadesDisponibles = [];
-        let actividadesIds = []; // Array para almacenar los IDs de actividades seleccionadas
+        let actividadesIds = [];
 
-        // Evento cuando cambia el sector
         sectorSelect.addEventListener('change', function() {
             const sectorId = this.value;
-
-            // Limpiar actividades seleccionadas y array de IDs
             actividadesSeleccionadas.clear();
             actividadesIds = [];
-            console.log('Actividades IDs:', actividadesIds); // Mostrar arreglo vacío en consola
-            actividadesContainer.innerHTML = ''; // Limpiar contenedor de actividades
+            console.log('Actividades IDs:', actividadesIds);
+            actividadesContainer.innerHTML = '';
 
             if (sectorId) {
-                // Limpiar dropdown de actividades
                 actividadSelect.innerHTML = '<option value="">Seleccione una actividad</option>';
                 actividadesDisponibles = [];
 
-                // Hacer petición AJAX para obtener las actividades del sector seleccionado
                 fetch(`/sectores/${sectorId}/actividades`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.success && data.data.length > 0) {
-                            actividadesDisponibles = data.data; // Guardamos todas las actividades
-                            updateActividadesDropdown(); // Actualizamos el dropdown
+                            actividadesDisponibles = data.data;
+                            updateActividadesDropdown();
                         }
                     })
                     .catch(error => {
@@ -117,16 +124,11 @@
                 actividadesDisponibles = [];
             }
 
-            // Validar actividades después de limpiar
             validateActividades();
         });
 
-        // Función para actualizar las opciones del dropdown de actividades
         function updateActividadesDropdown() {
-            // Limpiar el select
             actividadSelect.innerHTML = '<option value="">Seleccione una actividad</option>';
-
-            // Agregar solo las actividades que no estén seleccionadas
             actividadesDisponibles.forEach(actividad => {
                 if (!actividadesSeleccionadas.has(actividad.id.toString())) {
                     const option = document.createElement('option');
@@ -137,15 +139,14 @@
             });
         }
 
-        // Evento cuando se selecciona una actividad
         actividadSelect.addEventListener('change', function() {
             const selectedValue = actividadSelect.value;
             const selectedText = actividadSelect.options[actividadSelect.selectedIndex].text;
 
             if (selectedValue && !actividadesSeleccionadas.has(selectedValue)) {
                 actividadesSeleccionadas.add(selectedValue);
-                actividadesIds.push(selectedValue); // Agregar ID al arreglo
-                console.log('Actividades IDs:', actividadesIds); // Mostrar arreglo en consola
+                actividadesIds.push(selectedValue);
+                console.log('Actividades IDs:', actividadesIds);
 
                 const actividadItem = document.createElement('div');
                 actividadItem.classList.add('actividad-item');
@@ -156,26 +157,22 @@
                 `;
                 actividadesContainer.appendChild(actividadItem);
 
-                // Evento para eliminar actividad
                 actividadItem.querySelector('.remove-actividad').addEventListener('click', function() {
                     actividadesSeleccionadas.delete(selectedValue);
-                    actividadesIds = actividadesIds.filter(id => id !== selectedValue); // Eliminar ID del arreglo
-                    console.log('Actividades IDs:', actividadesIds); // Mostrar arreglo actualizado
+                    actividadesIds = actividadesIds.filter(id => id !== selectedValue);
+                    console.log('Actividades IDs:', actividadesIds);
                     actividadItem.remove();
                     validateActividades();
                     updateActividadesDropdown();
                 });
 
-                // Resetear el select y actualizar opciones
                 actividadSelect.value = '';
                 updateActividadesDropdown();
             }
 
-            // Validar actividades después de agregar
             validateActividades();
         });
 
-        // Función para validar actividades
         function validateActividades() {
             const errorElement = document.querySelector('#formulario__grupo--actividades .formulario__input-error');
             if (actividadesSeleccionadas.size === 0) {

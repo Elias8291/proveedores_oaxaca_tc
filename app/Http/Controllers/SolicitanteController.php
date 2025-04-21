@@ -9,16 +9,15 @@ use App\Models\Direccion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class SolicitanteController extends Controller
 {
+    // Registra un nuevo solicitante con sus datos básicos, dirección y archivo SAT
     public function register(Request $request)
     {
         try {
-            // Validate request with custom error messages
             $request->validate([
                 'sat_file' => 'required|file|mimes:pdf|max:5120',
                 'email' => 'required|email|unique:users,email',
@@ -26,7 +25,7 @@ class SolicitanteController extends Controller
                 'rfc' => 'required|string|max:255|unique:users,rfc',
                 'tipo_persona' => 'required|in:Física,Moral',
                 'codigo_postal' => 'required|integer',
-                'curp' => 'nullable|string|regex:/^[A-Z0-9]{18}$/', // Optional CURP, 18 alphanumeric characters
+                'curp' => 'nullable|string|regex:/^[A-Z0-9]{18}$/',
             ], [
                 'sat_file.required' => 'El archivo SAT es obligatorio.',
                 'sat_file.mimes' => 'El archivo SAT debe ser un PDF.',
@@ -48,25 +47,21 @@ class SolicitanteController extends Controller
 
             DB::beginTransaction();
 
-            // Create user
             $user = new User();
             $user->name = $request->nombre;
             $user->email = $request->email;
-            $user->password = Hash::make('ZDYPNFHUSCED'); // Fixed password
+            $user->password = Hash::make('ZDYPNFHUSCED');
             $user->rfc = $request->rfc;
             $user->ultimo_acceso = null;
             $user->status = 'active';
             $user->save();
 
-            // Assign the 'solicitante' role (ID 2)
             $user->assignRole('solicitante');
 
-            // Create address
             $direccion = new Direccion();
             $direccion->codigo_postal = $request->codigo_postal;
             $direccion->save();
 
-            // Create solicitante
             $solicitante = new Solicitante();
             $solicitante->user_id = $user->id;
             $solicitante->email = $request->email;
@@ -74,7 +69,7 @@ class SolicitanteController extends Controller
             $solicitante->sitio_web = null;
             $solicitante->razon_social = $request->tipo_persona === 'Moral' ? $request->nombre : $request->nombre;
             $solicitante->tipo_persona = $request->tipo_persona;
-            $solicitante->curp = $request->tipo_persona === 'Física' && $request->curp ? $request->curp : null; // Save CURP only for Física if provided
+            $solicitante->curp = $request->tipo_persona === 'Física' && $request->curp ? $request->curp : null;
             $solicitante->direccion_id = $direccion->id;
             $solicitante->contacto_id = null;
             $solicitante->representante_legal_id = null;
@@ -86,13 +81,12 @@ class SolicitanteController extends Controller
 
             DB::commit();
 
-            // Log successful registration
             Log::info('User registered successfully', [
                 'user_id' => $user->id,
                 'email' => $user->email,
                 'rfc' => $user->rfc,
-                'curp' => $solicitante->curp, // Log CURP if saved
-                'role' => 'solicitante', // Log the assigned role
+                'curp' => $solicitante->curp,
+                'role' => 'solicitante',
             ]);
 
             return response()->json([
@@ -105,7 +99,6 @@ class SolicitanteController extends Controller
             $errors = $e->errors();
             $message = 'Errores de validación.';
 
-            // Customize message for duplicate RFC or email
             if (isset($errors['rfc']) && in_array('El RFC ya está registrado. No puedes registrar este RFC nuevamente.', $errors['rfc'])) {
                 $message = 'El RFC ya está registrado. No puedes registrar este RFC nuevamente.';
             } elseif (isset($errors['email']) && in_array('El correo electrónico ya está registrado. Por favor, usa otro correo.', $errors['email'])) {
@@ -132,21 +125,25 @@ class SolicitanteController extends Controller
         }
     }
 
-    // Muestra la página inicial de registro o redirige según el progreso del solicitante.
+    // Determina la vista inicial de registro o redirige según el estado del solicitante
     public function showRegistrationIndex()
     {
         $user = Auth::user();
         if (!$user) return redirect()->route('login');
-
+    
+        if ($user->hasRole('revisor_1')) {
+            return redirect()->route('registration.formularios.formularios');
+        }
+    
         $solicitante = Solicitante::where('user_id', $user->id)->first();
         if ($solicitante && $solicitante->numero_seccion >= 1) {
             return redirect()->route('registration.formularios.formularios');
         }
-
+    
         return view('registration.terminos_condiciones');
-    } 
+    }
 
-    // Obtiene los datos del solicitante autenticado para su uso en formularios.
+    // Proporciona los datos del solicitante autenticado para su uso en formularios
     public function getSolicitanteData(Request $request)
     {
         $user = Auth::user();
@@ -162,7 +159,7 @@ class SolicitanteController extends Controller
         ]);
     }
 
-    // Valida la aceptación de términos y avanza el progreso del solicitante al formulario 1.
+    // Valida la aceptación de términos y avanza al primer formulario
     public function proceedToForm1(Request $request)
     {
         $user = Auth::user();
@@ -177,7 +174,7 @@ class SolicitanteController extends Controller
         }
     }
 
-    // Muestra el formulario 1 de registro con datos del solicitante autenticado.
+    // Muestra el primer formulario de registro con datos del solicitante
     public function showForm1()
     {
         $user = Auth::user();
@@ -188,13 +185,22 @@ class SolicitanteController extends Controller
         ]);
     }
 
-    // Obtiene los datos de dirección del solicitante, incluyendo asentamientos y detalles geográficos.
+    // Obtiene los datos de dirección del solicitante, incluyendo información geográfica
     public function getDireccionData(Request $request)
     {
         $user = Auth::user();
         if (!$user) {
             Log::warning('Intento de acceso a getDireccionData sin autenticación', ['ip' => $request->ip()]);
             return response()->json(['error' => 'Usuario no autenticado'], 401);
+        }
+    
+        if ($user->hasRole('revisor_1')) {
+            return response()->json([
+                'codigo_postal' => '',
+                'estado' => '',
+                'municipio' => '',
+                'asentamientos' => []
+            ]);
         }
     
         $solicitante = Solicitante::with('direccion')->where('user_id', $user->id)->first();
@@ -213,7 +219,6 @@ class SolicitanteController extends Controller
             ]);
         }
     
-        // Fetch geographic data based on codigo_postal
         $data = DB::table('asentamientos')
             ->join('localidades', 'asentamientos.localidad_id', '=', 'localidades.id')
             ->join('municipios', 'localidades.municipio_id', '=', 'municipios.id')
@@ -239,11 +244,9 @@ class SolicitanteController extends Controller
             ]);
         }
     
-        // Split the comma-separated asentamientos and their IDs
         $asentamientoIds = explode(',', $data->asentamiento_ids);
         $asentamientos = explode(',', $data->asentamientos);
     
-        // Combine into an array of objects
         $asentamientosList = array_map(function ($id, $nombre) {
             return ['id' => $id, 'nombre' => $nombre];
         }, $asentamientoIds, $asentamientos);
@@ -256,7 +259,7 @@ class SolicitanteController extends Controller
         ]);
     }
 
-    // Valida la aceptación de términos y condiciones y avanza al formulario de registro.
+    // Procesa la aceptación de términos y condiciones para avanzar en el registro
     public function acceptTerms(Request $request)
     {
         $user = Auth::user();
