@@ -5,20 +5,20 @@
             <div class="half-width form-group" id="formulario__grupo--codigo_postal">
                 <label class="form-label data-label">Código Postal</label>
                 @if (Auth::user()->hasRole('solicitante'))
-                    <span class="data-field" id="codigo_postal_display">{{ Auth::user()->solicitante->codigo_postal ?? 'No disponible' }}</span>
-                    <input type="hidden" id="codigo_postal" name="codigo_postal" value="{{ Auth::user()->solicitante->codigo_postal ?? '' }}">
+                    <span class="data-field" id="codigo_postal_display">{{ Auth::user()->solicitante->direccion->codigo_postal ?? 'No disponible' }}</span>
+                    <input type="hidden" id="codigo_postal" name="codigo_postal" value="{{ Auth::user()->solicitante->direccion->codigo_postal ?? '' }}">
                 @else
-                    <input type="text" id="codigo_postal" name="codigo_postal" class="form-control" placeholder="Ej: 12345" required pattern="[0-9]{5}" maxlength="5" value="{{ Auth::user()->solicitante->codigo_postal ?? '' }}">
+                    <input type="text" id="codigo_postal" name="codigo_postal" class="form-control" placeholder="Ej: 12345" required pattern="[0-9]{5}" maxlength="5" value="">
                     <p class="formulario__input-error">El código postal debe contener exactamente 5 dígitos numéricos.</p>
                 @endif
             </div>
             <div class="half-width form-group" id="formulario__grupo--estado">
                 <label class="form-label data-label">Estado</label>
                 @if (Auth::user()->hasRole('solicitante'))
-                    <span class="data-field" id="estado_display">{{ Auth::user()->solicitante->estado ?? 'No disponible' }}</span>
-                    <input type="hidden" id="estado" name="estado" value="{{ Auth::user()->solicitante->estado ?? '' }}">
+                    <span class="data-field" id="estado_display">{{ Auth::user()->solicitante->direccion->estado ?? 'No disponible' }}</span>
+                    <input type="hidden" id="estado" name="estado" value="{{ Auth::user()->solicitante->direccion->estado ?? '' }}">
                 @else
-                    <input type="text" id="estado" name="estado" class="form-control" placeholder="Ej: Jalisco" required maxlength="100" pattern="[A-Za-z\s]+" value="{{ Auth::user()->solicitante->estado ?? '' }}">
+                    <input type="text" id="estado" name="estado" class="form-control" placeholder="Ej: Jalisco" readonly value="">
                     <p class="formulario__input-error">El estado debe contener solo letras y espacios, máximo 100 caracteres.</p>
                 @endif
             </div>
@@ -27,10 +27,10 @@
             <div class="half-width form-group" id="formulario__grupo--municipio">
                 <label class="form-label data-label">Municipio</label>
                 @if (Auth::user()->hasRole('solicitante'))
-                    <span class="data-field" id="municipio_display">{{ Auth::user()->solicitante->municipio ?? 'No disponible' }}</span>
-                    <input type="hidden" id="municipio" name="municipio" value="{{ Auth::user()->solicitante->municipio ?? '' }}">
+                    <span class="data-field" id="municipio_display">{{ Auth::user()->solicitante->direccion->municipio ?? 'No disponible' }}</span>
+                    <input type="hidden" id="municipio" name="municipio" value="{{ Auth::user()->solicitante->direccion->municipio ?? '' }}">
                 @else
-                    <input type="text" id="municipio" name="municipio" class="form-control" placeholder="Ej: Guadalajara" required maxlength="100" pattern="[A-Za-z\s]+" value="{{ Auth::user()->solicitante->municipio ?? '' }}">
+                    <input type="text" id="municipio" name="municipio" class="form-control" placeholder="Ej: Guadalajara" readonly value="">
                     <p class="formulario__input-error">El municipio debe contener solo letras y espacios, máximo 100 caracteres.</p>
                 @endif
             </div>
@@ -74,73 +74,123 @@
     </div>
 </form>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-        const isSolicitante = @json(Auth::user()->hasRole('solicitante'));
-    
+  document.addEventListener('DOMContentLoaded', function () {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    const isSolicitante = @json(Auth::user()->hasRole('solicitante'));
+
+    // Function to populate fields with data
+    function populateAddressFields(data) {
+        // Populate estado
+        document.getElementById('estado').value = data.estado || '';
         if (isSolicitante) {
-            fetch('/solicitante/direccion-data', {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.error) {
-                    console.error('Error from server:', data.error);
-                    return;
-                }
-    
-                // Populate postal code
-                document.getElementById('codigo_postal_display').textContent = data.codigo_postal || 'No disponible';
-                document.getElementById('codigo_postal').value = data.codigo_postal || '';
-    
-                // Populate estado
-                document.getElementById('estado_display').textContent = data.estado || 'No disponible';
-                document.getElementById('estado').value = data.estado || '';
-    
-                // Populate municipio
-                document.getElementById('municipio_display').textContent = data.municipio || 'No disponible';
-                document.getElementById('municipio').value = data.municipio || '';
-    
-                // Populate asentamientos dropdown
-                const coloniaSelect = document.getElementById('colonia');
-                coloniaSelect.innerHTML = '<option value="">Seleccione un Asentamiento</option>';
-                if (data.asentamientos && data.asentamientos.length > 0) {
-                    data.asentamientos.forEach(asentamiento => {
-                        const option = document.createElement('option');
-                        option.value = asentamiento.id; // Use ID for submission
-                        option.textContent = asentamiento.nombre;
-                        if (data.colonia && asentamiento.id == data.colonia) {
-                            option.selected = true;
-                        }
-                        coloniaSelect.appendChild(option);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error al cargar datos de dirección:', error);
-                // Reset fields on error
-                document.getElementById('codigo_postal_display').textContent = 'No disponible';
-                document.getElementById('codigo_postal').value = '';
-                document.getElementById('estado_display').textContent = 'No disponible';
-                document.getElementById('estado').value = '';
-                document.getElementById('municipio_display').textContent = 'No disponible';
-                document.getElementById('municipio').value = '';
-                document.getElementById('colonia').innerHTML = '<option value="">Seleccione un Asentamiento</option>';
-            });
-        } else {
-            // For revisor_1, initialize colonia dropdown as empty
-            const coloniaSelect = document.getElementById('colonia');
-            coloniaSelect.innerHTML = '<option value="">Seleccione un Asentamiento</option>';
+            document.getElementById('estado_display').textContent = data.estado || 'No disponible';
         }
-    });
+
+        // Populate municipio
+        document.getElementById('municipio').value = data.municipio || '';
+        if (isSolicitante) {
+            document.getElementById('municipio_display').textContent = data.municipio || 'No disponible';
+        }
+
+        // Populate asentamientos dropdown
+        const coloniaSelect = document.getElementById('colonia');
+        coloniaSelect.innerHTML = '<option value="">Seleccione un Asentamiento</option>';
+        if (data.asentamientos && data.asentamientos.length > 0) {
+            data.asentamientos.forEach(asentamiento => {
+                const option = document.createElement('option');
+                option.value = asentamiento.id; // Use ID for submission
+                option.textContent = asentamiento.nombre;
+                coloniaSelect.appendChild(option);
+            });
+        }
+    }
+
+    // Function to reset fields on error or invalid input
+    function resetAddressFields() {
+        document.getElementById('estado').value = '';
+        document.getElementById('municipio').value = '';
+        if (isSolicitante) {
+            document.getElementById('estado_display').textContent = 'No disponible';
+            document.getElementById('municipio_display').textContent = 'No disponible';
+        }
+        const coloniaSelect = document.getElementById('colonia');
+        coloniaSelect.innerHTML = '<option value="">Seleccione un Asentamiento</option>';
+    }
+
+    if (isSolicitante) {
+        // Existing logic for solicitante
+        fetch('/solicitante/direccion-data', {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                console.error('Error from server:', data.error);
+                resetAddressFields();
+                return;
+            }
+
+            // Populate postal code
+            document.getElementById('codigo_postal_display').textContent = data.codigo_postal || 'No disponible';
+            document.getElementById('codigo_postal').value = data.codigo_postal || '';
+
+            populateAddressFields(data);
+        })
+        .catch(error => {
+            console.error('Error al cargar datos de dirección:', error);
+            resetAddressFields();
+        });
+    } else {
+        // Logic for revisor_1
+        const codigoPostalInput = document.getElementById('codigo_postal');
+        
+        codigoPostalInput.addEventListener('input', function () {
+            const codigoPostal = this.value;
+
+            // Only trigger search if exactly 5 digits
+            if (codigoPostal.length === 5 && /^\d{5}$/.test(codigoPostal)) {
+                fetch(`/solicitante/direccion-data?codigo_postal=${codigoPostal}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error from server:', data.error);
+                        resetAddressFields();
+                        return;
+                    }
+
+                    populateAddressFields(data);
+                })
+                .catch(error => {
+                    console.error('Error al buscar datos de dirección:', error);
+                    resetAddressFields();
+                });
+            } else {
+                // Reset fields if input is not 5 digits
+                resetAddressFields();
+            }
+        });
+    }
+});
     </script>

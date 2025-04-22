@@ -98,6 +98,9 @@ export async function scrapeSATData(qrUrl) {
     }
 }
 
+// Make scrapeSATData globally available
+window.scrapeSATData = scrapeSATData;
+
 // Display SAT data in a modal
 export function showSATDataModal(satData, qrUrl) {
     console.log('showSATDataModal called with:', { satData, qrUrl }); // Debug log
@@ -171,3 +174,6 @@ export function showSATDataModal(satData, qrUrl) {
         throw new Error(`Failed to create modal: ${error.message}`);
     }
 }
+
+// Make showSATDataModal globally available
+window.showSATDataModal = showSATDataModal;

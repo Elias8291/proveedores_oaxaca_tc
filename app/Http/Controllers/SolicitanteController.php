@@ -186,15 +186,28 @@ class SolicitanteController extends Controller
     }
 
     // Obtiene los datos de dirección del solicitante, incluyendo información geográfica
-    public function getDireccionData(Request $request)
-    {
-        $user = Auth::user();
-        if (!$user) {
-            Log::warning('Intento de acceso a getDireccionData sin autenticación', ['ip' => $request->ip()]);
-            return response()->json(['error' => 'Usuario no autenticado'], 401);
-        }
-    
-        if ($user->hasRole('revisor_1')) {
+   // Obtiene los datos de dirección del solicitante o basados en un código postal proporcionado
+public function getDireccionData(Request $request)
+{
+    $user = Auth::user();
+    if (!$user) {
+        Log::warning('Intento de acceso a getDireccionData sin autenticación', ['ip' => $request->ip()]);
+        return response()->json(['error' => 'Usuario no autenticado'], 401);
+    }
+
+    $codigoPostal = null;
+    $solicitante = null;
+
+    if ($user->hasRole('revisor_1')) {
+        // For revisor_1, use the provided codigo_postal
+        $request->validate([
+            'codigo_postal' => 'nullable|digits:5',
+        ], [
+            'codigo_postal.digits' => 'El código postal debe contener exactamente 5 dígitos.',
+        ]);
+
+        $codigoPostal = $request->input('codigo_postal');
+        if (!$codigoPostal) {
             return response()->json([
                 'codigo_postal' => '',
                 'estado' => '',
@@ -202,14 +215,14 @@ class SolicitanteController extends Controller
                 'asentamientos' => []
             ]);
         }
-    
+    } else {
+        // For solicitante, use the stored codigo_postal
         $solicitante = Solicitante::with('direccion')->where('user_id', $user->id)->first();
-    
         if (!$solicitante) {
             Log::error('Solicitante no encontrado para user_id: ' . $user->id);
             return response()->json(['error' => 'Solicitante no encontrado'], 404);
         }
-    
+
         if (!$solicitante->direccion || !$solicitante->direccion->codigo_postal) {
             return response()->json([
                 'codigo_postal' => '',
@@ -218,46 +231,49 @@ class SolicitanteController extends Controller
                 'asentamientos' => []
             ]);
         }
-    
-        $data = DB::table('asentamientos')
-            ->join('localidades', 'asentamientos.localidad_id', '=', 'localidades.id')
-            ->join('municipios', 'localidades.municipio_id', '=', 'municipios.id')
-            ->join('estados', 'municipios.estado_id', '=', 'estados.id')
-            ->join('paises', 'estados.id_pais', '=', 'paises.id')
-            ->where('asentamientos.codigo_postal', $solicitante->direccion->codigo_postal)
-            ->select(
-                'paises.nombre as pais',
-                'estados.nombre as estado',
-                'municipios.nombre as municipio',
-                DB::raw('GROUP_CONCAT(asentamientos.id) as asentamiento_ids'),
-                DB::raw('GROUP_CONCAT(asentamientos.nombre) as asentamientos')
-            )
-            ->groupBy('paises.nombre', 'estados.nombre', 'municipios.nombre')
-            ->first();
-    
-        if (!$data) {
-            return response()->json([
-                'codigo_postal' => $solicitante->direccion->codigo_postal,
-                'estado' => '',
-                'municipio' => '',
-                'asentamientos' => []
-            ]);
-        }
-    
-        $asentamientoIds = explode(',', $data->asentamiento_ids);
-        $asentamientos = explode(',', $data->asentamientos);
-    
-        $asentamientosList = array_map(function ($id, $nombre) {
-            return ['id' => $id, 'nombre' => $nombre];
-        }, $asentamientoIds, $asentamientos);
-    
+
+        $codigoPostal = $solicitante->direccion->codigo_postal;
+    }
+
+    $data = DB::table('asentamientos')
+        ->join('localidades', 'asentamientos.localidad_id', '=', 'localidades.id')
+        ->join('municipios', 'localidades.municipio_id', '=', 'municipios.id')
+        ->join('estados', 'municipios.estado_id', '=', 'estados.id')
+        ->join('paises', 'estados.id_pais', '=', 'paises.id')
+        ->where('asentamientos.codigo_postal', $codigoPostal)
+        ->select(
+            'paises.nombre as pais',
+            'estados.nombre as estado',
+            'municipios.nombre as municipio',
+            DB::raw('GROUP_CONCAT(asentamientos.id) as asentamiento_ids'),
+            DB::raw('GROUP_CONCAT(asentamientos.nombre) as asentamientos')
+        )
+        ->groupBy('paises.nombre', 'estados.nombre', 'municipios.nombre')
+        ->first();
+
+    if (!$data) {
         return response()->json([
-            'codigo_postal' => $solicitante->direccion->codigo_postal,
-            'estado' => $data->estado,
-            'municipio' => $data->municipio,
-            'asentamientos' => $asentamientosList
+            'codigo_postal' => $codigoPostal,
+            'estado' => '',
+            'municipio' => '',
+            'asentamientos' => []
         ]);
     }
+
+    $asentamientoIds = explode(',', $data->asentamiento_ids);
+    $asentamientos = explode(',', $data->asentamientos);
+
+    $asentamientosList = array_map(function ($id, $nombre) {
+        return ['id' => $id, 'nombre' => $nombre];
+    }, $asentamientoIds, $asentamientos);
+
+    return response()->json([
+        'codigo_postal' => $codigoPostal,
+        'estado' => $data->estado,
+        'municipio' => $data->municipio,
+        'asentamientos' => $asentamientosList
+    ]);
+}
 
     // Procesa la aceptación de términos y condiciones para avanzar en el registro
     public function acceptTerms(Request $request)

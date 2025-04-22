@@ -1,15 +1,26 @@
 <form id="formulario1">
     <!-- Sección para subir Constancia de Situación Fiscal, visible solo para revisor_1 -->
     @if (Auth::user()->hasRole('revisor_1'))
-        <div class="form-section" id="constancia-upload-section">
-            <h4><i class="fas fa-file-pdf"></i> Subir Constancia de Situación Fiscal</h4>
-            <div class="form-group full-width" id="formulario__grupo--constancia">
-                <label class="form-label" for="constancia_upload">Seleccionar Constancia de Situación Fiscal (PDF)</label>
-                <input type="file" id="constancia_upload" name="constancia_upload" class="form-control"
-                    accept="application/pdf" required>
-                <p class="formulario__input-error">Debe seleccionar un archivo en formato PDF.</p>
+    <div class="form-section" id="constancia-upload-section">
+        <h4><i class="fas fa-file-pdf"></i> Subir Constancia de Situación Fiscal</h4>
+        <div class="form-group full-width" id="formulario__grupo--constancia">
+            <label class="form-label" for="constancia_upload">
+                <span>Seleccionar Constancia de Situación Fiscal</span>
+                <span class="file-desc">Formato PDF, máximo 5MB</span>
+            </label>
+            <input type="file" id="constancia_upload" name="constancia_upload" class="form-control"
+                accept="application/pdf" required>
+            <p class="formulario__input-error">Debe seleccionar un archivo en formato PDF.</p>
+            <!-- Contenedor para confirmación de subida y vista previa -->
+            <div class="pdf-preview-container" id="upload-feedback" style="display: none;">
+                <i class="fas fa-file-pdf pdf-icon"></i>
+                <span class="pdf-name upload-success">PDF subido correctamente</span>
+                <button class="view-pdf-btn preview-pdf" id="preview-pdf" title="Ver PDF">
+                    <i class="fas fa-eye"></i> Ver PDF
+                </button>
             </div>
         </div>
+    </div>
     @endif
 
     <!-- Resto del formulario -->
@@ -20,7 +31,7 @@
                 <label class="form-label data-label">Tipo de Proveedor</label>
                 @if (Auth::user()->hasRole('solicitante'))
                     <span class="data-field">{{ Auth::user()->solicitante->tipo_persona ?? 'No disponible' }}</span>
-                    @else
+                @else
                     <select name="tipo_persona" id="tipo_persona" class="form-control" required>
                         <option value="">Seleccione un tipo</option>
                         <option value="Física">Física</option>
@@ -82,12 +93,11 @@
                 <!-- Actividades seleccionadas se añadirán aquí dinámicamente -->
             </div>
         </div>
-        @if (Auth::user()->hasRole('solicitante') &&
-                Auth::user()->solicitante &&
-                Auth::user()->solicitante->tipo_persona == 'Física')
-            <div class="form-group">
+        <!-- CURP field, initially hidden for revisor_1, shown dynamically if tipo_persona is Física -->
+        @if (Auth::user()->hasRole('revisor_1') || (Auth::user()->hasRole('solicitante') && Auth::user()->solicitante && Auth::user()->solicitante->tipo_persona == 'Física'))
+            <div class="form-group" id="curp-field" style="display: none;">
                 <label class="form-label data-label">CURP</label>
-                <span class="data-field">{{ Auth::user()->solicitante->curp ?? 'No disponible' }}</span>
+                <span class="data-field" id="curp-value">{{ Auth::user()->solicitante->curp ?? 'No disponible' }}</span>
             </div>
         @endif
         <div class="horizontal-group">
@@ -133,87 +143,76 @@
         </div>
     </div>
 </form>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Validación para el campo de subida de Constancia de Situación Fiscal
-        const constanciaInput = document.getElementById('constancia_upload');
-        if (constanciaInput) {
-            constanciaInput.addEventListener('change', async function() {
-                const file = this.files[0];
-                const errorElement = document.querySelector(
-                    '#formulario__grupo--constancia .formulario__input-error');
-
-                if (!file) {
-                    errorElement.style.display = 'block';
-                    return;
-                }
-
-                if (file.type !== 'application/pdf') {
-                    errorElement.style.display = 'block';
-                    this.value = ''; // Limpiar archivo inválido
-                    return;
-                }
-
-                errorElement.style.display = 'none';
-
-                // Process the PDF and scrape SAT data
-                try {
-                    const loading = createModal({
-                        html: createSpinner()
-                    });
-                    const pdfData = await extractQRCodeFromPDF(file);
-                    const satData = await scrapeSATData(pdfData.qrUrl);
-                    document.body.removeChild(loading);
-
-                    // Autocomplete form fields
-                    autocompleteFormFields(pdfData, satData);
-                } catch (error) {
-                    document.body.removeChild(loading);
-                    showError(`Error al procesar el PDF: ${error.message}`);
-                    this.value = ''; // Clear invalid file
-                }
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para actualizar la visibilidad de los campos del formulario según tipo_persona
+    function updateFormVisibility(tipoPersona) {
+        const curpField = document.getElementById('curp-field');
+        if (curpField) {
+            if (tipoPersona === 'Física') {
+                curpField.style.display = 'block';
+            } else {
+                curpField.style.display = 'none';
+            }
         }
+    }
 
-        // Función para autocompletar los campos del formulario
-        function autocompleteFormFields(pdfData, satData) {
-            const isRevisor = !!document.getElementById('constancia_upload'); // Check if user is revisor_1
-            const nombre = pdfData.tipo === 'Moral' ? satData.razonSocial || pdfData.name : satData
-                .nombreCompleto || pdfData.name;
+    // Función para autocompletar los campos del formulario
+    function autocompleteFormFields(pdfData, satData) {
+        const isRevisor = !!document.getElementById('constancia_upload');
 
-            // Map of form field IDs to their corresponding values
-            const fieldMappings = {
-                tipo_persona: pdfData.tipo || '',
-                rfc: pdfData.rfc || '',
-                contacto_correo: satData.email?.toUpperCase() || '',
-                contacto_nombre: nombre?.toUpperCase() || '',
-            };
+        const fieldMappings = {
+            tipo_persona: pdfData.tipo || '',
+            rfc: pdfData.rfc || '',
+            razon_social: satData.razonSocial?.toUpperCase() || '',
+            correo_electronico: satData.email?.toUpperCase() || ''
+        };
 
-            // Populate form fields
-            Object.entries(fieldMappings).forEach(([fieldId, value]) => {
-                const element = document.getElementById(fieldId);
-                if (element && isRevisor && element.tagName === 'INPUT') {
+        Object.entries(fieldMappings).forEach(([fieldId, value]) => {
+            const element = document.getElementById(fieldId);
+            if (element && isRevisor) {
+                if (element.tagName === 'INPUT') {
+                    element.value = value;
+                } else if (element.tagName === 'SELECT') {
                     element.value = value;
                 }
-            });
+            }
+        });
 
-            // Handle CURP for Persona Física
-            if (pdfData.tipo === 'Física' && satData.curp) {
-                const curpField = document.querySelector('.data-field[data-field="curp"]');
-                if (curpField) {
-                    curpField.textContent = satData.curp.toUpperCase() || 'No disponible';
-                }
+        if (pdfData.tipo === 'Física' && satData.curp) {
+            const curpField = document.querySelector('.data-field#curp-value');
+            if (curpField) {
+                curpField.textContent = satData.curp.toUpperCase() || 'No disponible';
             }
         }
 
-        // Código existente para sectores y actividades
-        const sectorSelect = document.getElementById('sectores');
-        const actividadSelect = document.getElementById('actividad');
-        const actividadesContainer = document.getElementById('actividades-seleccionadas');
-        const actividadesSeleccionadas = new Set();
-        let actividadesDisponibles = [];
-        let actividadesIds = [];
+        // Actualizar visibilidad del formulario y secciones después de autocompletar tipo_persona
+        if (pdfData.tipo && isRevisor) {
+            updateFormVisibility(pdfData.tipo);
+            if (pdfData.tipo === 'Física' || pdfData.tipo === 'Moral') {
+                const tipoPersonaSelect = document.getElementById('tipo_persona');
+                if (tipoPersonaSelect) {
+                    tipoPersonaSelect.value = pdfData.tipo;
+                    if (window.formNavigation && window.formNavigation.updateSectionsByTipoPersona) {
+                        window.formNavigation.updateSectionsByTipoPersona(pdfData.tipo);
+                    }
+                    const changeEvent = new Event('change');
+                    tipoPersonaSelect.dispatchEvent(changeEvent);
+                }
+            }
+        }
+    }
 
+    // Código para sectores y actividades
+    const sectorSelect = document.getElementById('sectores');
+    const actividadSelect = document.getElementById('actividad');
+    const actividadesContainer = document.getElementById('actividades-seleccionadas');
+    const actividadesSeleccionadas = new Set();
+    let actividadesDisponibles = [];
+    let actividadesIds = [];
+
+    if (sectorSelect) {
         sectorSelect.addEventListener('change', function() {
             const sectorId = this.value;
             actividadesSeleccionadas.clear();
@@ -243,19 +242,21 @@
 
             validateActividades();
         });
+    }
 
-        function updateActividadesDropdown() {
-            actividadSelect.innerHTML = '<option value="">Seleccione una actividad</option>';
-            actividadesDisponibles.forEach(actividad => {
-                if (!actividadesSeleccionadas.has(actividad.id.toString())) {
-                    const option = document.createElement('option');
-                    option.value = actividad.id;
-                    option.textContent = actividad.nombre;
-                    actividadSelect.appendChild(option);
-                }
-            });
-        }
+    function updateActividadesDropdown() {
+        actividadSelect.innerHTML = '<option value="">Seleccione una actividad</option>';
+        actividadesDisponibles.forEach(actividad => {
+            if (!actividadesSeleccionadas.has(actividad.id.toString())) {
+                const option = document.createElement('option');
+                option.value = actividad.id;
+                option.textContent = actividad.nombre;
+                actividadSelect.appendChild(option);
+            }
+        });
+    }
 
+    if (actividadSelect) {
         actividadSelect.addEventListener('change', function() {
             const selectedValue = actividadSelect.value;
             const selectedText = actividadSelect.options[actividadSelect.selectedIndex].text;
@@ -289,15 +290,115 @@
 
             validateActividades();
         });
+    }
 
-        function validateActividades() {
-            const errorElement = document.querySelector(
-                '#formulario__grupo--actividades .formulario__input-error');
+    function validateActividades() {
+        const errorElement = document.querySelector('#formulario__grupo--actividades .formulario__input-error');
+        if (errorElement) {
             if (actividadesSeleccionadas.size === 0) {
                 errorElement.style.display = 'block';
             } else {
                 errorElement.style.display = 'none';
             }
         }
-    });
+    }
+
+    // Procesar PDF automáticamente al cargarlo
+    const fileInput = document.getElementById('constancia_upload');
+    const uploadFeedback = document.getElementById('upload-feedback');
+    const previewPdfLink = document.getElementById('preview-pdf');
+    const formGroupConstancia = document.getElementById('formulario__grupo--constancia');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', async function() {
+            const file = fileInput.files[0];
+            if (!file) {
+                console.error('No se seleccionó ningún archivo.');
+                uploadFeedback.style.display = 'none';
+                return;
+            }
+
+            if (file.type !== 'application/pdf') {
+                console.error('El archivo debe ser un PDF.');
+                uploadFeedback.style.display = 'block';
+                uploadFeedback.innerHTML = '<span class="upload-error"><i class="fas fa-exclamation-circle"></i> Debe seleccionar un archivo en formato PDF.</span>';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                console.error('El archivo excede el tamaño máximo de 5MB.');
+                uploadFeedback.style.display = 'block';
+                uploadFeedback.innerHTML = '<span class="upload-error"><i class="fas fa-exclamation-circle"></i> El archivo excede el tamaño máximo de 5MB.</span>';
+                return;
+            }
+
+            // Add progress bar
+            let progressBar = formGroupConstancia.querySelector('.pdf-upload-progress');
+            if (!progressBar) {
+                progressBar = document.createElement('div');
+                progressBar.classList.add('pdf-upload-progress');
+                progressBar.innerHTML = '<div class="progress-bar"></div>';
+                formGroupConstancia.appendChild(progressBar);
+            }
+            progressBar.style.display = 'block';
+            const progressBarInner = progressBar.querySelector('.progress-bar');
+
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                progressBarInner.style.width = `${progress}%`;
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    progressBar.style.display = 'none';
+                }
+            }, 100);
+
+            try {
+                // Extraer datos del PDF
+                const pdfData = await window.extractQRCodeFromPDF(file);
+                console.log('Datos extraídos del PDF:', pdfData);
+
+                // Obtener datos del SAT
+                const satData = await window.scrapeSATData(pdfData.qrUrl);
+                console.log('Datos extraídos del SAT:', satData);
+
+                // Combinar y retornar los datos
+                const combinedData = {
+                    pdfData: pdfData,
+                    satData: satData
+                };
+                console.log('Datos combinados:', combinedData);
+
+                // Autocompletar campos del formulario
+                autocompleteFormFields(pdfData, satData);
+
+                // Update UI for successful upload
+                formGroupConstancia.classList.add('pdf-upload-success');
+                uploadFeedback.style.display = 'block';
+                uploadFeedback.innerHTML = `
+                    <span class="upload-success">
+                        <i class="fas fa-check-circle"></i> PDF subido correctamente
+                    </span>
+                    <a href="#" class="preview-pdf" id="preview-pdf" title="Ver PDF">
+                        <i class="fas fa-eye"></i> Ver PDF
+                    </a>
+                `;
+
+                // Create a URL for the PDF file to enable preview
+                const pdfUrl = URL.createObjectURL(file);
+                const newPreviewLink = uploadFeedback.querySelector('#preview-pdf');
+                newPreviewLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.open(pdfUrl, '_blank');
+                });
+            } catch (error) {
+                console.error('Error al procesar el PDF:', error.message);
+                uploadFeedback.style.display = 'block';
+                uploadFeedback.innerHTML = '<span class="upload-error"><i class="fas fa-exclamation-circle"></i> Error al procesar el PDF.</span>';
+                progressBar.style.display = 'none';
+            }
+        });
+    }
+});
 </script>

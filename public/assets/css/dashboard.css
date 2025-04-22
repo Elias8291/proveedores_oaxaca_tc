@@ -869,37 +869,38 @@ img {
     border-radius: 50%;
     background: white;
 }
+/* Estilos base proporcionados */
 #constancia-upload-section {
     margin-bottom: 20px;
-  }
-  
-  #constancia-upload-section h4 {
+}
+
+#constancia-upload-section h4 {
     color: var(--color-primary);
     margin-bottom: 12px;
     font-weight: var(--font-weight-medium);
     font-size: 0.95rem;
-  }
-  
-  #constancia-upload-section h4 i {
+}
+
+#constancia-upload-section h4 i {
     margin-right: 6px;
-  }
-  
-  #formulario__grupo--constancia {
+}
+
+#formulario__grupo--constancia {
     position: relative;
-  }
-  
-  /* Ocultar el input file original */
-  #constancia_upload {
+}
+
+/* Ocultar el input file original */
+#constancia_upload {
     width: 0.1px;
     height: 0.1px;
     opacity: 0;
     overflow: hidden;
     position: absolute;
     z-index: -1;
-  }
-  
-  /* Contenedor personalizado para subir archivo - versión más compacta */
-  #formulario__grupo--constancia label {
+}
+
+/* Contenedor personalizado para subir archivo - versión más compacta */
+#formulario__grupo--constancia label {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -913,10 +914,10 @@ img {
     text-align: center;
     max-width: 350px;
     margin: 0 auto;
-  }
-  
-  /* Icono de documento más pequeño y refinado */
-  #formulario__grupo--constancia label::before {
+}
+
+/* Icono de documento más pequeño y refinado */
+#formulario__grupo--constancia label::before {
     content: '';
     display: block;
     width: 36px;
@@ -927,30 +928,189 @@ img {
     background-size: contain;
     margin-bottom: 10px;
     transition: var(--transition);
-  }
-  
-  #formulario__grupo--constancia label span {
+}
+
+#formulario__grupo--constancia label span {
     display: block;
     font-weight: var(--font-weight-medium);
     color: var(--color-primary);
     margin-bottom: 3px;
     font-size: 0.9rem;
-  }
-  
-  #formulario__grupo--constancia label .file-desc {
+}
+
+#formulario__grupo--constancia label .file-desc {
     font-size: 0.75rem;
     color: var(--color-text-light);
-  }
-  
-  /* Estilo sutil al pasar el mouse */
-  #formulario__grupo--constancia label:hover {
+}
+
+/* Estilo sutil al pasar el mouse */
+#formulario__grupo--constancia label:hover {
     border-color: var(--gold-accent);
     background-color: var(--neutral-light);
-  }
-  
-  #formulario__grupo--constancia label:hover::before {
+}
+
+#formulario__grupo--constancia label:hover::before {
     transform: translateY(-2px);
-  }
+}
+
+/* Nuevos estilos para el efecto de subida exitosa */
+
+/* Contenedor de carga */
+.pdf-upload-progress {
+    height: 4px;
+    width: 100%;
+    max-width: 350px;
+    background-color: var(--neutral-light, #f0f0f0);
+    border-radius: 4px;
+    margin: 15px auto 10px;
+    overflow: hidden;
+    display: none;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: var(--color-primary, #9d2449);
+    transition: width 0.3s ease-out;
+}
+
+/* Ícono de éxito con animación */
+.upload-success-icon {
+    display: flex;
+    justify-content: center;
+    margin: 10px auto;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.upload-success-icon i {
+    font-size: 36px;
+    color: var(--color-success, #4CAF50);
+}
+
+.upload-success-icon.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+.pdf-preview-container .upload-success {
+    flex-grow: 1;
+    font-size: 0.85rem;
+    color: var(--color-success, #4CAF50);
+    font-weight: var(--font-weight-medium, 500);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Contenedor de vista previa del PDF */
+.pdf-preview-container {
+    display: none;
+    align-items: center;
+    max-width: 350px;
+    margin: 15px auto 0;
+    padding: 10px 15px;
+    border: 1px solid var(--neutral-border, #e0e0e0);
+    border-radius: 8px;
+    background-color: var(--neutral-light, #f9f9f9);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    animation: fadein 0.5s ease-in-out;
+    transition: all 0.3s ease;
+}
+
+@keyframes fadein {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.pdf-preview-container .pdf-icon {
+    color: var(--color-primary, #9d2449);
+    font-size: 20px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.pdf-preview-container .pdf-name {
+    flex-grow: 1;
+    font-size: 0.85rem;
+    color: var(--color-text, #333);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pdf-preview-container .view-pdf-btn {
+    background-color: var(--color-primary, #9d2449);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    flex-shrink: 0;
+}
+
+.pdf-preview-container .view-pdf-btn:hover {
+    background-color: var(--color-primary-dark, #7a1c38);
+}
+
+/* Efecto de pulso para el contenedor cuando se sube correctamente */
+.pdf-upload-success label {
+    animation: successPulse 1.2s ease-in-out;
+    border-color: var(--color-success, #4CAF50) !important;
+}
+
+.view-pdf-btn.preview/pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: var(--font-weight-medium);
+    font-family: "Montserrat", "Segoe UI", sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    line-height: 1;
+}
+
+
+
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .view-pdf-btn.preview-pdf {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    .view-pdf-btn.preview-pdf .fas.fa-eye {
+        font-size: 0.85rem;
+    }
+}
+
+@keyframes successPulse {
+    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.5); }
+    50% { box-shadow: 0 0 0 8px rgba(76, 175, 80, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+/* Cuando se sube el archivo, cambiamos la apariencia del label */
+.pdf-upload-success label::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234CAF50' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.08V12a10 10 0 1 1-5.93-9.14'%3E%3C/path%3E%3Cpolyline points='22 4 12 14.01 9 11.01'%3E%3C/polyline%3E%3C/svg%3E");
+    animation: checkmark 0.5s ease-in-out;
+}
+
+@keyframes checkmark {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
 
   .progress-container {
     display: flex;

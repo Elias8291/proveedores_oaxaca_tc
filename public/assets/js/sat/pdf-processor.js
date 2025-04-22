@@ -1,6 +1,5 @@
 import { createModal, createSpinner, showError } from './utils.js';
-import { scrapeSATData, showSATDataModal } from './sat-scraper.js';
-// public/assets/js/sat/pdf_processor.js
+import { scrapeSATData, showSATDataModal } from './sat-scraper.js';// public/assets/js/sat/pdf-processor.js
 window.pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
