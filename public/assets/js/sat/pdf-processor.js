@@ -1,82 +1,78 @@
 import { createModal, createSpinner, showError } from './utils.js';
 import { scrapeSATData, showSATDataModal } from './sat-scraper.js';
-
-// Set PDF.js worker source
+// public/assets/js/sat/pdf_processor.js
 window.pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-    async function extractQRCodeFromPDF(file) {
-        try {
-            const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
-            const data = { name: '', rfc: '', date: '', regimen: '', qrUrl: '', tipo: '', estatus: '' };
-    
-            for (let i = 1; i <= Math.min(3, pdf.numPages); i++) {
-                const page = await pdf.getPage(i);
-                const text = (await page.getTextContent()).items.map((item) => item.str).join(' ');
-    
-                // Extraer RFC
-                const rfcMatch = text.match(/([A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3})/);
-                if (rfcMatch) {
-                    data.rfc = rfcMatch[0];
-                    data.tipo = data.rfc.length === 12 ? 'Moral' : 'Física';
-                }
-    
-                // Extraer código QR
-                const { width, height } = page.getViewport({ scale: 1 });
-                const canvas = Object.assign(document.createElement('canvas'), { width, height });
-                await page.render({ canvasContext: canvas.getContext('2d'), viewport: page.getViewport({ scale: 1 }) }).promise;
-                const qrCode = jsQR(canvas.getContext('2d').getImageData(0, 0, width, height).data, width, height);
-                if (qrCode) {
-                    data.qrUrl = qrCode.data;
-                    console.log('QR Code URL:', data.qrUrl); // Mostrar la URL del QR en la consola
-    
-                    // Validar URL del QR del SAT
-                    const satUrlPattern = /^https:\/\/siat\.sat\.gob\.mx\/app\/qr\/faces\/pages\/mobile\/validadorqr\.jsf\?.*D1=\d+.*&D2=\d+.*&D3=[^&]+/;
-                    if (!satUrlPattern.test(data.qrUrl)) {
-                        throw new Error('El código QR no pertenece al SAT o tiene un formato inválido.');
-                    }
-    
-                    // Extraer fecha y estatus
-                    const dateMatch = text.match(/(\d{2}\/\d{2}\/\d{4})/g);
-                    if (dateMatch) {
-                        data.date = dateMatch[dateMatch.length - 1];
-                        const [day, month, year] = data.date.split('/');
-                        data.estatus =
-                            new Date(`${year}-${month}-${day}`) < new Date().setHours(0, 0, 0, 0) ? 'Vencido' : 'Vigente';
-                    }
-    
-                    // Extraer nombre y régimen
-                    data.name = text.match(/NOMBRE(?:\sDEL\sCONTRIBUYENTE)?:\s*([A-ZÀ-ÚÑ&\s]+)/i)?.[1]?.trim() || '';
-                    data.regimen = text.match(/RÉGIMEN(?:\sFISCAL)?:\s*([A-ZÀ-ÚÑ\s]+)/i)?.[1]?.trim() || '';
-                    break;
-                }
+async function extractQRCodeFromPDF(file) {
+    try {
+        const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+        const data = { name: '', rfc: '', date: '', regimen: '', qrUrl: '', tipo: '', estatus: '' };
+
+        for (let i = 1; i <= Math.min(3, pdf.numPages); i++) {
+            const page = await pdf.getPage(i);
+            const text = (await page.getTextContent()).items.map((item) => item.str).join(' ');
+
+            // Extraer RFC
+            const rfcMatch = text.match(/([A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3})/);
+            if (rfcMatch) {
+                data.rfc = rfcMatch[0];
+                data.tipo = data.rfc.length === 12 ? 'Moral' : 'Física';
             }
-    
-            // Lanzar advertencia si no se encuentra el RFC, pero no fallar si QR es válido
-            if (!data.qrUrl) throw new Error('No se pudo encontrar el código QR en el PDF.');
-            if (!data.rfc) console.warn('Advertencia: No se pudo encontrar el RFC en el texto extraído.');
-    
-            return data;
-        } catch (error) {
-            throw new Error(`Error al procesar el PDF: ${error.message}`);
+
+            // Extraer código QR
+            const { width, height } = page.getViewport({ scale: 1 });
+            const canvas = Object.assign(document.createElement('canvas'), { width, height });
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: page.getViewport({ scale: 1 }) }).promise;
+            const qrCode = jsQR(canvas.getContext('2d').getImageData(0, 0, width, height).data, width, height);
+            if (qrCode) {
+                data.qrUrl = qrCode.data;
+                console.log('QR Code URL:', data.qrUrl);
+
+                const satUrlPattern = /^https:\/\/siat\.sat\.gob\.mx\/app\/qr\/faces\/pages\/mobile\/validadorqr\.jsf\?.*D1=\d+.*&D2=\d+.*&D3=[^&]+/;
+                if (!satUrlPattern.test(data.qrUrl)) {
+                    throw new Error('El código QR no pertenece al SAT o tiene un formato inválido.');
+                }
+
+                const dateMatch = text.match(/(\d{2}\/\d{2}\/\d{4})/g);
+                if (dateMatch) {
+                    data.date = dateMatch[dateMatch.length - 1];
+                    const [day, month, year] = data.date.split('/');
+                    data.estatus =
+                        new Date(`${year}-${month}-${day}`) < new Date().setHours(0, 0, 0, 0) ? 'Vencido' : 'Vigente';
+                }
+
+                data.name = text.match(/NOMBRE(?:\sDEL\sCONTRIBUYENTE)?:\s*([A-ZÀ-ÚÑ&\s]+)/i)?.[1]?.trim() || '';
+                data.regimen = text.match(/RÉGIMEN(?:\sFISCAL)?:\s*([A-ZÀ-ÚÑ\s]+)/i)?.[1]?.trim() || '';
+                break;
+            }
         }
+
+        if (!data.qrUrl) throw new Error('No se pudo encontrar el código QR en el PDF.');
+        if (!data.rfc) console.warn('Advertencia: No se pudo encontrar el RFC en el texto extraído.');
+
+        return data;
+    } catch (error) {
+        throw new Error(`Error al procesar el PDF: ${error.message}`);
     }
-    
-    // Helper function to enhance image for QR detection
-    function enhanceImage(imageData) {
-        const { data, width, height } = imageData;
-        const enhancedData = new Uint8ClampedArray(data);
-    
-        // Convert to grayscale and increase contrast
-        for (let i = 0; i < data.length; i += 4) {
-            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-            const contrast = avg > 128 ? 255 : 0; // Binarize the image
-            enhancedData[i] = enhancedData[i + 1] = enhancedData[i + 2] = contrast;
-            enhancedData[i + 3] = 255; // Set alpha to fully opaque
-        }
-    
-        return new ImageData(enhancedData, width, height);
+}
+
+function enhanceImage(imageData) {
+    const { data, width, height } = imageData;
+    const enhancedData = new Uint8ClampedArray(data);
+
+    for (let i = 0; i < data.length; i += 4) {
+        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        const contrast = avg > 128 ? 255 : 0;
+        enhancedData[i] = enhancedData[i + 1] = enhancedData[i + 2] = contrast;
+        enhancedData[i + 3] = 255;
     }
+
+    return new ImageData(enhancedData, width, height);
+}
+
+window.extractQRCodeFromPDF = extractQRCodeFromPDF;
+window.enhanceImage = enhanceImage;
 
 // Update UI with PDF and SAT data
 function updatePDFDataPreview(pdfData, satData) {
