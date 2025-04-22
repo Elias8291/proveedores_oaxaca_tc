@@ -14,11 +14,12 @@
                         <span class="progress-text">Completado</span>
                     </div>
                     <span class="progress-text persona-type-text">
-                        Formulario para el tipo de persona: 
-                        @if(Auth::user()->hasRole('revisor_1'))
+                        Formulario para el tipo de persona:
+                        @if (Auth::user()->hasRole('revisor_1'))
                             <span class="persona-type-value" id="persona-type-value">Pendiente</span>
                         @else
-                            <span class="persona-type-value">{{ Auth::user()->solicitante->tipo_persona ?? 'No definido' }}</span>
+                            <span
+                                class="persona-type-value">{{ Auth::user()->solicitante->tipo_persona ?? 'No definido' }}</span>
                         @endif
                     </span>
                 </div>
@@ -31,7 +32,7 @@
                     $user = Auth::user();
                     $isRevisor = $user->hasRole('revisor_1');
                     // Initialize sections: For revisor_1, only section 1 initially
-                    $tipoPersona = $isRevisor ? null : ($user->solicitante->tipo_persona ?? null);
+                    $tipoPersona = $isRevisor ? null : $user->solicitante->tipo_persona ?? null;
                     $secciones = $isRevisor ? [1] : ($tipoPersona === 'Física' ? [1, 2, 6, 7] : [1, 2, 3, 4, 5, 6, 7]);
                     $titulosSecciones = [
                         1 => 'Datos Generales',
@@ -40,7 +41,7 @@
                         4 => 'Accionistas',
                         5 => 'Apoderado Legal',
                         6 => 'Documentos',
-                        7 => 'Final'
+                        7 => 'Final',
                     ];
                 @endphp
                 @foreach ($secciones as $index => $seccion)
@@ -52,7 +53,8 @@
             </div>
             <!-- Render all possible sections, but control visibility with JS -->
             @foreach ([1, 2, 3, 4, 5, 6, 7] as $seccion)
-                <div id="seccion{{ $seccion }}" class="form-seccion" style="display: {{ $seccion === 1 ? 'block' : 'none' }};">
+                <div id="seccion{{ $seccion }}" class="form-seccion"
+                    style="display: {{ $seccion === 1 ? 'block' : 'none' }};">
                     <form id="formulario{{ $seccion }}">
                         @include("registration.formularios.seccion{$seccion}")
                     </form>
@@ -67,155 +69,158 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const progressTracker = document.getElementById('progressTracker');
-            const progressFill = document.getElementById('progress-fill');
-            const progressPercent = document.getElementById('progress-percent');
-            const personaTypeValue = document.getElementById('persona-type-value');
-            const tipoPersonaSelect = document.getElementById('tipo_persona');
-            const btnSiguiente = document.getElementById('btnSiguiente');
-            const btnAnterior = document.getElementById('btnAnterior');
-            const isRevisor = @json($isRevisor);
-            let seccionActual = 1;
-            let secciones = @json($secciones); // Initial sections
-            let totalSecciones = secciones.length;
-            let tipoPersona = isRevisor ? null : @json($tipoPersona);
+       document.addEventListener('DOMContentLoaded', function() {
+    const progressTracker = document.getElementById('progressTracker');
+    const progressFill = document.getElementById('progress-fill');
+    const progressPercent = document.getElementById('progress-percent');
+    const personaTypeValue = document.getElementById('persona-type-value');
+    const tipoPersonaSelect = document.getElementById('tipo_persona');
+    const btnSiguiente = document.getElementById('btnSiguiente');
+    const btnAnterior = document.getElementById('btnAnterior');
+    const isRevisor = @json($isRevisor);
+    let seccionActual = 1;
+    let secciones = @json($secciones);
+    let totalSecciones = secciones.length;
+    let tipoPersona = isRevisor ? null : @json($tipoPersona);
+    let isNavigating = false;
 
-            // Section mapping for Física and Moral
-            const seccionesFisica = [1, 2, 6, 7]; // 4 sections
-            const seccionesMoral = [1, 2, 3, 4, 5, 6, 7]; // 7 sections
-            const titulosSecciones = @json($titulosSecciones);
+    const seccionesFisica = [1, 2, 6, 7];
+    const seccionesMoral = [1, 2, 3, 4, 5, 6, 7];
+    const titulosSecciones = @json($titulosSecciones);
 
-            // Function to update progress tracker
-            function updateProgressTracker() {
-                progressTracker.innerHTML = '';
-                secciones.forEach((seccion, index) => {
-                    const div = document.createElement('div');
-                    div.classList.add('seccion');
-                    div.setAttribute('data-seccion', index + 1);
-                    div.innerHTML = `
-                        <div class="seccion-numero">${String(index + 1).padStart(2, '0')}</div>
-                        <div class="seccion-titulo">${titulosSecciones[seccion]}</div>
-                    `;
-                    if (index + 1 < seccionActual) {
-                        div.classList.add('completed');
-                    } else if (index + 1 === seccionActual) {
-                        div.classList.add('active');
-                    }
-                    progressTracker.appendChild(div);
-                    // Add click event for navigation
-                    div.addEventListener('click', function() {
-                        const seccionNum = parseInt(this.getAttribute('data-seccion'));
-                        if (seccionNum <= seccionActual) {
-                            seccionActual = seccionNum;
-                            actualizarProgreso();
-                            scrollToTop();
-                        }
-                    });
-                });
+    function updateProgressTracker() {
+        progressTracker.innerHTML = '';
+        secciones.forEach((seccion, index) => {
+            const div = document.createElement('div');
+            div.classList.add('seccion');
+            div.setAttribute('data-seccion', index + 1);
+            div.innerHTML = `
+                <div class="seccion-numero">${String(index + 1).padStart(2, '0')}</div>
+                <div class="seccion-titulo">${titulosSecciones[seccion]}</div>
+            `;
+            if (index + 1 < seccionActual) {
+                div.classList.add('completed');
+            } else if (index + 1 === seccionActual) {
+                div.classList.add('active');
             }
-
-            // Function to update progress bar and sections
-            function actualizarProgreso() {
-                totalSecciones = secciones.length;
-                const porcentaje = ((seccionActual - 1) / (totalSecciones - 1)) * 100;
-                progressFill.style.width = porcentaje + '%';
-                progressPercent.textContent = Math.round(porcentaje) + '%';
-
-                // Update section visibility
-                for (let i = 1; i <= 7; i++) {
-                    const seccionElement = document.getElementById(`seccion${i}`);
-                    if (seccionElement) {
-                        seccionElement.style.display = (secciones[seccionActual - 1] === i) ? 'block' : 'none';
-                    }
+            progressTracker.appendChild(div);
+            div.addEventListener('click', function() {
+                const seccionNum = parseInt(this.getAttribute('data-seccion'));
+                if (seccionNum <= seccionActual) {
+                    seccionActual = seccionNum;
+                    actualizarProgreso();
+                    scrollToTop();
                 }
+            });
+        });
+    }
 
-                // Update navigation buttons
-                btnAnterior.style.display = seccionActual === 1 ? 'none' : 'block';
-                btnSiguiente.textContent = seccionActual === totalSecciones ? 'Finalizar' : 'Siguiente';
-                btnSiguiente.setAttribute('form', `formulario${secciones[seccionActual - 1]}`);
-                btnSiguiente.disabled = isRevisor && !tipoPersona; // Enable button after tipo_persona is selected
+    function actualizarProgreso() {
+        totalSecciones = secciones.length;
+        const porcentaje = totalSecciones === 1 ? 0 : ((seccionActual - 1) / (totalSecciones - 1)) * 100;
+        progressFill.style.width = porcentaje + '%';
+        progressPercent.textContent = Math.round(porcentaje) + '%';
+
+        for (let i = 1; i <= 7; i++) {
+            const seccionElement = document.getElementById(`seccion${i}`);
+            if (seccionElement) {
+                seccionElement.style.display = (secciones[seccionActual - 1] === i) ? 'block' : 'none';
             }
+        }
 
-            // Function to scroll to top
-            function scrollToTop() {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+        btnAnterior.style.display = seccionActual === 1 ? 'none' : 'block';
+        btnSiguiente.textContent = seccionActual === totalSecciones ? 'Finalizar' : 'Siguiente';
+        btnSiguiente.setAttribute('form', `formulario${secciones[seccionActual - 1]}`);
+        btnSiguiente.disabled = isRevisor && !tipoPersona;
 
-            // Update sections based on tipo_persona
-            function updateSectionsByTipoPersona(tipo) {
-                tipoPersona = tipo;
-                secciones = tipo === 'Física' ? seccionesFisica : seccionesMoral;
-                totalSecciones = secciones.length;
-                personaTypeValue.textContent = tipo;
+        updateProgressTracker();
+    }
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateSectionsByTipoPersona(tipo) {
+        tipoPersona = tipo;
+        secciones = tipo === 'Física' ? seccionesFisica : seccionesMoral;
+        totalSecciones = secciones.length;
+        personaTypeValue.textContent = tipo;
+        seccionActual = 1; // Reset to first section when tipo_persona changes
+        updateProgressTracker();
+        actualizarProgreso();
+        btnSiguiente.disabled = false;
+    }
+
+    if (isRevisor && tipoPersonaSelect) {
+        tipoPersonaSelect.addEventListener('change', function() {
+            const selectedTipo = this.value;
+            if (selectedTipo === 'Física' || selectedTipo === 'Moral') {
+                updateSectionsByTipoPersona(selectedTipo);
+            } else {
+                personaTypeValue.textContent = 'Pendiente';
+                secciones = [1];
+                totalSecciones = 1;
+                seccionActual = 1;
                 updateProgressTracker();
                 actualizarProgreso();
-                btnSiguiente.disabled = false; // Enable navigation
+                btnSiguiente.disabled = true;
             }
-
-            // Listen for tipo_persona change
-            if (isRevisor && tipoPersonaSelect) {
-                tipoPersonaSelect.addEventListener('change', function() {
-                    const selectedTipo = this.value;
-                    if (selectedTipo === 'Física' || selectedTipo === 'Moral') {
-                        updateSectionsByTipoPersona(selectedTipo);
-                    } else {
-                        personaTypeValue.textContent = 'Pendiente';
-                        secciones = [1]; // Reset to only section 1
-                        totalSecciones = 1;
-                        updateProgressTracker();
-                        actualizarProgreso();
-                        btnSiguiente.disabled = true;
-                    }
-                });
-            }
-
-            // Navigation functions
-            window.formNavigation = {
-                goToNextSection: function() {
-                    if (seccionActual < totalSecciones) {
-                        seccionActual++;
-                        actualizarProgreso();
-                        scrollToTop();
-                    } else {
-                        const form = document.getElementById(`formulario${secciones[seccionActual - 1]}`);
-                        form.submit();
-                    }
-                },
-                goToPreviousSection: function() {
-                    if (seccionActual > 1) {
-                        seccionActual--;
-                        actualizarProgreso();
-                        scrollToTop();
-                    }
-                },
-                getCurrentSection: function() {
-                    return secciones[seccionActual - 1];
-                },
-                updateSectionsByTipoPersona: updateSectionsByTipoPersona // Expose function globally
-            };
-
-            // Button event listeners
-            btnSiguiente.addEventListener('click', function(e) {
-                e.preventDefault();
-                const currentForm = document.getElementById(`formulario${secciones[seccionActual - 1]}`);
-                const inputs = currentForm.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => {
-                    if (input.type !== 'hidden' && input.name !== 'actividad') {
-                        input.dispatchEvent(new Event('change'));
-                        input.dispatchEvent(new Event('blur'));
-                    }
-                });
-                currentForm.dispatchEvent(new Event('submit')); // Trigger form submission
-            });
-
-            btnAnterior.addEventListener('click', function() {
-                window.formNavigation.goToPreviousSection();
-            });
-
-            // Initialize progress
-            updateProgressTracker();
-            actualizarProgreso();
         });
-    </script>
+    }
+
+    window.formNavigation = {
+        goToNextSection: function() {
+            if (seccionActual < totalSecciones) {
+                seccionActual++;
+                actualizarProgreso();
+                scrollToTop();
+            } else {
+                const form = document.getElementById(`formulario${secciones[seccionActual - 1]}`);
+                form.submit();
+            }
+        },
+        goToPreviousSection: function() {
+            if (seccionActual > 1) {
+                seccionActual--;
+                actualizarProgreso();
+                scrollToTop();
+            }
+        },
+        getCurrentSection: function() {
+            return secciones[seccionActual - 1];
+        },
+        updateSectionsByTipoPersona: updateSectionsByTipoPersona
+    };
+
+    btnSiguiente.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (isNavigating) return;
+        isNavigating = true;
+
+        const currentForm = document.getElementById(`formulario${secciones[seccionActual - 1]}`);
+        const inputs = currentForm.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            if (input.type !== 'hidden' && input.name !== 'actividad') {
+                input.dispatchEvent(new Event('change'));
+                input.dispatchEvent(new Event('blur'));
+            }
+        });
+
+        // Simulate form validation (replace with actual validation logic if available)
+        const isValid = true; // Replace with actual form validation
+        if (isValid) {
+            window.formNavigation.goToNextSection();
+        }
+
+        setTimeout(() => { isNavigating = false; }, 500);
+    });
+
+    btnAnterior.addEventListener('click', function() {
+        window.formNavigation.goToPreviousSection();
+    });
+
+    updateProgressTracker();
+    actualizarProgreso();
+});
+        </script>
 @endsection

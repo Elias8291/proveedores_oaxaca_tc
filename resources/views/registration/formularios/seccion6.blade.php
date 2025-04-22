@@ -49,7 +49,7 @@
                           <div class="file-info">
                               <h6>Identificación Oficial</h6>
                               <span class="file-type">PDF</span>
-                              <span class="file-description">Copiaシンプル, vigente (INE, pasaporte o cédula profesional)</span>
+                              <span class="file-description">Original vigente (INE, pasaporte o cédula profesional)</span>
                           </div>
                           <div class="file-upload">
                               <input type="file" id="identificacion_oficial" name="identificacion_oficial" class="file-upload-input" accept=".pdf" required>

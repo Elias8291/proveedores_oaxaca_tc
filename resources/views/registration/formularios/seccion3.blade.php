@@ -48,13 +48,14 @@
             </div>
             <div class="half-width form-group" id="formulario__grupo--fecha_inscripcion">
                 <label class="form-label" for="fecha_inscripcion">Fecha de Inscripción</label>
-                <input type="date" id="fecha_inscripcion" name="fecha_inscripcion" class="form-control">
+                <input type="date" id="fecha_inscripcion" name="fecha_inscripcion" class="form-control" max="">
                 <p class="formulario__input-error">Por favor, seleccione una fecha válida.</p>
-            </div>
+            </div>            
         </div>
     </div>
 </form>
 <script>
+
     document.addEventListener('DOMContentLoaded', function() {
         // Cargar estados cuando se muestre la sección 3
         const observer = new MutationObserver(function(mutations) {
@@ -96,4 +97,7 @@
                 .catch(error => console.error('Error al cargar estados:', error));
         }
     });
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fecha_inscripcion').setAttribute('max', today);
+    document.getElementById('fecha_constitucion').setAttribute('max', today);
 </script>
