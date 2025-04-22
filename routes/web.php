@@ -67,7 +67,7 @@ Route::middleware('web')->group(function () {
         // Admin Resources
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
-        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        
         Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
         Route::get('/profiles', [ProfileController::class, 'index'])->name('profiles.index');
 
