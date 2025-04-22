@@ -310,95 +310,152 @@ document.addEventListener('DOMContentLoaded', function() {
     const formGroupConstancia = document.getElementById('formulario__grupo--constancia');
 
     if (fileInput) {
-        fileInput.addEventListener('change', async function() {
-            const file = fileInput.files[0];
-            if (!file) {
-                console.error('No se seleccionó ningún archivo.');
-                uploadFeedback.style.display = 'none';
-                return;
-            }
+    fileInput.addEventListener('change', async function() {
+        const file = fileInput.files[0];
+        if (!file) {
+            console.error('No se seleccionó ningún archivo.');
+            uploadFeedback.style.display = 'none';
+            return;
+        }
 
-            if (file.type !== 'application/pdf') {
-                console.error('El archivo debe ser un PDF.');
-                uploadFeedback.style.display = 'block';
-                uploadFeedback.innerHTML = '<span class="upload-error"><i class="fas fa-exclamation-circle"></i> Debe seleccionar un archivo en formato PDF.</span>';
-                return;
-            }
+        if (file.type !== 'application/pdf') {
+            console.error('El archivo debe ser un PDF.');
+            uploadFeedback.style.display = 'block';
+            uploadFeedback.innerHTML = '<span class="upload-error"><i class="fas fa-exclamation-circle"></i> Debe seleccionar un archivo en formato PDF.</span>';
+            return;
+        }
 
-            if (file.size > 5 * 1024 * 1024) {
-                console.error('El archivo excede el tamaño máximo de 5MB.');
-                uploadFeedback.style.display = 'block';
-                uploadFeedback.innerHTML = '<span class="upload-error"><i class="fas fa-exclamation-circle"></i> El archivo excede el tamaño máximo de 5MB.</span>';
-                return;
-            }
+        if (file.size > 5 * 1024 * 1024) {
+            console.error('El archivo excede el tamaño máximo de 5MB.');
+            uploadFeedback.style.display = 'block';
+            uploadFeedback.innerHTML = '<span class="upload-error"><i class="fas fa-exclamation-circle"></i> El archivo excede el tamaño máximo de 5MB.</span>';
+            return;
+        }
 
-            // Add progress bar
-            let progressBar = formGroupConstancia.querySelector('.pdf-upload-progress');
-            if (!progressBar) {
-                progressBar = document.createElement('div');
-                progressBar.classList.add('pdf-upload-progress');
-                progressBar.innerHTML = '<div class="progress-bar"></div>';
-                formGroupConstancia.appendChild(progressBar);
-            }
-            progressBar.style.display = 'block';
-            const progressBarInner = progressBar.querySelector('.progress-bar');
+        // Add progress bar
+        let progressBar = formGroupConstancia.querySelector('.pdf-upload-progress');
+        if (!progressBar) {
+            progressBar = document.createElement('div');
+            progressBar.classList.add('pdf-upload-progress');
+            progressBar.innerHTML = '<div class="progress-bar"></div>';
+            formGroupConstancia.appendChild(progressBar);
+        }
+        progressBar.style.display = 'block';
+        const progressBarInner = progressBar.querySelector('.progress-bar');
 
-            // Simulate progress
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += 10;
-                progressBarInner.style.width = `${progress}%`;
-                if (progress >= 100) {
-                    clearInterval(progressInterval);
-                    progressBar.style.display = 'none';
-                }
-            }, 100);
-
-            try {
-                // Extraer datos del PDF
-                const pdfData = await window.extractQRCodeFromPDF(file);
-                console.log('Datos extraídos del PDF:', pdfData);
-
-                // Obtener datos del SAT
-                const satData = await window.scrapeSATData(pdfData.qrUrl);
-                console.log('Datos extraídos del SAT:', satData);
-
-                // Combinar y retornar los datos
-                const combinedData = {
-                    pdfData: pdfData,
-                    satData: satData
-                };
-                console.log('Datos combinados:', combinedData);
-
-                // Autocompletar campos del formulario
-                autocompleteFormFields(pdfData, satData);
-
-                // Update UI for successful upload
-                formGroupConstancia.classList.add('pdf-upload-success');
-                uploadFeedback.style.display = 'block';
-                uploadFeedback.innerHTML = `
-                    <span class="upload-success">
-                        <i class="fas fa-check-circle"></i> PDF subido correctamente
-                    </span>
-                    <a href="#" class="preview-pdf" id="preview-pdf" title="Ver PDF">
-                        <i class="fas fa-eye"></i> Ver PDF
-                    </a>
-                `;
-
-                // Create a URL for the PDF file to enable preview
-                const pdfUrl = URL.createObjectURL(file);
-                const newPreviewLink = uploadFeedback.querySelector('#preview-pdf');
-                newPreviewLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.open(pdfUrl, '_blank');
-                });
-            } catch (error) {
-                console.error('Error al procesar el PDF:', error.message);
-                uploadFeedback.style.display = 'block';
-                uploadFeedback.innerHTML = '<span class="upload-error"><i class="fas fa-exclamation-circle"></i> Error al procesar el PDF.</span>';
+        // Simulate progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += 10;
+            progressBarInner.style.width = `${progress}%`;
+            if (progress >= 100) {
+                clearInterval(progressInterval);
                 progressBar.style.display = 'none';
             }
-        });
-    }
+        }, 100);
+
+        try {
+            // Extraer datos del PDF
+            const pdfData = await window.extractQRCodeFromPDF(file);
+            console.log('Datos extraídos del PDF:', pdfData);
+
+            // Obtener datos del SAT
+            const satData = await window.scrapeSATData(pdfData.qrUrl);
+            console.log('Datos extraídos del SAT:', satData);
+
+            // Combinar y retornar los datos
+            const combinedData = {
+                pdfData: pdfData,
+                satData: satData
+            };
+            console.log('Datos combinados:', combinedData);
+
+            // Autocompletar campos del Formulario 1
+            autocompleteFormFields(pdfData, satData);
+
+            // Autocompletar campos de dirección en Formulario 2
+            populateFormulario2AddressFields(satData);
+
+            // Update UI for successful upload
+            formGroupConstancia.classList.add('pdf-upload-success');
+            uploadFeedback.style.display = 'block';
+            uploadFeedback.innerHTML = `
+                <span class="upload-success">
+                    <i class="fas fa-check-circle"></i> PDF subido correctamente
+                </span>
+                <a href="#" class="preview-pdf" id="preview-pdf" title="Ver PDF">
+                    <i class="fas fa-eye"></i> Ver PDF
+                </a>
+            `;
+
+            // Create a URL for the PDF file to enable preview
+            const pdfUrl = URL.createObjectURL(file);
+            const newPreviewLink = uploadFeedback.querySelector('#preview-pdf');
+            newPreviewLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.open(pdfUrl, '_blank');
+            });
+        } catch (error) {
+            console.error('Error al procesar el PDF:', error.message);
+            uploadFeedback.style.display = 'block';
+            uploadFeedback.innerHTML = '<span class="upload-error"><i class="fas fa-exclamation-circle"></i> Error al procesar el PDF.</span>';
+            progressBar.style.display = 'none';
+        }
+    });
+}
 });
+function populateFormulario2AddressFields(satData) {
+    const isSolicitante = @json(Auth::user()->hasRole('solicitante'));
+    const fields = {
+        codigo_postal: satData.cp || '',
+        calle: satData.nombreVialidad || '',
+        numero_exterior: satData.numeroExterior || '',
+        numero_interior: satData.numeroInterior || '',
+        colonia: satData.colonia || ''
+    };
+
+    Object.entries(fields).forEach(([fieldId, value]) => {
+        const inputElement = document.getElementById(fieldId);
+        const displayElement = document.getElementById(`${fieldId}_display`);
+
+        if (isSolicitante) {
+            // For solicitante, update display spans and hidden inputs
+            if (displayElement) {
+                displayElement.textContent = value || 'No disponible';
+            }
+            if (inputElement) {
+                inputElement.value = value || '';
+            }
+        } else {
+            // For revisor_1, update input fields
+            if (inputElement && fieldId !== 'colonia') {
+                inputElement.value = value || '';
+            }
+        }
+    });
+
+    // For revisor_1, trigger postal code lookup if cp is available
+    if (!isSolicitante && satData.cp) {
+        const codigoPostalInput = document.getElementById('codigo_postal');
+        if (codigoPostalInput) {
+            // Set the postal code and dispatch input event to trigger lookup
+            codigoPostalInput.value = satData.cp;
+            const inputEvent = new Event('input', { bubbles: true });
+            codigoPostalInput.dispatchEvent(inputEvent);
+
+            // Set colonia after lookup (if available in SAT data)
+            setTimeout(() => {
+                const coloniaSelect = document.getElementById('colonia');
+                if (coloniaSelect && satData.colonia) {
+                    // Find and select the matching option
+                    Array.from(coloniaSelect.options).forEach(option => {
+                        if (option.textContent.toLowerCase() === satData.colonia.toLowerCase()) {
+                            option.selected = true;
+                        }
+                    });
+                }
+            }, 1000); // Delay to allow lookup to complete
+        }
+    }
+}
 </script>

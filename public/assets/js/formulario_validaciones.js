@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         calle: /^[a-zA-Z0-9À-ÿ\s]{1,100}$/,
         numero_exterior: /^[a-zA-Z0-9]{1,10}$/,
         numero_interior: /^[a-zA-Z0-9]{0,10}$/,
-        entre_calle: /^[a-zA-Z0-9À-ÿ\s]{0,100}$/,
+        entre_calle: /^[a-zA-Z0-9À-ÿ\s]{1,100}$/,
         numero_escritura: /^\d{1,10}$/,
         nombre_notario: /^[a-zA-ZÀ-ÿ\s]{1,100}$/,
         nombre_apoderado: /^[a-zA-ZÀ-ÿ\s]{1,100}$/,
@@ -71,8 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
         calle: false,
         numero_exterior: false,
         numero_interior: true,
-        entre_calle_1: true,
-        entre_calle_2: true,
+        entre_calle_1: false,
+        entre_calle_2: false,
         numero_escritura: false,
         nombre_notario: false,
         entidad_federativa: false,
@@ -349,71 +349,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'numero_interior':
                 limitarCaracteres(input, limites.numero_interior);
-                if (input.value === '' || expresiones.numero_interior.test(input.value)) {
-                    const grupo = input.closest('.form-group');
+                const grupo = input.closest('.form-group') || input.closest('.formulario__grupo');
+                const error = grupo ? grupo.querySelector('.formulario__input-error') : null;
+                if (input.value.trim() === '' || expresiones.numero_interior.test(input.value)) {
                     if (grupo) {
                         grupo.classList.remove('formulario__grupo-incorrecto');
-                        grupo.classList.add('formulario__grupo-correcto');
-                        const error = grupo.querySelector('.formulario__input-error');
+                        grupo.classList.remove('formulario__grupo-correcto');
                         if (error) error.classList.remove('formulario__input-error-activo');
-                        window.campos.numero_interior = true;
                     }
+                    window.campos.numero_interior = true;
                 } else {
-                    const grupo = input.closest('.form-group');
                     if (grupo) {
                         grupo.classList.add('formulario__grupo-incorrecto');
                         grupo.classList.remove('formulario__grupo-correcto');
-                        const error = grupo.querySelector('.formulario__input-error');
                         if (error) error.classList.add('formulario__input-error-activo');
-                        window.campos.numero_interior = false;
                     }
+                    window.campos.numero_interior = false;
                 }
                 break;
             case 'entre_calle_1':
                 convertirMayusculas(input);
                 limitarCaracteres(input, limites.entre_calle);
-                if (input.value === '' || expresiones.entre_calle.test(input.value)) {
-                    const grupo = input.closest('.form-group');
-                    if (grupo) {
-                        grupo.classList.remove('formulario__grupo-incorrecto');
-                        grupo.classList.add('formulario__grupo-correcto');
-                        const error = grupo.querySelector('.formulario__input-error');
-                        if (error) error.classList.remove('formulario__input-error-activo');
-                        window.campos.entre_calle_1 = true;
-                    }
-                } else {
-                    const grupo = input.closest('.form-group');
-                    if (grupo) {
-                        grupo.classList.add('formulario__grupo-incorrecto');
-                        grupo.classList.remove('formulario__grupo-correcto');
-                        const error = grupo.querySelector('.formulario__input-error');
-                        if (error) error.classList.add('formulario__input-error-activo');
-                        window.campos.entre_calle_1 = false;
-                    }
-                }
+                validarCampo(expresiones.entre_calle, input, 'entre_calle_1');
                 break;
             case 'entre_calle_2':
                 convertirMayusculas(input);
                 limitarCaracteres(input, limites.entre_calle);
-                if (input.value === '' || expresiones.entre_calle.test(input.value)) {
-                    const grupo = input.closest('.form-group');
-                    if (grupo) {
-                        grupo.classList.remove('formulario__grupo-incorrecto');
-                        grupo.classList.add('formulario__grupo-correcto');
-                        const error = grupo.querySelector('.formulario__input-error');
-                        if (error) error.classList.remove('formulario__input-error-activo');
-                        window.campos.entre_calle_2 = true;
-                    }
-                } else {
-                    const grupo = input.closest('.form-group');
-                    if (grupo) {
-                        grupo.classList.add('formulario__grupo-incorrecto');
-                        grupo.classList.remove('formulario__grupo-correcto');
-                        const error = grupo.querySelector('.formulario__input-error');
-                        if (error) error.classList.add('formulario__input-error-activo');
-                        window.campos.entre_calle_2 = false;
-                    }
-                }
+                validarCampo(expresiones.entre_calle, input, 'entre_calle_2');
                 break;
 
             // Formulario 3
