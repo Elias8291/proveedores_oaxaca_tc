@@ -10,8 +10,18 @@
         <div class="inner-form-container">
             <div class="progress-container">
                 <div class="progress-info">
-                    <span class="progress-percent" id="progress-percent">0%</span>
-                    <span class="progress-text">Completado</span>
+                    <div class="progress-status">
+                        <span class="progress-percent" id="progress-percent">0%</span>
+                        <span class="progress-text">Completado</span>
+                    </div>
+                    <span class="progress-text persona-type-text">
+                        Formulario para el tipo de persona: 
+                        @if(Auth::user()->hasRole('revisor_1'))
+                            <span class="persona-type-value">Pendiente</span>
+                        @else
+                            <span class="persona-type-value">{{ Auth::user()->solicitante->tipo_persona ?? 'No definido' }}</span>
+                        @endif
+                    </span>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progress-fill"></div>
@@ -19,21 +29,21 @@
             </div>
             <div class="progress-tracker" id="progressTracker">
                 @php
-                    // Determine sections based on user role
-                    $user = Auth::user();
-                    $isRevisor = $user->hasRole('revisor_1');
-                    $tipoPersona = $isRevisor ? null : ($user->solicitante->tipo_persona ?? null);
-                    $secciones = $isRevisor ? [1, 2, 3, 4, 5, 6, 7] : ($tipoPersona === 'Física' ? [1, 2, 6, 7] : [1, 2, 3, 4, 5, 6, 7]);
-                    $titulosSecciones = [
-                        1 => 'Datos Generales',
-                        2 => 'Domicilio',
-                        3 => 'Datos de Constitución',
-                        4 => 'Accionistas',
-                        5 => 'Apoderado Legal',
-                        6 => 'Documentos',
-                        7 => 'Final'
-                    ];
-                @endphp
+                $user = Auth::user();
+                $isRevisor = $user->hasRole('revisor_1');
+                // Si es revisor_1, solo mostrar sección 1 inicialmente
+                $tipoPersona = $isRevisor ? null : ($user->solicitante->tipo_persona ?? null);
+                $secciones = $isRevisor ? [1] : ($tipoPersona === 'Física' ? [1, 2, 6, 7] : [1, 2, 3, 4, 5, 6, 7]);
+                $titulosSecciones = [
+                    1 => 'Datos Generales',
+                    2 => 'Domicilio',
+                    3 => 'Datos de Constitución',
+                    4 => 'Accionistas',
+                    5 => 'Apoderado Legal',
+                    6 => 'Documentos',
+                    7 => 'Final'
+                ];
+            @endphp
                 @foreach ($secciones as $index => $seccion)
                     <div class="seccion" data-seccion="{{ $index + 1 }}">
                         <div class="seccion-numero">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
@@ -134,28 +144,35 @@
         };
 
         function actualizarProgreso() {
-            for (let i = 0; i < secciones.length; i++) {
-                const seccionNum = parseInt(secciones[i].getAttribute('data-seccion'));
-                secciones[i].classList.remove('completed', 'active');
-                if (seccionNum < seccionActual) {
-                    secciones[i].classList.add('completed');
-                } else if (seccionNum === seccionActual) {
-                    secciones[i].classList.add('active');
-                }
-            }
-            const porcentaje = ((seccionActual - 1) / (totalSecciones - 1)) * 100;
-            progressFill.style.width = porcentaje + '%';
-            progressPercent.textContent = Math.round(porcentaje) + '%';
-            for (let i = 1; i <= 7; i++) {
-                const seccionElement = document.getElementById(`seccion${i}`);
-                if (seccionElement) {
-                    seccionElement.style.display = (seccionMapping[seccionActual - 1] === i) ? 'block' : 'none';
-                }
-            }
-            btnAnterior.style.display = seccionActual === 1 ? 'none' : 'block';
-            btnSiguiente.textContent = seccionActual === totalSecciones ? 'Finalizar' : 'Siguiente';
-            btnSiguiente.setAttribute('form', `formulario${seccionMapping[seccionActual - 1]}`);
+    for (let i = 0; i < secciones.length; i++) {
+        const seccionNum = parseInt(secciones[i].getAttribute('data-seccion'));
+        secciones[i].classList.remove('completed', 'active');
+        if (seccionNum < seccionActual) {
+            secciones[i].classList.add('completed');
+        } else if (seccionNum === seccionActual) {
+            secciones[i].classList.add('active');
         }
+    }
+    // Mostrar "Pendiente" para revisor_1, de lo contrario calcular porcentaje
+    if (isRevisor) {
+        progressPercent.textContent = 'Pendiente';
+        progressFill.style.width = '0%'; // Opcional: mantener la barra de progreso en 0%
+    } else {
+        const porcentaje = ((seccionActual - 1) / (totalSecciones - 1)) * 100;
+        progressFill.style.width = porcentaje + '%';
+        progressPercent.textContent = Math.round(porcentaje) + '%';
+    }
+    for (let i = 1; i <= 7; i++) {
+        const seccionElement = document.getElementById(`seccion${i}`);
+        if (seccionElement) {
+            seccionElement.style.display = (seccionMapping[seccionActual - 1] === i) ? 'block' : 'none';
+        }
+    }
+    btnAnterior.style.display = seccionActual === 1 ? 'none' : 'block';
+    btnSiguiente.textContent = seccionActual === totalSecciones ? 'Finalizar' : 'Siguiente';
+    btnSiguiente.setAttribute('form', `formulario${seccionMapping[seccionActual - 1]}`);
+    btnSiguiente.disabled = isRevisor; // Deshabilitar botón para revisor_1
+}
 
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -7,7 +7,8 @@
     <title>@yield('title', 'Dashboard Gobierno')</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="{{ asset('assets/css/dashboard.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     @stack('styles')
 </head>
 
@@ -19,6 +20,11 @@
         @yield('content')
     </main>
     @include('layouts.footer')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js" defer></script>
+    <script src="{{ asset('assets/js/sat/utils.js') }}" defer></script>
+    <script src="{{ asset('assets/js/sat/sat-scraper.js') }}" defer></script>
+    <script src="{{ asset('assets/js/sat/pdf_processor.js') }}" defer></script>
     <script>
         const menuToggle = document.getElementById('menu-toggle');
         const sidebar = document.getElementById('sidebar');
