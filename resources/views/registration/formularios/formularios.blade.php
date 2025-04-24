@@ -62,6 +62,7 @@
             @endforeach
             <div class="navigation-buttons">
                 <button type="button" id="btnAnterior" style="display: none;">Anterior</button>
+                <span id="progress-small-text" class="progress-small-text">Sección 1 de 4</span>
                 <button type="submit" id="btnSiguiente" form="formulario1" disabled>Siguiente</button>
             </div>
         </div>
@@ -88,9 +89,16 @@
             const seccionesMoral = [1, 2, 3, 4, 5, 6, 7];
             const titulosSecciones = @json($titulosSecciones);
 
+            // Excluir la sección 7 de la barra de progreso
+            const seccionesSinProgreso = [7];
+
             function updateProgressTracker() {
                 progressTracker.innerHTML = '';
                 secciones.forEach((seccion, index) => {
+                    if (seccionesSinProgreso.includes(seccion)) {
+                        return; // Saltar secciones que no deben aparecer en la barra de progreso
+                    }
+
                     const div = document.createElement('div');
                     div.classList.add('seccion');
                     div.setAttribute('data-seccion', index + 1);
@@ -117,7 +125,10 @@
 
             function actualizarProgreso() {
                 totalSecciones = secciones.length;
-                const porcentaje = totalSecciones === 1 ? 0 : ((seccionActual - 1) / (totalSecciones - 1)) * 100;
+                const seccionesVisibles = secciones.filter(seccion => !seccionesSinProgreso.includes(seccion));
+                const porcentaje = seccionesVisibles.length === 1 ? 0 : ((seccionActual - 1) / (seccionesVisibles
+                    .length - 1)) * 100;
+
                 progressFill.style.width = porcentaje + '%';
                 progressPercent.textContent = Math.round(porcentaje) + '%';
 
@@ -127,6 +138,10 @@
                         seccionElement.style.display = (secciones[seccionActual - 1] === i) ? 'block' : 'none';
                     }
                 }
+
+                // Actualizar el texto del progreso pequeño
+                const progressSmallText = document.getElementById('progress-small-text');
+                progressSmallText.textContent = `Sección ${seccionActual} de ${seccionesVisibles.length}`;
 
                 btnAnterior.style.display = seccionActual === 1 ? 'none' : 'block';
                 btnSiguiente.textContent = seccionActual === totalSecciones ? 'Finalizar' : 'Siguiente';
@@ -148,7 +163,6 @@
                 secciones = tipo === 'Física' ? seccionesFisica : seccionesMoral;
                 totalSecciones = secciones.length;
                 personaTypeValue.textContent = tipo;
-                // Solo reiniciar seccionActual si estamos en una sección no válida
                 if (!secciones.includes(secciones[seccionActual - 1])) {
                     seccionActual = 1;
                 }
@@ -211,10 +225,9 @@
                     if (input.type !== 'hidden' && input.name !== 'actividad') {
                         input.dispatchEvent(new Event('change'));
                         input.dispatchEvent(new Event('blur'));
-                        // Validar que los campos requeridos estén llenos
                         if (input.hasAttribute('required') && !input.value.trim()) {
                             isValid = false;
-                            input.classList.add('error'); // Agregar clase de error si es necesario
+                            input.classList.add('error');
                         } else {
                             input.classList.remove('error');
                         }

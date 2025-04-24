@@ -50,6 +50,11 @@ html {
     -webkit-text-size-adjust: 100%;
 }
 body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ocupa al menos toda la altura de la ventana */
+    margin: 0;
+    padding: 0;
     background: linear-gradient(135deg, #ebd6d1, #f3f3f3);
     color: var(--color-text);
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -57,11 +62,7 @@ body {
     line-height: 1.8;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    min-height: 100vh;
     position: relative;
-    margin: 0;
-    padding: 0;
-    transition: all 0.5s ease;
 }
 
 body::before {
@@ -436,7 +437,6 @@ img {
     position: fixed;
     top: var(--header-height);
     left: 0;
-    bottom: var(--footer-height);
     width: 60px;
     background: var(--color-white);
     box-shadow: var(--shadow-sm);
@@ -445,14 +445,15 @@ img {
     z-index: 99;
     border-right: 1px solid var(--color-border);
     backdrop-filter: blur(8px);
+    height: calc(100vh - var(--header-height)); /* Extends from header to bottom of viewport */
 }
 
 .sidebar:hover {
     width: var(--sidebar-width);
 }
 
-.sidebar-menu {
-    padding: 20px 10px;
+.sidebar:hover + .content {
+    margin-left: var(--sidebar-width);
 }
 
 .menu-item {
@@ -653,12 +654,8 @@ img {
 }
 
 /* Footer */
+/* Footer */
 .footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: var(--footer-height);
     background: var(--color-white);
     border-top: 1px solid var(--color-border);
     display: flex;
@@ -669,8 +666,10 @@ img {
     color: var(--color-text-light);
     box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.03);
     backdrop-filter: blur(8px);
+    height: var(--footer-height);
+    width: 100%;
+    z-index: 100; /* Added to ensure footer is in front of sidebar */
 }
-
 .footer-right {
     display: flex;
     gap: 18px;
@@ -809,6 +808,46 @@ img {
 .form-row .form-group {
     flex: 1;
 }
+.progress-small-text {
+    position: relative;
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+    padding: 0 8px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  /* Mini progress bar */
+  .progress-small-text::before {
+    content: "";
+    display: inline-block;
+    width: 40px;
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    position: relative;
+  }
+  
+  /* Filled progress indicator */
+  .progress-small-text::after {
+    content: "";
+    position: absolute;
+    left: 8px;
+    width: 10px; /* 25% of 40px (1 of 4 sections) */
+    height: 4px;
+    background: var(--color-primary);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+  
+  /* You can update this CSS dynamically based on the current section */
+  .progress-small-text[data-section="1"]::after { width: 10px; } /* 25% */
+  .progress-small-text[data-section="2"]::after { width: 20px; } /* 50% */
+  .progress-small-text[data-section="3"]::after { width: 30px; } /* 75% */
+  .progress-small-text[data-section="4"]::after { width: 40px; } /* 100% */
 
 /* Radio Buttons */
 .radio-group {
