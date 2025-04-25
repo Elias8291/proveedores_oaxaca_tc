@@ -33,131 +33,114 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function resetForm(formElement) {
         if (!formElement) return;
-
-        // Reset all input fields
+        if (formElement.id === 'loginForm' && hasLoginErrors()) {
+            const errorInputs = formElement.querySelectorAll('.error, .is-invalid');
+            errorInputs.forEach(input => input.classList.remove('error', 'is-invalid'));
+            return;
+        }
         const inputs = formElement.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
-            if (input.type === 'checkbox' || input.type === 'radio') {
-                input.checked = false;
-            } else if (input.type !== 'hidden') { // Skip hidden inputs like CSRF token
-                input.value = '';
-            }
+            if (input.type === 'checkbox' || input.type === 'radio') input.checked = false;
+            else if (input.type !== 'hidden') input.value = '';
         });
-
-        // Remove error messages and error classes
         const errorMessages = formElement.querySelectorAll('.error-message, .alert-danger, .invalid-feedback');
         errorMessages.forEach(error => error.remove());
         const errorInputs = formElement.querySelectorAll('.error, .is-invalid');
         errorInputs.forEach(input => input.classList.remove('error', 'is-invalid'));
-
-        // Form-specific resets
         if (formElement.id === 'registerFormStep1' || formElement.id === 'registerFormStep2') {
-            // Clear PDF data fields
             ['pdf-name', 'pdf-rfc', 'pdf-date', 'pdf-regimen', 'pdf-qr-url', 'nombre', 'tipo-persona', 'rfc', 'cp', 'direccion'].forEach(id => {
                 const element = document.getElementById(id);
                 if (element) element.textContent = '';
             });
-            // Reset email input in registerFormStep2
             const emailInput = document.getElementById('email-input');
             if (emailInput) emailInput.value = '';
-            // Reset warning badge and document status
             const warningBadge = document.getElementById('warning-badge');
             if (warningBadge) warningBadge.style.display = 'none';
             const documentStatus = document.getElementById('document-status');
             if (documentStatus) documentStatus.textContent = 'DOCUMENTO';
             cleanFileUpload();
         }
-
         if (formElement.id === 'passwordForm') {
-            // Clear password inputs
             const passwordInputs = formElement.querySelectorAll('input[type="password"]');
             passwordInputs.forEach(input => input.value = '');
-            // Remove session error messages
             const sessionErrors = formElement.querySelectorAll('.alert.alert-danger');
             sessionErrors.forEach(error => error.remove());
         }
-
         if (formElement.id === 'loginForm') {
-            // Clear login inputs
             const loginInputs = formElement.querySelectorAll('input[type="email"], input[type="password"]');
             loginInputs.forEach(input => input.value = '');
         }
-
         if (formElement.id === 'forgotForm') {
-            // Clear email input
             const emailInput = formElement.querySelector('input[type="email"]');
             if (emailInput) emailInput.value = '';
         }
     }
 
     function resetAllForms() {
-        const allForms = [welcomeForm, loginForm, forgotForm, registerFormStep1, registerFormStep2, passwordForm];
-        allForms.forEach(form => {
+        [welcomeForm, loginForm, forgotForm, registerFormStep1, registerFormStep2, passwordForm].forEach(form => {
             if (form) resetForm(form);
         });
     }
 
     function hasLoginErrors() {
         const errorElements = loginForm.querySelectorAll('.error-message, .alert-danger');
-        return errorElements.length > 0;
+        const hasErrorInput = document.getElementById('has-login-errors');
+        return errorElements.length > 0 || (hasErrorInput && hasErrorInput.value === 'true');
     }
 
     function hasPasswordResetToken() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.has('token');
+        return new URLSearchParams(window.location.search).has('token');
     }
 
     function initializeForms() {
-        // Remove active class from all forms
-        const allForms = [welcomeForm, loginForm, forgotForm, registerFormStep1, registerFormStep2, passwordForm];
-        allForms.forEach(form => {
+        [welcomeForm, loginForm, forgotForm, registerFormStep1, registerFormStep2, passwordForm].forEach(form => {
             if (form) form.classList.remove('active', 'slide-in');
         });
-
-        // Reset all forms to ensure clean state
-        resetAllForms();
-
-        // Activate the appropriate form
-        if (hasPasswordResetToken()) {
-            activateForm(passwordForm);
-        } else if (hasLoginErrors()) {
+        if (hasLoginErrors()) {
+            [welcomeForm, forgotForm, registerFormStep1, registerFormStep2, passwordForm].forEach(form => {
+                if (form) resetForm(form);
+            });
             activateForm(loginForm);
         } else {
-            activateForm(welcomeForm);
+            resetAllForms();
+            activateForm(hasPasswordResetToken() ? passwordForm : welcomeForm);
         }
     }
 
     function activateForm(formToShow, isBackNavigation = false) {
         if (!formToShow) return;
+    
+        // Get all forms in the forms-container
+        const allForms = document.querySelectorAll('.form-page');
         const currentActive = document.querySelector('.form-page.active');
-        if (currentActive) {
-            if (isBackNavigation) {
-                resetForm(currentActive);
-                // Reset all forms if navigating to welcomeForm
-                if (formToShow.id === 'welcomeForm') {
-                    resetAllForms();
-                }
-            }
-            currentActive.classList.remove('active', 'slide-in', 'fade-in', 'flip-in');
-            currentActive.classList.add('slide-out');
-            setTimeout(() => {
-                currentActive.classList.remove('slide-out');
-            }, 350);
+        const formsContainer = document.querySelector('.forms-container');
+    
+        // Remove active and transition classes from all forms
+        allForms.forEach(form => {
+            form.classList.remove('active', 'slide-in', 'slide-out', 'fade-in', 'flip-in');
+        });
+    
+        // Reset the current form if navigating back
+        if (currentActive && isBackNavigation) {
+            resetForm(currentActive);
+            if (formToShow.id === 'welcomeForm') resetAllForms();
         }
+    
+        // Activate the target form
         setTimeout(() => {
             formToShow.classList.add('active', 'slide-in');
-            if (formsContainer) {
-                formsContainer.style.height = `${formToShow.scrollHeight}px`;
-            }
+            if (formsContainer) formsContainer.style.height = `${formToShow.scrollHeight}px`;
+    
+            // Update container class for PDF preview (if applicable)
             const container = document.querySelector('.container');
             if (formToShow.id === 'registerFormStep2') {
                 container.classList.add('show-pdf-preview');
             } else {
                 container.classList.remove('show-pdf-preview');
             }
-            setTimeout(() => {
-                formToShow.classList.remove('slide-in');
-            }, 350);
+    
+            // Remove transition class after animation
+            setTimeout(() => formToShow.classList.remove('slide-in'), 350);
         }, 10);
     }
 
@@ -169,9 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     if (buttonId === 'nextToStep2Btn') {
                         const fileInput = document.getElementById('register-file');
-                        if (!fileInput || fileInput.files.length === 0) {
-                            return; // Prevent navigation if no file is uploaded
-                        }
+                        if (!fileInput || fileInput.files.length === 0) return;
                         const event = new CustomEvent('processPDF', { detail: fileInput.files[0] });
                         document.dispatchEvent(event);
                     }
@@ -192,13 +173,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (fileInput.files.length > 0) {
                     customFileUpload.classList.add('has-file');
                     customFileUpload.querySelector('span').textContent = fileInput.files[0].name;
-                } else {
-                    cleanFileUpload();
-                }
+                } else cleanFileUpload();
             });
         }
     }
 
+    function setupPasswordToggle() {
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('login-password');
+        const eyeIcon = togglePassword?.querySelector('.eye-icon');
+        const eyeSlashIcon = togglePassword?.querySelector('.eye-slash-icon');
+        if (togglePassword && passwordInput && eyeIcon && eyeSlashIcon) {
+            togglePassword.addEventListener('click', function() {
+                const isPasswordVisible = passwordInput.type === 'text';
+                passwordInput.type = isPasswordVisible ? 'password' : 'text';
+                eyeIcon.style.display = isPasswordVisible ? 'block' : 'none';
+                eyeSlashIcon.style.display = isPasswordVisible ? 'none' : 'block';
+            });
+        }
+    }
+
+    setupPasswordToggle();
     window.addEventListener('popstate', function(e) {
         if (e.state && e.state.form) {
             const targetForm = document.getElementById(navButtons[e.state.form]);
@@ -216,8 +211,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.addEventListener('resize', function() {
         const activeForm = document.querySelector('.form-page.active');
-        if (activeForm && formsContainer) {
-            formsContainer.style.height = `${activeForm.scrollHeight}px`;
-        }
+        if (activeForm && formsContainer) formsContainer.style.height = `${activeForm.scrollHeight}px`;
     });
 });

@@ -14,7 +14,7 @@
                         <span class="progress-text">Completado</span>
                     </div>
                     <span class="progress-text persona-type-text">
-                        Formulario para el tipo de persona:
+                        Formulario para persona 
                         @if (Auth::user()->hasRole('revisor_1'))
                             <span class="persona-type-value" id="persona-type-value">Pendiente</span>
                         @else
@@ -129,19 +129,22 @@
                 const porcentaje = seccionesVisibles.length === 1 ? 0 : ((seccionActual - 1) / (seccionesVisibles
                     .length - 1)) * 100;
 
+                // Actualizar la barra de progreso principal
                 progressFill.style.width = porcentaje + '%';
                 progressPercent.textContent = Math.round(porcentaje) + '%';
 
+                // Actualizar el texto y la mini barra de progreso de progress-small-text
+                const progressSmallText = document.getElementById('progress-small-text');
+                progressSmallText.textContent = `Sección ${seccionActual} de ${seccionesVisibles.length}`;
+                progressSmallText.setAttribute('data-section', seccionActual);
+
+                // Mostrar u ocultar secciones
                 for (let i = 1; i <= 7; i++) {
                     const seccionElement = document.getElementById(`seccion${i}`);
                     if (seccionElement) {
                         seccionElement.style.display = (secciones[seccionActual - 1] === i) ? 'block' : 'none';
                     }
                 }
-
-                // Actualizar el texto del progreso pequeño
-                const progressSmallText = document.getElementById('progress-small-text');
-                progressSmallText.textContent = `Sección ${seccionActual} de ${seccionesVisibles.length}`;
 
                 btnAnterior.style.display = seccionActual === 1 ? 'none' : 'block';
                 btnSiguiente.textContent = seccionActual === totalSecciones ? 'Finalizar' : 'Siguiente';

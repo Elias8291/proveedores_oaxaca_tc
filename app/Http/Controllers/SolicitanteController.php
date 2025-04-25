@@ -125,6 +125,9 @@ class SolicitanteController extends Controller
         }
     }
 
+
+    
+
     // Determina la vista inicial de registro o redirige según el estado del solicitante
     public function showRegistrationIndex()
     {

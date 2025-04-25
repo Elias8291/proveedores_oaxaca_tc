@@ -445,15 +445,22 @@ img {
     z-index: 99;
     border-right: 1px solid var(--color-border);
     backdrop-filter: blur(8px);
-    height: calc(100vh - var(--header-height)); /* Extends from header to bottom of viewport */
+    min-height: calc(100vh - var(--header-height)); /* Sidebar extends to bottom of viewport */
 }
-
 .sidebar:hover {
     width: var(--sidebar-width);
 }
 
 .sidebar:hover + .content {
     margin-left: var(--sidebar-width);
+}
+
+.content {
+    margin-left: 60px; /* Default margin to account for collapsed sidebar */
+    margin-top: var(--header-height); /* Space for fixed header */
+    flex: 1; /* Allow content to grow and push footer down */
+    padding-bottom: var(--footer-height); /* Prevent content from overlapping footer */
+    transition: margin-left var(--transition);
 }
 
 .menu-item {
@@ -814,14 +821,14 @@ img {
     color: #6c757d;
     font-weight: 500;
     padding: 0 8px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     align-items: center;
     gap: 8px;
-  }
-  
-  /* Mini progress bar */
-  .progress-small-text::before {
+}
+
+/* Mini progress bar */
+.progress-small-text::before {
     content: "";
     display: inline-block;
     width: 40px;
@@ -829,10 +836,10 @@ img {
     background: #e9ecef;
     border-radius: 2px;
     position: relative;
-  }
-  
-  /* Filled progress indicator */
-  .progress-small-text::after {
+}
+
+/* Filled progress indicator */
+.progress-small-text::after {
     content: "";
     position: absolute;
     left: 8px;
@@ -841,13 +848,21 @@ img {
     background: var(--color-primary);
     border-radius: 2px;
     transition: width 0.3s ease;
-  }
-  
-  /* You can update this CSS dynamically based on the current section */
-  .progress-small-text[data-section="1"]::after { width: 10px; } /* 25% */
-  .progress-small-text[data-section="2"]::after { width: 20px; } /* 50% */
-  .progress-small-text[data-section="3"]::after { width: 30px; } /* 75% */
-  .progress-small-text[data-section="4"]::after { width: 40px; } /* 100% */
+}
+
+/* You can update this CSS dynamically based on the current section */
+.progress-small-text[data-section="1"]::after {
+    width: 10px;
+} /* 25% */
+.progress-small-text[data-section="2"]::after {
+    width: 20px;
+} /* 50% */
+.progress-small-text[data-section="3"]::after {
+    width: 30px;
+} /* 75% */
+.progress-small-text[data-section="4"]::after {
+    width: 40px;
+} /* 100% */
 
 /* Radio Buttons */
 .radio-group {
@@ -957,7 +972,7 @@ img {
 
 /* Icono de documento más pequeño y refinado */
 #formulario__grupo--constancia label::before {
-    content: '';
+    content: "";
     display: block;
     width: 36px;
     height: 42px;
@@ -1025,7 +1040,7 @@ img {
 
 .upload-success-icon i {
     font-size: 36px;
-    color: var(--color-success, #4CAF50);
+    color: var(--color-success, #4caf50);
 }
 
 .upload-success-icon.visible {
@@ -1035,7 +1050,7 @@ img {
 .pdf-preview-container .upload-success {
     flex-grow: 1;
     font-size: 0.85rem;
-    color: var(--color-success, #4CAF50);
+    color: var(--color-success, #4caf50);
     font-weight: var(--font-weight-medium, 500);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1058,8 +1073,14 @@ img {
 }
 
 @keyframes fadein {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .pdf-preview-container .pdf-icon {
@@ -1097,7 +1118,7 @@ img {
 /* Efecto de pulso para el contenedor cuando se sube correctamente */
 .pdf-upload-success label {
     animation: successPulse 1.2s ease-in-out;
-    border-color: var(--color-success, #4CAF50) !important;
+    border-color: var(--color-success, #4caf50) !important;
 }
 
 .view-pdf-btn.preview/pdf {
@@ -1119,9 +1140,6 @@ img {
     line-height: 1;
 }
 
-
-
-
 /* Responsive adjustments */
 @media screen and (max-width: 768px) {
     .view-pdf-btn.preview-pdf {
@@ -1135,9 +1153,15 @@ img {
 }
 
 @keyframes successPulse {
-    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.5); }
-    50% { box-shadow: 0 0 0 8px rgba(76, 175, 80, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+    0% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(76, 175, 80, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
 }
 
 /* Cuando se sube el archivo, cambiamos la apariencia del label */
@@ -1147,11 +1171,17 @@ img {
 }
 
 @keyframes checkmark {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
-  .progress-container {
+.progress-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -1202,13 +1232,6 @@ img {
     background: var(--color-primary);
     transition: width 0.3s ease;
 }
-
-
-
-
-
-
-
 
 /* Responsive adjustments */
 @media screen and (max-width: 768px) {

@@ -53,8 +53,7 @@
                 <img src="{{ asset('assets/images/welcome/administration-secretariat-logo.png') }}" alt="Logo" class="logo-img">
                 <h1 class="welcome-title-animation">Bienvenido</h1>
                 <p class="welcome-subtitle">Padrón de Proveedores de Oaxaca</p>
-                <p class="welcome-description">Portal oficial para el registro y administración de proveedores del
-                    Estado de Oaxaca. Accede a licitaciones y mantén actualizada tu información.</p>
+                <p class="welcome-description">Portal oficial para el registro, actualización y renovación de proveedores del Estado de Oaxaca.</p>
                 <div class="welcome-buttons">
                     <button type="button" class="btn" id="goToLoginBtn">Iniciar Sesión</button>
                     <button type="button" class="btn btn-secondary" id="goToRegisterBtn">Registrarse</button>

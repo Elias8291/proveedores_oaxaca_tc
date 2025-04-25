@@ -493,6 +493,23 @@ button:focus:not(:active)::after {
 .dropdown-content.show {
     display: block;
 }
+.error-message {
+    display: block;
+    color: #c62828;
+    font-size: 0.8em;
+    background-color: #fff1f0;
+    border: 1px solid #ef5350;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-top: 6px;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+}
+.error-message:hover {
+    background-color: #ffebee;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
 
 /* Error and File Input Styles */
 .error-message::before {
@@ -1312,7 +1329,40 @@ input:checked+.toggle-slider:before {
     color: var(--primary-color);
     transform: rotate(90deg);
   }
-  
+  .password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 40px; /* Space for the icon */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password svg {
+    width: 20px;
+    height: 20px;
+    color: #666; /* Adjust color to match your design */
+}
+
+.toggle-password .eye-icon,
+.toggle-password .eye-slash-icon {
+    transition: opacity 0.2s ease;
+}
+
+.toggle-password .eye-slash-icon {
+    display: none;
+}
   #modalTitle {
     color: var(--primary-color);
     font-family: 'Segoe UI', sans-serif;
