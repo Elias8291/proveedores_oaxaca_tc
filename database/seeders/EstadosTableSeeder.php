@@ -14,18 +14,18 @@ class EstadosTableSeeder extends Seeder
             'Baja California',
             'Baja California Sur',
             'Campeche',
-            'Coahuila de Zaragoza',
-            'Colima',
             'Chiapas',
             'Chihuahua',
             'Ciudad de México',
+            'Coahuila',
+            'Colima',
             'Durango',
+            'Estado de México',
             'Guanajuato',
             'Guerrero',
             'Hidalgo',
             'Jalisco',
-            'México',
-            'Michoacán de Ocampo',
+            'Michoacán',
             'Morelos',
             'Nayarit',
             'Nuevo León',
@@ -39,14 +39,14 @@ class EstadosTableSeeder extends Seeder
             'Tabasco',
             'Tamaulipas',
             'Tlaxcala',
-            'Veracruz de Ignacio de la Llave',
+            'Veracruz',
             'Yucatán',
             'Zacatecas',
         ];
 
         foreach ($estados as $estado) {
             DB::table('estados')->insert([
-                'id_pais' => 103, // Changed from 'pais_id' to 'id_pais'
+                'id_pais' => 103, // Assuming this is the ID for Mexico
                 'nombre' => $estado,
                 'created_at' => now(),
                 'updated_at' => now(),
