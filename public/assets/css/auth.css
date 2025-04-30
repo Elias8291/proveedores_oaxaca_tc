@@ -397,7 +397,7 @@ button:focus:not(:active)::after {
     box-shadow: 0 20px 40px rgba(157, 36, 73, 0.15);
     display: flex;
     height: 600px;
-    max-width: 1000px;
+    max-width: 1100px;
     opacity: 0;
     overflow: hidden;
     transform: translateY(20px);
@@ -878,7 +878,7 @@ p {
     justify-content: center;
     padding: 20px;
     position: relative;
-    width: 55%;
+    width: 50%;
 }
 
 /* SAT Modal */
