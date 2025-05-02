@@ -93,12 +93,12 @@ Route::middleware('web')->group(function () {
         Route::get('/solicitantes/index', fn () => view('solicitantes.index'))->name('solicitantes.index');
         Route::post('/registration/accept-terms', [SolicitanteController::class, 'acceptTerms'])->name('registration.accept-terms');
         Route::resource('revisiones', RevisionController::class);
-
-        // Detalles Solicitud Route
-        Route::get('/detalles-solicitud', [SectorController::class, 'showDetallesSolicitud'])->name('detalles-solicitud');
-
         // Legacy Registro Route
         Route::get('/registro', [EstadoController::class, 'index'])->name('registro.form');
+        Route::get('/detalles-solicitud', function () {
+            return view('revisiones.detalles-solicitud');
+        });
+        
     });
 
     /*
