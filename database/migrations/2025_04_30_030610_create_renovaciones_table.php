@@ -11,14 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('proveedores', function (Blueprint $table) {
-            $table->string('pv', 10)->primary();
-            $table->foreignId('solicitante_id')->nullable()->constrained('solicitantes');
-            $table->date('fecha_registro');
+        Schema::create('renovaciones', function (Blueprint $table) {
+            $table->id();
+            $table->string('proveedor_pv', 10); 
             $table->date('fecha_renovacion');
-            $table->enum('estado', ['Activo', 'Inactivo', 'Pendiente Renovacion']);
+            $table->date('fecha_vencimiento')->nullable();
+            $table->string('estado', 20)->default('Pendiente');
             $table->text('observaciones')->nullable();
             $table->timestamps();
+            $table->foreign('proveedor_pv')->references('pv')->on('proveedores');
         });
     }
 
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('proveedores');
+        Schema::dropIfExists('renovaciones');
     }
 };

@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\RevisionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +50,7 @@ Route::middleware('web')->group(function () {
 
     // Public Registration Route
     Route::post('/register', [SolicitanteController::class, 'register'])->name('register');
-  
+
     /*
     |--------------------------------------------------------------------------
     | Authenticated Routes
@@ -80,7 +81,7 @@ Route::middleware('web')->group(function () {
         Route::get('/tramites', [SolicitanteController::class, 'showForm'])->name('tramites.form');
 
         // Account Configuration
-        Route::post('/registro', [RegisterController::class, 'register'])->name('registro'); // Renamed to avoid conflict
+        Route::post('/registro', [RegisterController::class, 'register'])->name('registro');
         Route::get('/set-password', [SetPasswordController::class, 'showSetForm'])->name('password.set.form');
         Route::post('/set-password', [SetPasswordController::class, 'setPassword'])->name('password.set');
 
@@ -91,6 +92,10 @@ Route::middleware('web')->group(function () {
         Route::get('/solicitante/direccion-data', [SolicitanteController::class, 'getDireccionData'])->name('solicitante.direccion-data');
         Route::get('/solicitantes/index', fn () => view('solicitantes.index'))->name('solicitantes.index');
         Route::post('/registration/accept-terms', [SolicitanteController::class, 'acceptTerms'])->name('registration.accept-terms');
+        Route::resource('revisiones', RevisionController::class);
+
+        // Detalles Solicitud Route
+        Route::get('/detalles-solicitud', [SectorController::class, 'showDetallesSolicitud'])->name('detalles-solicitud');
 
         // Legacy Registro Route
         Route::get('/registro', [EstadoController::class, 'index'])->name('registro.form');
