@@ -3,6 +3,7 @@
 @section('title', 'Detalles de Solicitud')
 
 <link rel="stylesheet" href="{{ asset('assets/css/tabla.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/formularios.CSS') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 @section('content')
