@@ -892,7 +892,7 @@
 
         /*css generales
             /* VARIABLES CSS GLOBALES */
-            :root {
+    :root {
     /* Colores principales */
     --primary-color: #9D2449;
     --primary-dark: #7a1c38;
@@ -2062,16 +2062,7 @@ body {
                     documents_completed: 15,
                     documents_total: 15,
                     observations: null
-                },
-                {
-      pv_id: "PV-002",
-      status: "renewal",  // <- Ejemplo de PV en renovación
-      start_date: "01/01/2022",
-      end_date: "31/12/2022",
-      registration_date: "15/12/2021",
-      responsible_person: "Carlos López",
-      observations: "En proceso de renovación"
-    }
+                }
   ]
 };
 
@@ -2123,10 +2114,6 @@ body {
                 case 'expired':
                     statusText = 'Expirado';
                     statusTitle = 'PV expirado el ' + pv.end_date;
-                    break;
-                case 'renewal':
-                    statusText = 'Renovación';
-                    statusTitle = 'PV en proceso de renovación';
                     break;
             }
 
