@@ -12,8 +12,7 @@
             <header class="page-header">
                 <div class="header-content">
                     <h1 class="page-title">Historial de Proveedor</h1>
-                    <p class="page-subtitle">Gestión de renovaciones y estados de PVs para <span
-                            id="supplier-name">Proveedor</span></p>
+                    <p class="page-subtitle">Gestión de renovaciones y estados de PVs para <span id="supplier-name">Proveedor</span></p>
                 </div>
             </header>
 
@@ -47,732 +46,372 @@
             </div>
 
             <!-- Formulario de revisión -->
-            <div id="review-form" class="details-container" style="display: none;">
-                <a href="#" class="close-form-btn">× Cerrar</a>
-                <form id="formulario1">
-                    <div class="form-section" id="constancia-upload-section">
-                        <h4><i class="fas fa-file-pdf"></i> Subir Constancia de Situación Fiscal</h4>
-                        <div class="form-group full-width" id="formulario__grupo--constancia">
-                            <label class="form-label" for="constancia_upload">
-                                <span>Seleccionar Constancia de Situación Fiscal</span>
-                                <span class="file-desc">Formato PDF, máximo 5MB</span>
-                            </label>
-                            <input type="file" id="constancia_upload" name="constancia_upload" class="form-control"
-                                accept="application/pdf" required>
-                            <p class="formulario__input-error">Debe seleccionar un archivo en formato PDF.</p>
-                            <div class="pdf-preview-container" id="upload-feedback" style="display: none;">
-                                <i class="fas fa-file-pdf pdf-icon"></i>
-                                <span class="pdf-name upload-success">PDF subido correctamente</span>
-                                <button class="view-pdf-btn preview-pdf" id="preview-pdf" title="Ver PDF">
-                                    <i class="fas fa-eye"></i> Ver PDF
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-section" id="form-step-1">
-                        <h4><i class="fas fa-building"></i> Datos Generales</h4>
-                        <div class="form-group horizontal-group">
-                            <div class="half-width">
-                                <label class="form-label data-label">Tipo de Proveedor</label>
-                                <select name="tipo_persona" id="tipo_persona" class="form-control" required>
-                                    <option value="">Seleccione un tipo</option>
-                                    <option value="Física">Física</option>
-                                    <option value="Moral">Moral</option>
-                                </select>
-                                <p class="formulario__input-error">Debe seleccionar 'Física' o 'Moral'.</p>
-                            </div>
-                            <div class="half-width">
-                                <label class="form-label data-label">RFC</label>
-                                <input type="text" name="rfc" id="rfc" class="form-control"
-                                    placeholder="Ej. XAXX010101000" required maxlength="13" pattern="[A-Z0-9]{12,13}">
-                                <p class="formulario__input-error">El RFC debe tener 12 o 13 caracteres alfanuméricos.</p>
-                            </div>
-                        </div>
-                        <div class="form-group horizontal-group">
-                            <div class="half-width form-group" id="formulario__grupo--razon_social">
-                                <label class="form-label" for="razon_social">Razón Social</label>
-                                <input type="text" id="razon_social" name="razon_social" class="form-control" required
-                                    maxlength="100" pattern="[A-Za-z\s&.,0-9]+">
-                                <p class="formulario__input-error">La razón social debe contener solo letras, números,
-                                    espacios y caracteres (&,.,).</p>
-                            </div>
-                            <div class="half-width form-group" id="formulario__grupo--correo_electronico">
-                                <label class="form-label" for="correo_electronico">Correo Electrónico</label>
-                                <input type="email" id="correo_electronico" name="correo_electronico"
-                                    class="form-control" required>
-                                <p class="formulario__input-error">El correo debe tener un formato válido (ej.
-                                    usuario@dominio.com).</p>
-                            </div>
-                        </div>
-                        <div class="form-group full-width" id="formulario__grupo--sectores">
-                            <label class="form-label">Sectores</label>
-                            <select name="sectores" id="sectores" class="form-control">
-                                <option value="">Seleccione un sector</option>
-                            </select>
-                            <p class="formulario__input-error">Debe seleccionar al menos un sector.</p>
-                        </div>
-                        <div class="form-group full-width" id="formulario__grupo--actividades">
-                            <label class="form-label">Actividades</label>
-                            <select name="actividad" id="actividad" class="form-control" required>
-                                <option value="">Seleccione una actividad</option>
-                            </select>
-                            <p class="formulario__input-error">Debe seleccionar al menos una actividad.</p>
-                        </div>
-                        <div class="form-group full-width" id="actividades-seleccionadas-container">
-                            <label class="form-label">Actividades Seleccionadas</label>
-                            <div id="actividades-seleccionadas" class="actividades-container"></div>
-                        </div>
-                        <div class="form-group" id="curp-field" style="display: none;">
-                            <label class="form-label data-label">CURP</label>
-                            <span class="data-field" id="verify-field" style="display: none;">
-                                <span class="data-field" id="curp-value">No disponible</span>
-                        </div>
-                        <div class="horizontal-group">
-                            <div class="half-width form-group" id="formulario__grupo--contacto_telefono">
-                                <label class="form-label" for="contacto_telefono">Teléfono de Contacto</label>
-                                <input type="tel" id="contacto_telefono" name="contacto_telefono"
-                                    class="form-control" required pattern="[0-9]{10}">
-                                <p class="formulario__input-error">El teléfono debe contener exactamente 10 dígitos
-                                    numéricos.</p>
-                            </div>
-                            <div class="half-width form-group" id="formulario__grupo--contacto_web">
-                                <label class="form-label" for="contacto_web">Página Web (opcional)</label>
-                                <input type="url" id="contacto_web" name="contacto_web" class="form-control"
-                                    placeholder="https://www.ejemplo.com">
-                                <p class="formulario__input-error">La URL debe ser válida (ej. https://www.empresa.com) o
-                                    dejar en blanco.</p>
-                            </div>
-                        </div>
-                        <h4><i class="fas fa-address-card"></i> Datos de Contacto</h4>
-                        <span>Persona encargada de recibir solicitudes y requerimientos</span>
-                        <div class="form-group" id="formulario__grupo--contacto_nombre">
-                            <label class="form-label" for="contacto_nombre">Nombre Completo</label>
-                            <input type="text" id="contacto_nombre" name="contacto_nombre" class="form-control"
-                                required maxlength="40" pattern="[A-Za-z\s]+">
-                            <p class="formulario__input-error">El nombre debe contener solo letras y espacios, máximo 40
-                                caracteres.</p>
-                        </div>
-                        <div class="form-group" id="formulario__grupo--contacto_cargo">
-                            <label class="form-label" for="contacto_cargo">Cargo o Puesto</label>
-                            <input type="text" id="contacto_cargo" name="contacto_cargo" class="form-control"
-                                required maxlength="50" pattern="[A-Za-z\s]+">
-                            <p class="formulario__input-error">El cargo debe contener solo letras y espacios, máximo 50
-                                caracteres.</p>
-                        </div>
-                        <div class="form-group" id="formulario__grupo--contacto_correo">
-                            <label class="form-label" for="contacto_correo">Correo Electrónico</label>
-                            <input type="email" id="contacto_correo" name="contacto_correo" class="form-control"
-                                required>
-                            <p class="formulario__input-error">El correo debe tener un formato válido (ej.
-                                usuario@dominio.com).</p>
-                        </div>
-                        <div class="form-group" id="formulario__grupo--contacto_telefono_2">
-                            <label class="form-label" for="contacto_telefono_2">Teléfono de Contacto 2</label>
-                            <input type="tel" id="contacto_telefono_2" name="contacto_telefono_2"
-                                class="form-control" required pattern="[0-9]{10}">
-                            <p class="formulario__input-error">El teléfono debe contener exactamente 10 dígitos numéricos.
-                            </p>
-                        </div>
-                    </div>
-                </form>
-                <form id="formulario2">
-                    <div class="form-section" id="form-step-2">
-                        <h4><i class="fas fa-map-marker-alt"></i> Domicilio</h4>
-                        <div class="form-group horizontal-group">
-                            <div class="half-width form-group" id="formulario__grupo--codigo_postal">
-                                <label class="form-label data-label">Código Postal</label>
-                                <input type="text" id="codigo_postal" name="codigo_postal" class="form-control"
-                                    placeholder="Ej: 12345" required pattern="[0-9]{5}" maxlength="5" value="">
-                                <p class="formulario__input-error">El código postal debe contener exactamente 5 dígitos
-                                    numéricos.</p>
-                            </div>
-                            <div class="half-width form-group" id="formulario__grupo--estado">
-                                <label class="form-label data-label">Estado</label>
-                                <input type="text" id="estado" name="estado" class="form-control"
-                                    placeholder="Ej: Jalisco" readonly value="">
-                                <p class="formulario__input-error">El estado debe contener solo letras y espacios, máximo
-                                    100 caracteres.</p>
-                            </div>
-                        </div>
-                        <div class="form-group horizontal-group">
-                            <div class="half-width form-group" id="formulario__grupo--municipio">
-                                <label class="form-label data-label">Municipio</label>
-                                <input type="text" id="municipio" name="municipio" class="form-control"
-                                    placeholder="Ej: Guadalajara" readonly value="">
-                                <p class="formulario__input-error">El municipio debe contener solo letras y espacios,
-                                    máximo 100 caracteres.</p>
-                            </div>
-                            <div class="half-width form-group" id="formulario__grupo--colonia">
-                                <label class="form-label" for="colonia">Asentamiento</label>
-                                <select id="colonia" name="colonia" class="form-control" required>
-                                    <option value="">Seleccione un Asentamiento</option>
-                                </select>
-                                <p class="formulario__input-error">Debe seleccionar un asentamiento.</p>
-                            </div>
-                        </div>
-                        <div class="form-group horizontal-group">
-                            <div class="half-width form-group" id="formulario__grupo--calle">
-                                <label class="form-label" for="calle">Calle</label>
-                                <input type="text" id="calle" name="calle" class="form-control"
-                                    placeholder="Ej: Av. Principal" required maxlength="100" pattern="[A-Za-z0-9\s]+">
-                                <p class="formulario__input-error">La calle debe contener letras, números o espacios,
-                                    máximo 100 caracteres.</p>
-                            </div>
-                            <div class="half-width form-group" id="formulario__grupo--numero_exterior">
-                                <label class="form-label" for="numero_exterior">Número Exterior</label>
-                                <input type="text" id="numero_exterior" name="numero_exterior" class="form-control"
-                                    placeholder="Ej: 123" required maxlength="10" pattern="[A-Za-z0-9]+">
-                                <p class="formulario__input-error">El número exterior debe contener letras o números,
-                                    máximo 10 caracteres.</p>
-                            </div>
-                        </div>
-                        <div class="form-group horizontal-group">
-                            <div class="half-width form-group" id="formulario__grupo--numero_interior">
-                                <label class="form-label" for="numero_interior">Número Interior</label>
-                                <input type="text" id="numero_interior" name="numero_interior" class="form-control"
-                                    placeholder="Ej: 5A" maxlength="10" pattern="[A-Za-z0-9]+">
-                                <p class="formulario__input-error">El número interior debe contener letras o números,
-                                    máximo 10 caracteres, o dejar en blanco.</p>
-                            </div>
-                            <div class="half-width form-group" id="formulario__grupo--entre_calle_1">
-                                <label class="form-label" for="entre_calle_1">Entre Calle 1</label>
-                                <input type="text" id="entre_calle_1" name="entre_calle_1" class="form-control"
-                                    placeholder="Ej: Calle Independencia" maxlength="100" pattern="[A-Za-z0-9\s]+">
-                                <p class="formulario__input-error">Entre calle 1 debe contener letras, números o espacios,
-                                    máximo 100 caracteres, o dejar en blanco.</p>
-                            </div>
-                        </div>
-                        <div class="form-group" id="formulario__grupo--entre_calle_2">
-                            <label class="form-label" for="entre_calle_2">Entre Calle 2</label>
-                            <input type="text" id="entre_calle_2" name="entre_calle_2" class="form-control"
-                                placeholder="Ej: Calle Morelos" maxlength="100" pattern="[A-Za-z0-9\s]+">
-                            <p class="formulario__input-error">Entre calle 2 debe contener letras, números o espacios,
-                                máximo 100 caracteres, o dejar en blanco.</p>
-                        </div>
-                    </div>
-                </form>
-                <form id="formulario3">
-                    <div class="form-section" id="form-step-3">
-                        <h4><i class="fas fa-building"></i> Datos de Constitución (Persona Moral)</h4>
-                        <div class="form-group horizontal-group">
-                            <div class="half-width form-group" id="formulario__grupo--numero_escritura">
-                                <label class="form-label" for="numero_escritura">Número de Escritura</label>
-                                <input type="text" id="numero_escritura" name="numero_escritura" class="form-control"
-                                    placeholder="Ej: 12345">
-                                <p class="formulario__input-error">El número de escritura debe contener solo números (máx.
-                                    10 dígitos).</p>
-                            </div>
-                            <div class="half-width form-group" id="formulario__grupo--nombre_notario">
-                                <label class="form-label" for="nombre_notario">Nombre del Notario</label>
-                                <input type="text" id="nombre_notario" name="nombre_notario" class="form-control"
-                                    placeholder="Ej: Lic. Juan Pérez González">
-                                <p class="formulario__input-error">El nombre del notario debe contener solo letras y
-                                    espacios (máx. 100 caracteres).</p>
-                            </div>
-                        </div>
-                        <div class="form-group horizontal-group">
-                            <div class="half-width form-group" id="formulario__grupo--entidad_federativa">
-                                <label class="form-label" for="entidad_federativa">Entidad Federativa</label>
-                                <select id="entidad_federativa" name="entidad_federativa" class="form-control">
-                                    <option value="">Seleccione un estado</option>
-                                </select>
-                                <p class="formulario__input-error">Por favor, seleccione una entidad federativa.</p>
-                            </div>
-                            <div class="half-width form-group" id="formulario__grupo--fecha_constitucion">
-                                <label class="form-label" for="fecha_constitucion">Fecha de Constitución</label>
-                                <input type="date" id="fecha_constitucion" name="fecha_constitucion"
-                                    class="form-control">
-                                <p class="formulario__input-error">Por favor, seleccione una fecha válida.</p>
-                            </div>
-                        </div>
-                        <div class="form-group horizontal-group">
-                            <div class="half-width form-group" id="formulario__grupo--numero_notario">
-                                <label class="form-label" for="numero_notario">Número de Notario</label>
-                                <input type="text" id="numero_notario" name="numero_notario" class="form-control"
-                                    placeholder="Ej: 123">
-                                <p class="formulario__input-error">El número de notario debe contener solo números (máx. 10
-                                    dígitos).</p>
-                            </div>
-                            <div class="half-width"></div>
-                        </div>
-                        <h4><i class="fas fa-file-contract"></i> Datos de Inscripción en el Registro Público</h4>
-                        <div class="form-group horizontal-group">
-                            <div class="half-width form-group" id="formulario__grupo--numero_registro">
-                                <label class="form-label" for="numero_registro">Número de Registro o Folio
-                                    Mercantil</label>
-                                <input type="text" id="numero_registro" name="numero_registro" class="form-control"
-                                    placeholder="Ej: 987654">
-                                <p class="formulario__input-error">El número de registro debe contener solo números (máx.
-                                    10 dígitos).</p>
-                            </div>
-                            <div class="half-width form-group" id="formulario__grupo--fecha_inscripcion">
-                                <label class="form-label" for="fecha_inscripcion">Fecha de Inscripción</label>
-                                <input type="date" id="fecha_inscripcion" name="fecha_inscripcion"
-                                    class="form-control">
-                                <p class="formulario__input-error">Por favor, seleccione una fecha válida.</p>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-                <form id="formulario4">
-                    <div class="form-section" id="form-step-4">
-                        <div class="form-container">
-                            <div class="form-column">
-                                <div class="form-header">
-                                    <h4><i class="fas fa-users"></i> Socios o Accionistas (Persona Moral)</h4>
-                                    <p class="subtitle">Agrega los socios o accionistas de la empresa</p>
-                                    <div class="percentage-summary">
-                                        <div class="progress-bar-container">
-                                            <div class="progress-bar" id="percentage-bar"></div>
+            <div id="review-form" class="details-container" style="display: none; position: relative;">
+                <a href="#" class="close-form-btn"><i class="fas fa-times"></i></a>
+                <div class="form-pdf-container">
+                    <div class="form-column">
+                        <div class="form-scroll-container">
+                            <div class="filled-form-container">
+                                <h3 class="filled-form-title">Revisión de Formulario Rellenado</h3>
+                                <!-- Datos del formulario -->
+                                <div class="form-data-column">
+                                    <!-- Datos Generales -->
+                                    <div class="form-section filled-section" data-section="datos-generales">
+                                        <div class="section-header">
+                                            <h4><i class="fas fa-building"></i> Datos Generales</h4>
+                                            <button class="pdf-view-btn" data-pdf="{{ asset('assets/pdf/Prueba.pdf') }}" data-section="datos-generales" data-page="1">
+                                                <i class="fas fa-eye"></i> Ver PDF
+                                            </button>
                                         </div>
-                                        <span id="percentage-text">0% asignado</span>
-                                    </div>
-                                </div>
-                                <div class="shareholders-container" id="shareholders-container"></div>
-                                <button type="button" id="add-shareholder" class="btn-add-shareholder">
-                                    <i class="fas fa-plus-circle"></i> Agregar Socio/Accionista
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-                <form id="formulario5">
-                    <div id="section-5" class="form-section">
-                        <div class="form-container">
-                            <div class="form-column">
-                                <div class="form-group">
-                                    <h4><i class="fas fa-user-tie"></i> Datos del Apoderado o Representante Legal</h4>
-                                </div>
-                                <div class="form-group horizontal-group">
-                                    <div class="half-width form-group" id="formulario__grupo--nombre-apoderado">
-                                        <label class="form-label" for="nombre-apoderado">Nombre</label>
-                                        <input type="text" id="nombre-apoderado" name="nombre-apoderado"
-                                            class="form-control" placeholder="Ej: Lic. Juan Pérez González">
-                                        <p class="formulario__input-error">El nombre solo puede contener letras y espacios,
-                                            máximo 100 caracteres.</p>
-                                    </div>
-                                    <div class="half-width form-group" id="formulario__grupo--numero-escritura">
-                                        <label class="form-label" for="numero-escritura">Número de Escritura</label>
-                                        <input type="text" id="numero-escritura" name="numero-escritura"
-                                            class="form-control" placeholder="Ej: 12345">
-                                        <p class="formulario__input-error">El número de escritura debe contener solo
-                                            números, máximo 10 dígitos.</p>
-                                    </div>
-                                </div>
-                                <div class="form-group horizontal-group">
-                                    <div class="half-width form-group" id="formulario__grupo--nombre-notario">
-                                        <label class="form-label" for="nombre-notario">Nombre del Notario</label>
-                                        <input type="text" id="nombre-notario" name="nombre-notario"
-                                            class="form-control" placeholder="Ej: Lic. María López Ramírez">
-                                        <p class="formulario__input-error">El nombre del notario solo puede contener letras
-                                            y espacios, máximo 100 caracteres.</p>
-                                    </div>
-                                    <div class="half-width form-group" id="formulario__grupo--numero-notario">
-                                        <label class="form-label" for="numero-notario">Número del Notario</label>
-                                        <input type="text" id="numero-notario" name="numero-notario"
-                                            class="form-control" placeholder="Ej: 123">
-                                        <p class="formulario__input-error">El número del notario debe contener solo
-                                            números, máximo 10 dígitos.</p>
-                                    </div>
-                                </div>
-                                <div class="form-group horizontal-group">
-                                    <div class="half-width form-group" id="formulario__grupo--entidad-federativa">
-                                        <label class="form-label" for="entidad-federativa">Entidad Federativa</label>
-                                        <select id="entidad-federativa" name="entidad-federativa" class="form-control">
-                                            <option value="">Seleccione un estado</option>
-                                        </select>
-                                        <p class="formulario__input-error">Por favor, seleccione una entidad federativa.
-                                        </p>
-                                    </div>
-                                    <div class="half-width form-group" id="formulario__grupo--fecha-escritura">
-                                        <label class="form-label" for="fecha-escritura">Fecha de Escritura</label>
-                                        <input type="date" id="fecha-escritura" name="fecha-escritura"
-                                            class="form-control">
-                                        <p class="formulario__input-error">Por favor, seleccione una fecha válida.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-                <form id="formulario6">
-                    <div id="section-6" class="form-section">
-                        <div class="form-container">
-                            <div class="form-column">
-                                <div class="document-category">
-                                    <div class="folder-item shared-docs">
-                                        <div class="folder-icon">
-                                            <i class="fas fa-users"></i>
+                                        <div class="form-group horizontal-group">
+                                            <div class="half-width">
+                                                <label class="form-label data-label">Tipo de Proveedor</label>
+                                                <div class="filled-value">Moral</div>
+                                            </div>
+                                            <div class="half-width">
+                                                <label class="form-label data-label">RFC</label>
+                                                <div class="filled-value">TAA250101ABC</div>
+                                            </div>
                                         </div>
-                                        <div class="folder-info">
-                                            <h5>Documentos para Ambos (Persona Física y Persona Moral)</h5>
+                                        <div class="form-group horizontal-group">
+                                            <div class="half-width">
+                                                <label class="form-label">Razón Social</label>
+                                                <div class="filled-value">TECNOLOGÍA AVANZADA S.A. DE C.V.</div>
+                                            </div>
+                                            <div class="half-width">
+                                                <label class="form-label">Correo Electrónico</label>
+                                                <div class="filled-value">contacto@tecnologiaavanzada.com</div>
+                                            </div>
                                         </div>
-                                        <div class="folder-actions">
-                                            <button class="action-btn more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                                        <div class="form-group full-width">
+                                            <label class="form-label">Sectores</label>
+                                            <div class="filled-value">Tecnología, Servicios</div>
+                                        </div>
+                                        <div class="form-group full-width">
+                                            <label class="form-label">Actividades</label>
+                                            <div class="filled-value">Desarrollo de Software</div>
+                                        </div>
+                                        <div class="form-group full-width">
+                                            <label class="form-label">Actividades Seleccionadas</label>
+                                            <div class="actividades-container filled-value">
+                                                <span class="actividad-chip">Desarrollo de Software</span>
+                                                <span class="actividad-chip">Consultoría TI</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group horizontal-group">
+                                            <div class="half-width">
+                                                <label class="form-label">Teléfono de Contacto</label>
+                                                <div class="filled-value">5512345678</div>
+                                            </div>
+                                            <div class="half-width">
+                                                <label class="form-label">Página Web</label>
+                                                <div class="filled-value">https://www.tecnologiaavanzada.com</div>
+                                            </div>
+                                        </div>
+                                        <h4><i class="fas fa-address-card"></i> Datos de Contacto</h4>
+                                        <span>Persona encargada de recibir solicitudes y requerimientos</span>
+                                        <div class="form-group">
+                                            <label class="form-label">Nombre Completo</label>
+                                            <div class="filled-value">Laura Méndez García</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Cargo o Puesto</label>
+                                            <div class="filled-value">Gerente de Ventas</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Correo Electrónico</label>
+                                            <div class="filled-value">laura.mendez@tecnologiaavanzada.com</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Teléfono de Contacto 2</label>
+                                            <div class="filled-value">5587654321</div>
                                         </div>
                                     </div>
-                                    <div class="folder-contents">
-                                        <div class="file-item formulario__grupo" id="grupo__constancia_situacion_fiscal">
-                                            <div class="file-icon">
-                                                <i class="fas fa-receipt"></i>
-                                            </div>
-                                            <div class="file-info">
-                                                <h6>Constancia de Situación Fiscal</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Original, vigente, emitido por el SAT, no
-                                                    mayor a 3 meses</span>
-                                            </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="constancia_situacion_fiscal"
-                                                    name="constancia_situacion_fiscal" class="file-upload-input"
-                                                    accept=".pdf" required>
-                                                <label for="constancia_situacion_fiscal"
-                                                    class="file-upload-label">Subir</label>
-                                            </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
-                                            </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
-                                            </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
+                                    <!-- Domicilio -->
+                                    <div class="form-section filled-section" data-section="domicilio">
+                                        <div class="section-header">
+                                            <h4><i class="fas fa-map-marker-alt"></i> Domicilio</h4>
+                                            <button class="pdf-view-btn" data-pdf="{{ asset('assets/pdf/Prueba.pdf') }}" data-section="domicilio" data-page="2">
+                                                <i class="fas fa-eye"></i> Ver PDF
+                                            </button>
                                         </div>
-                                        <div class="file-item formulario__grupo" id="grupo__identificacion_oficial">
-                                            <div class="file-icon">
-                                                <i class="fas fa-id-card"></i>
+                                        <div class="form-group horizontal-group">
+                                            <div class="half-width">
+                                                <label class="form-label data-label">Código Postal</label>
+                                                <div class="filled-value">06600</div>
                                             </div>
-                                            <div class="file-info">
-                                                <h6>Identificación Oficial</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Original vigente (INE, pasaporte o cédula
-                                                    profesional)</span>
+                                            <div class="half-width">
+                                                <label class="form-label data-label">Estado</label>
+                                                <div class="filled-value">Ciudad de México</div>
                                             </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="identificacion_oficial"
-                                                    name="identificacion_oficial" class="file-upload-input"
-                                                    accept=".pdf" required>
-                                                <label for="identificacion_oficial"
-                                                    class="file-upload-label">Subir</label>
-                                            </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
-                                            </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
-                                            </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
                                         </div>
-                                        <div class="file-item formulario__grupo" id="grupo__curriculum">
-                                            <div class="file-icon">
-                                                <i class="fas fa-file-alt"></i>
+                                        <div class="form-group horizontal-group">
+                                            <div class="half-width">
+                                                <label class="form-label data-label">Municipio</label>
+                                                <div class="filled-value">Cuauhtémoc</div>
                                             </div>
-                                            <div class="file-info">
-                                                <h6>Curriculum Actualizado</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Original, con giro, experiencia, clientes y
-                                                    recursos</span>
+                                            <div class="half-width">
+                                                <label class="form-label">Asentamiento</label>
+                                                <div class="filled-value">Colonia Juárez</div>
                                             </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="curriculum" name="curriculum"
-                                                    class="file-upload-input" accept=".pdf" required>
-                                                <label for="curriculum" class="file-upload-label">Subir</label>
-                                            </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
-                                            </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
-                                            </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
                                         </div>
-                                        <div class="file-item formulario__grupo" id="grupo__comprobante_domicilio">
-                                            <div class="file-icon">
-                                                <i class="fas fa-home"></i>
+                                        <div class="form-group horizontal-group">
+                                            <div class="half-width">
+                                                <label class="form-label">Calle</label>
+                                                <div class="filled-value">Av. Insurgentes Sur</div>
                                             </div>
-                                            <div class="file-info">
-                                                <h6>Comprobante de Domicilio</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Copia simple, no mayor a 3 meses</span>
+                                            <div class="half-width">
+                                                <label class="form-label">Número Exterior</label>
+                                                <div class="filled-value">123</div>
                                             </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="comprobante_domicilio"
-                                                    name="comprobante_domicilio" class="file-upload-input" accept=".pdf"
-                                                    required>
-                                                <label for="comprobante_domicilio" class="file-upload-label">Subir</label>
-                                            </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
-                                            </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
-                                            </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
                                         </div>
-                                        <div class="file-item formulario__grupo" id="grupo__croquis_fotografias">
-                                            <div class="file-icon">
-                                                <i class="fas fa-map-marked-alt"></i>
+                                        <div class="form-group horizontal-group">
+                                            <div class="half-width">
+                                                <label class="form-label">Número Interior</label>
+                                                <div class="filled-value">4B</div>
                                             </div>
-                                            <div class="file-info">
-                                                <h6>Croquis de Localización y Fotografías</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Original, del domicilio del proveedor</span>
+                                            <div class="half-width">
+                                                <label class="form-label">Entre Calle 1</label>
+                                                <div class="filled-value">Calle Londres</div>
                                             </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="croquis_fotografias" name="croquis_fotografias"
-                                                    class="file-upload-input" accept=".pdf" required>
-                                                <label for="croquis_fotografias" class="file-upload-label">Subir</label>
-                                            </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
-                                            </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
-                                            </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
                                         </div>
-                                        <div class="file-item formulario__grupo" id="grupo__carta_poder">
-                                            <div class="file-icon">
-                                                <i class="fas fa-file-contract"></i>
-                                            </div>
-                                            <div class="file-info">
-                                                <h6>Carta Poder Simple</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Original, con identificación del aceptante,
-                                                    si aplica</span>
-                                            </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="carta_poder" name="carta_poder"
-                                                    class="file-upload-input" accept=".pdf">
-                                                <label for="carta_poder" class="file-upload-label">Subir</label>
-                                            </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
-                                            </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
-                                            </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
+                                        <div class="form-group">
+                                            <label class="form-label">Entre Calle 2</label>
+                                            <div class="filled-value">Calle Hamburgo</div>
                                         </div>
-                                        <div class="file-item formulario__grupo" id="grupo__acuse_recibo">
-                                            <div class="file-icon">
-                                                <i class="fas fa-receipt"></i>
+                                    </div>
+                                    <!-- Datos de Constitución -->
+                                    <div class="form-section filled-section" data-section="constitucion">
+                                        <div class="section-header">
+                                            <h4><i class="fas fa-building"></i> Datos de Constitución (Persona Moral)</h4>
+                                            <button class="pdf-view-btn" data-pdf="{{ asset('assets/pdf/Prueba.pdf') }}" data-section="constitucion" data-page="3">
+                                                <i class="fas fa-eye"></i> Ver PDF
+                                            </button>
+                                        </div>
+                                        <div class="form-group horizontal-group">
+                                            <div class="half-width">
+                                                <label class="form-label">Número de Escritura</label>
+                                                <div class="filled-value">54321</div>
                                             </div>
-                                            <div class="file-info">
-                                                <h6>Acuse de Recibo</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Copia simple, última declaración anual y
-                                                    provisionales</span>
+                                            <div class="half-width">
+                                                <label class="form-label">Nombre del Notario</label>
+                                                <div class="filled-value">Lic. Juan Pérez González</div>
                                             </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="acuse_recibo" name="acuse_recibo"
-                                                    class="file-upload-input" accept=".pdf" required>
-                                                <label for="acuse_recibo" class="file-upload-label">Subir</label>
+                                        </div>
+                                        <div class="form-group horizontal-group">
+                                            <div class="half-width">
+                                                <label class="form-label">Entidad Federativa</label>
+                                                <div class="filled-value">Ciudad de México</div>
                                             </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
+                                            <div class="half-width">
+                                                <label class="form-label">Fecha de Constitución</label>
+                                                <div class="filled-value">15/03/2010</div>
                                             </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
+                                        </div>
+                                        <div class="form-group horizontal-group">
+                                            <div class="half-width">
+                                                <label class="form-label">Número de Notario</label>
+                                                <div class="filled-value">456</div>
                                             </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
+                                            <div class="half-width"></div>
+                                        </div>
+                                        <h4><i class="fas fa-file-contract"></i> Datos de Inscripción en el Registro Público</h4>
+                                        <div class="form-group horizontal-group">
+                                            <div class="half-width">
+                                                <label class="form-label">Número de Registro o Folio Mercantil</label>
+                                                <div class="filled-value">987654</div>
+                                            </div>
+                                            <div class="half-width">
+                                                <label class="form-label">Fecha de Inscripción</label>
+                                                <div class="filled-value">20/04/2010</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Socios o Accionistas -->
+                                    <div class="form-section filled-section" data-section="socios">
+                                        <div class="form-container">
+                                            <div class="form-column">
+                                                <div class="form-header">
+                                                    <h4><i class="fas fa-users"></i> Socios o Accionistas (Persona Moral)</h4>
+                                                    <p class="subtitle">Lista de socios o accionistas de la empresa</p>
+                                                    <div class="percentage-summary">
+                                                        <div class="progress-bar-container">
+                                                            <div class="progress-bar" style="width: 100%;"></div>
+                                                        </div>
+                                                        <span>100% asignado</span>
+                                                    </div>
+                                                </div>
+                                                <div class="shareholders-container">
+                                                    <div class="shareholder-item">
+                                                        <div class="form-group horizontal-group">
+                                                            <div class="half-width">
+                                                                <label class="form-label">Nombre del Socio/Accionista</label>
+                                                                <div class="filled-value">Juan Pérez López</div>
+                                                            </div>
+                                                            <div class="half-width">
+                                                                <label class="form-label">Porcentaje de Participación</label>
+                                                                <div class="filled-value">60%</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="shareholder-item">
+                                                        <div class="form-group horizontal-group">
+                                                            <div class="half-width">
+                                                                <label class="form-label">Nombre del Socio/Accionista</label>
+                                                                <div class="filled-value">María García Sánchez</div>
+                                                            </div>
+                                                            <div class="half-width">
+                                                                <label class="form-label">Porcentaje de Participación</label>
+                                                                <div class="filled-value">40%</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Representante Legal -->
+                                    <div class="form-section filled-section" data-section="representante">
+                                        <div class="section-header">
+                                            <h4><i class="fas fa-user-tie"></i> Datos del Apoderado o Representante Legal</h4>
+                                            <button class="pdf-view-btn" data-pdf="{{ asset('assets/pdf/Prueba.pdf') }}" data-section="representante" data-page="4">
+                                                <i class="fas fa-eye"></i> Ver PDF
+                                            </button>
+                                        </div>
+                                        <div class="form-container">
+                                            <div class="form-column">
+                                                <div class="form-group horizontal-group">
+                                                    <div class="half-width">
+                                                        <label class="form-label">Nombre</label>
+                                                        <div class="filled-value">Carlos Ramírez Torres</div>
+                                                    </div>
+                                                    <div class="half-width">
+                                                        <label class="form-label">Número de Escritura</label>
+                                                        <div class="filled-value">78910</div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group horizontal-group">
+                                                    <div class="half-width">
+                                                        <label class="form-label">Nombre del Notario</label>
+                                                        <div class="filled-value">Lic. Ana López Ramírez</div>
+                                                    </div>
+                                                    <div class="half-width">
+                                                        <label class="form-label">Número del Notario</label>
+                                                        <div class="filled-value">789</div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group horizontal-group">
+                                                    <div class="half-width">
+                                                        <label class="form-label">Entidad Federativa</label>
+                                                        <div class="filled-value">Ciudad de México</div>
+                                                    </div>
+                                                    <div class="half-width">
+                                                        <label class="form-label">Fecha de Escritura</label>
+                                                        <div class="filled-value">10/05/2020</div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="document-category">
-                                    <div class="folder-item individual-docs">
-                                        <div class="folder-icon">
-                                            <i class="fas fa-user"></i>
+                                <!-- Carrusel de PDFs -->
+                                <div class="pdf-carousel-container">
+                                    <h4><i class="fas fa-file-pdf"></i> Documentos Asociados</h4>
+                                    <div class="pdf-carousel">
+                                        <div class="pdf-card">
+                                            <i class="fas fa-file-pdf pdf-icon"></i>
+                                            <span class="pdf-name">constancia_situacion_fiscal_2025.pdf</span>
+                                            <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/constancia_situacion_fiscal_2025.pdf') }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
-                                        <div class="folder-info">
-                                            <h5>Documentos Exclusivos para Persona Física</h5>
+                                        <div class="pdf-card">
+                                            <i class="fas fa-file-pdf pdf-icon"></i>
+                                            <span class="pdf-name">comprobante_domicilio.pdf</span>
+                                            <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/comprobante_domicilio.pdf') }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
-                                        <div class="folder-actions">
-                                            <button class="action-btn more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                                        <div class="pdf-card">
+                                            <i class="fas fa-file-pdf pdf-icon"></i>
+                                            <span class="pdf-name">acta_constitutiva.pdf</span>
+                                            <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/acta_constitutiva.pdf') }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
-                                    </div>
-                                    <div class="folder-contents">
-                                        <div class="file-item formulario__grupo" id="grupo__acta_nacimiento">
-                                            <div class="file-icon">
-                                                <i class="fas fa-certificate"></i>
-                                            </div>
-                                            <div class="file-info">
-                                                <h6>Acta de Nacimiento</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Original, no mayor a 3 meses</span>
-                                            </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="acta_nacimiento" name="acta_nacimiento"
-                                                    class="file-upload-input" accept=".pdf">
-                                                <label for="acta_nacimiento" class="file-upload-label">Subir</label>
-                                            </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
-                                            </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
-                                            </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
+                                        <div class="pdf-card">
+                                            <i class="fas fa-file-pdf pdf-icon"></i>
+                                            <span class="pdf-name">poder_notariado.pdf</span>
+                                            <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/poder_notariado.pdf') }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
-                                        <div class="file-item formulario__grupo" id="grupo__curp">
-                                            <div class="file-icon">
-                                                <i class="fas fa-id-badge"></i>
-                                            </div>
-                                            <div class="file-info">
-                                                <h6>CURP</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Copia simple, formato actualizado</span>
-                                            </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="curp" name="curp"
-                                                    class="file-upload-input" accept=".pdf">
-                                                <label for="curp" class="file-upload-label">Subir</label>
-                                            </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
-                                            </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
-                                            </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
+                                        <div class="pdf-card">
+                                            <i class="fas fa-file-pdf pdf-icon"></i>
+                                            <span class="pdf-name">identificacion_oficial.pdf</span>
+                                            <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/identificacion_oficial.pdf') }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="document-category">
-                                    <div class="folder-item corporate-docs">
-                                        <div class="folder-icon">
-                                            <i class="fas fa-building"></i>
+                                        <div class="pdf-card">
+                                            <i class="fas fa-file-pdf pdf-icon"></i>
+                                            <span class="pdf-name">curriculum_actualizado.pdf</span>
+                                            <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/curriculum_actualizado.pdf') }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
-                                        <div class="folder-info">
-                                            <h5>Documentos Exclusivos para Persona Moral</h5>
+                                        <div class="pdf-card">
+                                            <i class="fas fa-file-pdf pdf-icon"></i>
+                                            <span class="pdf-name">croquis_localizacion.pdf</span>
+                                            <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/croquis_localizacion.pdf') }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
-                                        <div class="folder-actions">
-                                            <button class="action-btn more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                                        <div class="pdf-card">
+                                            <i class="fas fa-file-pdf pdf-icon"></i>
+                                            <span class="pdf-name">carta_poder.pdf</span>
+                                            <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/carta_poder.pdf') }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
-                                    </div>
-                                    <div class="folder-contents">
-                                        <div class="file-item formulario__grupo" id="grupo__acta_constitutiva">
-                                            <div class="file-icon">
-                                                <i class="fas fa-file-signature"></i>
-                                            </div>
-                                            <div class="file-info">
-                                                <h6>Acta Constitutiva</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Copia simple, notariada, inscrita en el
-                                                    Registro Público</span>
-                                            </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="acta_constitutiva" name="acta_constitutiva"
-                                                    class="file-upload-input" accept=".pdf">
-                                                <label for="acta_constitutiva" class="file-upload-label">Subir</label>
-                                            </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
-                                            </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
-                                            </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
+                                        <div class="pdf-card">
+                                            <i class="fas fa-file-pdf pdf-icon"></i>
+                                            <span class="pdf-name">acuse_recibo.pdf</span>
+                                            <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/acuse_recibo.pdf') }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
-                                        <div class="file-item formulario__grupo" id="grupo__modificaciones_acta">
-                                            <div class="file-icon">
-                                                <i class="fas fa-file-contract"></i>
-                                            </div>
-                                            <div class="file-info">
-                                                <h6>Modificaciones al Acta</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Copia simple, si aplica</span>
-                                            </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="modificaciones_acta" name="modificaciones_acta"
-                                                    class="file-upload-input" accept=".pdf">
-                                                <label for="modificaciones_acta" class="file-upload-label">Subir</label>
-                                            </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
-                                            </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
-                                            </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
-                                        </div>
-                                        <div class="file-item formulario__grupo" id="grupo__poder_notariado">
-                                            <div class="file-icon">
-                                                <i class="fas fa-stamp"></i>
-                                            </div>
-                                            <div class="file-info">
-                                                <h6>Poder Notariado</h6>
-                                                <span class="file-type">PDF</span>
-                                                <span class="file-description">Copia simple, para actos de
-                                                    administración</span>
-                                            </div>
-                                            <div class="file-upload">
-                                                <input type="file" id="poder_notariado" name="poder_notariado"
-                                                    class="file-upload-input" accept=".pdf">
-                                                <label for="poder_notariado" class="file-upload-label">Subir</label>
-                                            </div>
-                                            <div class="file-status" data-status="pending">
-                                                <span class="status-icon"><i class="fas fa-clock"></i></span>
-                                                <span class="status-text">Pendiente</span>
-                                            </div>
-                                            <div class="file-preview" style="display: none;">
-                                                <button class="preview-btn" title="Ver PDF"><i
-                                                        class="fas fa-eye"></i></button>
-                                            </div>
-                                            <p class="formulario__input-error">Por favor suba un archivo PDF válido (máximo
-                                                10 MB).</p>
+                                        <div class="pdf-card">
+                                            <i class="fas fa-file-pdf pdf-icon"></i>
+                                            <span class="pdf-name">modificaciones_acta.pdf</span>
+                                            <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/modificaciones_acta.pdf') }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </form>
+                    <div class="pdf-column" id="pdf-preview" style="display: none;">
+                        <div class="pdf-viewer">
+                            <div class="pdf-header">
+                                <h4><i class="fas fa-file-pdf"></i> Vista Previa del PDF</h4>
+                                <button class="close-pdf-btn"><i class="fas fa-times"></i> Cerrar PDF</button>
+                            </div>
+                            <iframe id="pdf-iframe" src="" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <style>
         :root {
             --primary-color: #9D2449;
-            /* Primary color for active card */
             --primary-dark: #7a1c38;
-            /* Darker shade for active card */
             --primary-light: #f8e8ee;
-            /* Light shade for active card */
             --expired-color: #6B7280;
-            /* Gray for expired card */
             --expired-dark: #4B5563;
             --expired-light: #D1D5DB;
             --success-color: #10b981;
@@ -804,9 +443,9 @@
         }
 
         .content-wrapper {
-            max-width: 1400px;
+            max-width: 2000px;
             margin: 0 auto;
-            padding: 24px 16px;
+            padding: 40px 32px;
         }
 
         .page-header {
@@ -900,7 +539,6 @@
             background-color: white;
         }
 
-        /* Fondo blanco para el card-body en tarjetas activas */
         .supplier-card.activo .card-body {
             background-color: white;
         }
@@ -961,7 +599,6 @@
         .supplier-card.expirado .supplier-name {
             color: var(--expired-color);
         }
-
 
         .card-body {
             padding: 12px;
@@ -1084,16 +721,13 @@
             background-color: var(--expired-dark);
         }
 
-        /* Estilo específico para el botón dentro del modal */
         .modal-body .action-btn {
             background-color: var(--primary-color);
-            /* Guinda (#9D2449) */
             color: white;
         }
 
         .modal-body .action-btn:hover {
             background-color: var(--primary-dark);
-            /* Guinda oscuro (#7a1c38) */
             transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
         }
@@ -1274,21 +908,31 @@
             border: 1px solid var(--border-light);
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-md);
+            position: relative;
         }
 
         .close-form-btn {
-            float: right;
-            font-size: 1.1em;
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 16px;
             text-decoration: none;
-            color: var(--text-medium);
-            padding: 4px 8px;
-            border-radius: var(--radius-md);
-            transition: all 0.2s ease;
+            color: white;
+            background-color: var(--primary-color);
+            padding: 8px;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-md);
         }
 
         .close-form-btn:hover {
-            color: var(--text-dark);
-            background-color: var(--bg-light);
+            background-color: var(--primary-dark);
+            transform: scale(1.1);
         }
 
         .alert {
@@ -1313,12 +957,320 @@
             border-left: 3px solid var(--danger-color);
         }
 
-        @keyframes slideIn {
+        /* Estilos para el formulario y vista previa del PDF */
+        .form-pdf-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            max-width: 100%;
+            min-height: 90vh;
+        }
+
+        .form-column {
+lorescence: flex;
+            min-width: 400px;
+            max-width: 100%;
+            min-height: 90vh;
+            box-sizing: border-box;
+            transition: max-width 0.3s ease;
+        }
+
+        .form-pdf-container.pdf-visible .form-column {
+            max-width: 50%;
+        }
+
+        .form-scroll-container {
+            max-height: 90vh;
+            overflow-y: auto;
+            padding-right: 10px;
+            box-sizing: border-box;
+        }
+
+        .form-scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .form-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .form-scroll-container::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+
+        .pdf-column {
+            flex: 1;
+            min-width: 400px;
+            max-width: 50%;
+            min-height: 90vh;
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-md);
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            box-sizing: border-box;
+            transition: max-width 0.3s ease;
+        }
+
+        .form-pdf-container.pdf-visible .pdf-column {
+            display: flex;
+        }
+
+        .pdf-column::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .pdf-column::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .pdf-column::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+
+        .pdf-viewer {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .pdf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .pdf-viewer h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-pdf-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all var(--transition-normal);
+        }
+
+        .close-pdf-btn:hover {
+            background: var(--danger-dark);
+            transform: translateY(-2px);
+        }
+
+        .pdf-viewer iframe {
+            width: 100%;
+            height: 1600px;
+            max-width: 1000px;
+            border: none;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+        }
+
+        .filled-form-container {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-md);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .filled-form-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .filled-section {
+            background: white;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .filled-section.validated {
+            background-color: var(--success-light);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .filled-section h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pdf-view-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all var(--transition-normal);
+        }
+
+        .pdf-view-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .filled-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-dark);
+            background: var(--bg-light);
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
+            margin-top: 4px;
+        }
+
+        .actividad-chip {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            margin: 4px;
+            font-weight: 500;
+        }
+
+        .shareholder-item {
+            background: var(--bg-light);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            margin-bottom: 8px;
+        }
+
+        .preview-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-normal);
+        }
+
+        .preview-btn i {
+            font-size: 14px;
+        }
+
+        .preview-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Estilos para el carrusel de PDFs */
+        .pdf-carousel-container {
+            margin-top: 24px;
+        }
+
+        .pdf-carousel-container h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pdf-carousel {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 16px;
+            padding: 16px 0;
+        }
+
+        .pdf-card {
+            background: var(--success-light);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        .pdf-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            background: var(--success-dark);
+        }
+
+        .pdf-card:hover .pdf-name,
+        .pdf-card:hover .pdf-icon {
+            color: white;
+        }
+
+        .pdf-card .pdf-icon {
+            font-size: 24px;
+            color: var(--success-dark);
+        }
+
+        .pdf-card .pdf-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--success-dark);
+            text-align: center;
+            word-break: break-all;
+        }
+
+        @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1345,6 +1297,57 @@
             .tab-btn {
                 padding: 8px 12px;
                 font-size: 11px;
+            }
+
+            .filled-form-title {
+                font-size: 20px;
+            }
+
+            .filled-section h4,
+            .pdf-carousel-container h4 {
+                font-size: 16px;
+            }
+
+            .filled-value {
+                font-size: 13px;
+            }
+
+            .pdf-carousel {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+                padding: 8px 0;
+            }
+
+            .pdf-card {
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+
+            .form-pdf-container {
+                flex-direction: column;
+                min-height: auto;
+            }
+
+            .form-column,
+            .pdf-column {
+                min-width: 100%;
+                max-width: 100%;
+                min-height: 70vh;
+            }
+
+            .form-pdf-container.pdf-visible .form-column,
+            .form-pdf-container.pdf-visible .pdf-column {
+                max-width: 100%;
+            }
+
+            .pdf-viewer iframe {
+                height: 1000px;
+                max-width: 100%;
+            }
+
+            .form-scroll-container {
+                max-height: 70vh;
             }
         }
     </style>
@@ -1389,6 +1392,10 @@
             const modalContent = document.getElementById('modal-content');
             const closeModalBtn = document.querySelector('.close-modal-btn');
             const closeFormBtn = document.querySelector('.close-form-btn');
+            const pdfPreview = document.getElementById('pdf-preview');
+            const pdfIframe = document.getElementById('pdf-iframe');
+            const closePdfBtn = document.querySelector('.close-pdf-btn');
+            const formPdfContainer = document.querySelector('.form-pdf-container');
 
             function renderAlert(message, type = 'info') {
                 alertContainer.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
@@ -1401,6 +1408,22 @@
             function closeForm() {
                 reviewForm.style.display = 'none';
                 supplierPvs.style.display = 'grid';
+                pdfPreview.style.display = 'none';
+                formPdfContainer.classList.remove('pdf-visible');
+                pdfIframe.src = '';
+                document.querySelectorAll('.filled-section').forEach(section => {
+                    section.classList.remove('validated');
+                });
+            }
+
+            function closePdf() {
+                pdfPreview.style.display = 'none';
+                formPdfContainer.classList.remove('pdf-visible');
+                pdfIframe.src = '';
+                renderAlert('Vista previa del PDF cerrada.', 'info');
+                document.querySelectorAll('.filled-section').forEach(section => {
+                    section.classList.remove('validated');
+                });
             }
 
             closeModalBtn.addEventListener('click', closeModal);
@@ -1413,6 +1436,45 @@
             closeFormBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 closeForm();
+            });
+
+            closePdfBtn.addEventListener('click', closePdf);
+
+            // Event listener para botones de previsualización de PDF en el carrusel
+            document.querySelectorAll('.preview-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const pdfUrl = this.dataset.pdf;
+                    pdfPreview.style.display = 'block';
+                    formPdfContainer.classList.add('pdf-visible');
+                    pdfIframe.src = pdfUrl;
+                    renderAlert('PDF cargado para revisión.', 'info');
+                });
+            });
+
+            // Event listener para botones de vista de PDF en secciones
+            document.querySelectorAll('.pdf-view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const pdfUrl = this.dataset.pdf;
+                    const section = this.dataset.section;
+                    const page = this.dataset.page || 1;
+
+                    // Load PDF and scroll to the specified page
+                    pdfPreview.style.display = 'block';
+                    formPdfContainer.classList.add('pdf-visible');
+                    pdfIframe.src = `${pdfUrl}#page=${page}`;
+
+                    // Highlight the corresponding section
+                    document.querySelectorAll('.filled-section').forEach(section => {
+                        section.classList.remove('validated');
+                    });
+                    const targetSection = document.querySelector(`.filled-section[data-section="${section}"]`);
+                    if (targetSection) {
+                        targetSection.classList.add('validated');
+                        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+
+                    renderAlert(`${section.charAt(0).toUpperCase() + section.slice(1)} validado en página ${page}.`, 'info');
+                });
             });
 
             function renderPvs(supplier, pvs) {
@@ -1439,7 +1501,6 @@
                                 </div>
                             </div>
                             <button class="action-btn review-btn" data-pv-id="${pv.pv_id}">
-
                                 <i class="fas fa-clipboard-check"></i> ${pv.status === 'expirado' ? 'Consultar Datos' : 'Iniciar Revisión'}
                             </button>
                         </div>
@@ -1493,14 +1554,14 @@
                                                 </div>
                                             </div>
                                             ${pv.observations ? `
-                                                        <div class="detail-item">
-                                                            <i class="fas fa-comment"></i>
-                                                            <div>
-                                                                <span class="detail-label">Observaciones</span>
-                                                                <span class="detail-value">${pv.observations}</span>
-                                                            </div>
-                                                        </div>
-                                                    ` : ''}
+                                                <div class="detail-item">
+                                                    <i class="fas fa-comment"></i>
+                                                    <div>
+                                                        <span class="detail-label">Observaciones</span>
+                                                        <span class="detail-value">${pv.observations}</span>
+                                                    </div>
+                                                </div>
+                                            ` : ''}
                                         </div>
                                     </div>
                                 </div>
@@ -1517,151 +1578,45 @@
                         });
 
                         if (pv.status === 'activo') {
-                            // solo si es activo, mostrar botón "Iniciar Revisión"
                             const startReviewBtn = document.createElement('button');
                             startReviewBtn.className = 'action-btn';
-                            startReviewBtn.innerHTML =
-                                '<i class="fas fa-clipboard-check"></i> Iniciar Revisión';
+                            startReviewBtn.innerHTML = '<i class="fas fa-clipboard-check"></i> Iniciar Revisión';
                             startReviewBtn.addEventListener('click', function() {
                                 closeModal();
                                 supplierPvs.style.display = 'none';
                                 reviewForm.style.display = 'block';
+                                pdfPreview.style.display = 'none';
+                                formPdfContainer.classList.remove('pdf-visible');
+                                pdfIframe.src = '';
                             });
                             modalContent.querySelector('.modal-body').appendChild(startReviewBtn);
                         }
-
                     });
                 });
             }
 
             document.querySelectorAll('.tab-btn').forEach(tab => {
                 tab.addEventListener('click', function() {
-                    document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove(
-                        'active'));
+                    document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
 
                     const tabType = this.dataset.tab;
                     if (tabType === 'formularios') {
                         supplierPvs.style.display = 'none';
                         reviewForm.style.display = 'block';
+                        pdfPreview.style.display = 'none';
+                        formPdfContainer.classList.remove('pdf-visible');
+                        pdfIframe.src = '';
                     } else {
                         supplierPvs.style.display = 'grid';
                         reviewForm.style.display = 'none';
+                        pdfPreview.style.display = 'none';
+                        formPdfContainer.classList.remove('pdf-visible');
+                        pdfIframe.src = '';
                         renderPvs(testData.supplier, testData.pvs);
                     }
                 });
             });
-
-            const formularios = document.querySelectorAll(
-                '#formulario1, #formulario2, #formulario3, #formulario4, #formulario5, #formulario6');
-            formularios.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    let hasErrors = false;
-
-                    const inputs = form.querySelectorAll('input[required], select[required]');
-                    inputs.forEach(input => {
-                        const errorMessage = input.nextElementSibling;
-                        if (!input.value || (input.type === 'file' && !input.files
-                                .length)) {
-                            errorMessage.style.display = 'block';
-                            hasErrors = true;
-                        } else {
-                            errorMessage.style.display = 'none';
-                        }
-                    });
-
-                    if (!hasErrors) {
-                        renderAlert('Formulario enviado correctamente.', 'info');
-                    } else {
-                        renderAlert('Por favor, complete todos los campos requeridos.', 'danger');
-                    }
-                });
-            });
-
-            const fileInputs = document.querySelectorAll('input[type="file"]');
-            fileInputs.forEach(input => {
-                input.addEventListener('change', function() {
-                    const file = this.files[0];
-                    const feedback = this.closest('.form-group').querySelector(
-                        '.pdf-preview-container');
-                    if (file && file.type === 'application/pdf' && file.size <= 5 * 1024 * 1024) {
-                        feedback.style.display = 'flex';
-                        feedback.querySelector('.pdf-name').textContent = file.name;
-                    } else {
-                        feedback.style.display = 'none';
-                        renderAlert('Por favor, seleccione un archivo PDF válido (máximo 5MB).',
-                            'danger');
-                    }
-                });
-            });
-
-            let shareholdersCount = 0;
-            const maxShareholders = 10;
-            let totalPercentage = 0;
-
-            function updatePercentageBar() {
-                const percentageBar = document.getElementById('percentage-bar');
-                const percentageText = document.getElementById('percentage-text');
-                percentageBar.style.width = `${totalPercentage}%`;
-                percentageText.textContent = `${totalPercentage}% asignado`;
-
-                if (totalPercentage > 100) {
-                    percentageBar.style.backgroundColor = 'var(--danger-color)';
-                    renderAlert('La suma de los porcentajes no puede exceder el 100%.', 'danger');
-                } else {
-                    percentageBar.style.backgroundColor = 'var(--primary-color)';
-                }
-            }
-
-            function addShareholder(name = '', percentage = '') {
-                if (shareholdersCount >= maxShareholders) {
-                    renderAlert(`No se pueden agregar más de ${maxShareholders} socios/accionistas.`, 'danger');
-                    return;
-                }
-
-                shareholdersCount++;
-                const shareholderId = `shareholder-${shareholdersCount}`;
-                const container = document.getElementById('shareholders-container');
-                const shareholderDiv = document.createElement('div');
-                shareholderDiv.className = 'shareholder-item';
-                shareholderDiv.id = shareholderId;
-                shareholderDiv.innerHTML = `
-                    <div class="form-group horizontal-group">
-                        <div class="half-width">
-                            <label class="form-label" for="${shareholderId}-name">Nombre del Socio/Accionista</label>
-                            <input type="text" id="${shareholderId}-name" name="${shareholderId}-name" class="form-control" value="${name}" required maxlength="100" pattern="[A-Za-z\s]+">
-                            <p class="formulario__input-error">El nombre debe contener solo letras y espacios.</p>
-                        </div>
-                        <div class="half-width">
-                            <label class="form-label" for="${shareholderId}-percentage">Porcentaje de Participación</label>
-                            <input type="number" id="${shareholderId}-percentage" name="${shareholderId}-percentage" class="form-control" value="${percentage}" min="0" max="100" step="0.01" required>
-                            <p class="formulario__input-error">El porcentaje debe estar entre 0 y 100.</p>
-                        </div>
-                    </div>
-                    <button type="button" class="remove-shareholder btn-danger"><i class="fas fa-trash"></i> Eliminar</button>
-                `;
-                container.appendChild(shareholderDiv);
-
-                const percentageInput = document.getElementById(`${shareholderId}-percentage`);
-                percentageInput.addEventListener('input', function() {
-                    totalPercentage = Array.from(container.querySelectorAll('input[type="number"]'))
-                        .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
-                    updatePercentageBar();
-                });
-
-                shareholderDiv.querySelector('.remove-shareholder').addEventListener('click', function() {
-                    const percentage = parseFloat(percentageInput.value) || 0;
-                    totalPercentage -= percentage;
-                    shareholderDiv.remove();
-                    shareholdersCount--;
-                    updatePercentageBar();
-                });
-
-                updatePercentageBar();
-            }
-
-            document.getElementById('add-shareholder').addEventListener('click', () => addShareholder());
 
             renderPvs(testData.supplier, testData.pvs);
         });
