@@ -167,7 +167,7 @@ body {
 }
 
 body::before {
-    background-image: url("/assets/images/welcome/oaxaca-logo.png");
+    background-image: url('/assets/imagenes/logobg.png');
     background-position: center;
     background-repeat: repeat;
     background-size: 100px;
@@ -778,17 +778,52 @@ label {
     margin: 0;
 }
 
+/* Overlay for the modal */
 .modal-overlay {
-    align-items: center;
-    background: rgba(0, 0, 0, 0.5);
-    bottom: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
-    left: 0;
-    position: fixed;
-    right: 0;
-    top: 0;
-    z-index: 2000;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Loading container */
+.loading-container {
+    text-align: center;
+    color: white;
+}
+
+/* Spinner animation */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Spinner animation keyframes */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Optional text below spinner */
+.loading-text {
+    margin-top: 10px;
+    font-size: 16px;
 }
 
 .sat-modal .modal-container {
@@ -1187,13 +1222,15 @@ input:checked+.toggle-slider:before {
     opacity: 1;
 }
 
+
 .form-page.register-form#registerFormStep2 .name-display p strong {
-    color: var(--text-dark);
+    color: var(--primary-color);
     display: block;
-    font-size: 10px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     margin-bottom: 3px;
     text-transform: uppercase;
+    letter-spacing: 0.5px; 
 }
 
 .form-page.register-form#registerFormStep2 .address-section {
@@ -1503,7 +1540,298 @@ input:checked+.toggle-slider:before {
   #modalOkBtn:hover {
     animation: pulse 1.5s infinite;
   }
-  
+  .modal-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(23, 25, 35, 0.85);
+    z-index: 1000;
+    animation: fadeIn 0.4s ease;
+    backdrop-filter: blur(5px);
+    transition: opacity 0.35s ease-out;
+}
+
+/* Modal Container */
+.modal-container {
+    background: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    width: 90%;
+    max-width: 480px;
+    overflow: hidden;
+    animation: slideDown 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 24px;
+    background: #ffffff;
+    border-bottom: 1px solid #e8e9eb;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #1a1a2e;
+    letter-spacing: 0.3px;
+    font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Modal Body */
+.modal-body {
+    padding: 24px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-body p {
+    margin: 0;
+    line-height: 1.6;
+    color: #333;
+    font-size: 15px;
+    font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Modal Footer */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 18px 24px;
+    border-top: 1px solid #e8e9eb;
+    background: #f9fafb;
+}
+
+/* Close Button */
+.close-modal {
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.close-modal:hover {
+    color: #9F1F4F;
+}
+
+/* Loading Modal Specific Styles */
+.modal-overlay.loading-modal {
+    background: rgba(26, 26, 46, 0.8);
+}
+
+/* Loading Container */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+    padding: 38px 40px;
+    border-radius: 4px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    animation: fadeSlideUp 0.5s ease-out;
+    min-width: 220px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Spinner Animation */
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(159, 31, 79, 0.15);
+    border-top: 3px solid #9F1F4F;
+    border-radius: 50%;
+    animation: spin 1.2s linear infinite;
+    box-shadow: 0 2px 10px rgba(159, 31, 79, 0.1);
+}
+
+/* Loading Text */
+.loading-text {
+    margin-top: 22px;
+    font-size: 15px;
+    color: #333;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Buttons */
+.small-btn {
+    padding: 9px 20px;
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0.3px;
+}
+
+.small-btn.outline {
+    background: transparent;
+    border: 1px solid #9F1F4F;
+    color: #9F1F4F;
+}
+
+.small-btn.outline:hover {
+    background: #9F1F4F;
+    color: white;
+    box-shadow: 0 2px 8px rgba(159, 31, 79, 0.25);
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 3px;
+    transition: background 0.25s;
+}
+
+.icon-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Error Modal Specific Styles */
+.modal-overlay.error-modal .modal-header {
+    border-bottom: 1px solid #f1e3e6;
+}
+
+.modal-overlay.error-modal .modal-header h3 {
+    color: #9F1F4F;
+}
+
+/* Success Modal Specific Styles */
+.modal-overlay.success-modal .modal-header {
+    border-bottom: 1px solid #e3f1e6;
+}
+
+.modal-overlay.success-modal .modal-header h3 {
+    color: #28a745;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { 
+        transform: translateY(-20px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes fadeSlideUp {
+    from { 
+        transform: translateY(10px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+/* Overlay for the modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Loading container */
+.loading-container {
+    text-align: center;
+    color: white;
+}
+
+/* Spinner animation */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Spinner animation keyframes */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Optional text below spinner */
+.loading-text {
+    margin-top: 10px;
+    font-size: 16px;
+}
+/* Media Queries for Responsive Design */
+@media (max-width: 600px) {
+    .modal-container {
+        width: 94%;
+        max-width: none;
+    }
+    
+    .loading-container {
+        padding: 30px;
+    }
+    
+    .modal-header {
+        padding: 18px 20px;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-footer {
+        padding: 16px 20px;
+    }
+}
+
   /* Responsive Styles for Modal */
   @media (max-width: 576px) {
     .modal-content {
@@ -1637,3 +1965,4 @@ input:checked+.toggle-slider:before {
         padding: 0.5rem 0.75rem;
     }
 }
+

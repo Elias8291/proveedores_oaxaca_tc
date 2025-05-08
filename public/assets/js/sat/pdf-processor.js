@@ -1,5 +1,6 @@
 import { createModal, createSpinner, showError } from './utils.js';
-import { scrapeSATData, showSATDataModal } from './sat-scraper.js';// public/assets/js/sat/pdf-processor.js
+import { scrapeSATData, showSATDataModal } from './sat-scraper.js';
+// public/assets/js/sat/pdf-processor.js
 window.pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
@@ -52,10 +53,9 @@ async function extractQRCodeFromPDF(file) {
 
         return data;
     } catch (error) {
-        throw new Error(`Error al procesar el PDF: ${error.message}`);
+        throw new Error(`El Archivo no corresponde a una costancia fiscal`);
     }
 }
-
 function enhanceImage(imageData) {
     const { data, width, height } = imageData;
     const enhancedData = new Uint8ClampedArray(data);
@@ -162,25 +162,71 @@ document.addEventListener('DOMContentLoaded', () => {
     const backBtnStep1 = document.getElementById('backFromRegisterStep1Btn');
     const fileInput = document.getElementById('register-file');
     const viewExampleBtn = document.getElementById('viewExampleBtnStep1');
+    
+    // Add file input change handler to provide visual feedback when a file is selected
+    fileInput?.addEventListener('change', () => {
+        const fileLabel = document.querySelector('.custom-file-upload span');
+        if (fileLabel) {
+            if (fileInput.files.length > 0) {
+                fileLabel.textContent = fileInput.files[0].name;
+                // Optional: Add a visual indicator that file is selected
+                document.querySelector('.custom-file-upload').classList.add('file-selected');
+            } else {
+                fileLabel.textContent = 'Subir archivo PDF';
+                document.querySelector('.custom-file-upload').classList.remove('file-selected');
+            }
+        }
+    });
 
     nextBtn?.addEventListener('click', async () => {
         const file = fileInput?.files[0];
-        if (!file) return;
-        if (file.size > 5 * 1024 * 1024) return alert('File exceeds the maximum size of 5MB.');
+        
+        if (!file) {
+            showError('Debe subir un archivo PDF de la Constancia del SAT para continuar.');
+            return;
+        }
     
+        if (file.type !== 'application/pdf') {
+            showError('El archivo debe ser un PDF válido.');
+            return;
+        }
+    
+        if (file.size > 5 * 1024 * 1024) {
+            showError('El archivo excede el tamaño máximo de 5MB.');
+            return;
+        }
+    
+        // Muestra el modal de carga
         const loading = createModal({ html: createSpinner() });
+    
+        // Define un tiempo mínimo para que el modal sea visible (por ejemplo, 2 segundos)
+        const minimumDelay = 2000; 
+        const startTime = Date.now();
+    
         try {
             const pdfData = await extractQRCodeFromPDF(file);
             const satData = await scrapeSATData(pdfData.qrUrl);
-            step1.classList.remove('active');
-            step2.classList.add('active');
-            updatePDFDataPreview(pdfData, satData);
+    
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(0, minimumDelay - elapsedTime);
+    
+            setTimeout(() => {
+                step1.classList.remove('active');
+                step2.classList.add('active');
+                updatePDFDataPreview(pdfData, satData);
+                document.body.removeChild(loading);
+            }, remainingTime);
         } catch (error) {
-            showError(error.message);
-        } finally {
-            document.body.removeChild(loading);
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(0, minimumDelay - elapsedTime);
+    
+            setTimeout(() => {
+                showError(error.message);
+                document.body.removeChild(loading);
+            }, remainingTime);
         }
     });
+    
     backBtnStep2?.addEventListener('click', () => {
         step2.classList.remove('active');
         step1.classList.add('active');
@@ -191,6 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     viewExampleBtn?.addEventListener('click', () => {
-        window.open('{{ asset("assets/pdf/ejemplo_sat.pdf") }}', '_blank');
+        window.open('/assets/pdf/ejemplo_sat.pdf', '_blank');
     });
 });
