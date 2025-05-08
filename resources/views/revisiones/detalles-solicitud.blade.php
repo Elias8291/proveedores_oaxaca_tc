@@ -45,6 +45,48 @@
                 </div>
             </div>
 
+            <!-- Modal para registro exitoso -->
+            <div id="success-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal-btn">×</span>
+                    <div class="modal-header">
+                        <h3 class="modal-title">Registro Exitoso</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p>El registro al padrón de proveedores fue exitoso.</p>
+                        <button class="action-btn close-success-modal"><i class="fas fa-check"></i> Aceptar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal para registro denegado -->
+            <div id="denied-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal-btn">×</span>
+                    <div class="modal-header">
+                        <h3 class="modal-title">Registro Denegado</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p>El formulario no cumple con los requisitos necesarios. Por favor, revisa los comentarios y documentos faltantes.</p>
+                        <button class="action-btn close-denied-modal"><i class="fas fa-check"></i> Aceptar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal para comentarios registrados -->
+            <div id="comments-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal-btn">×</span>
+                    <div class="modal-header">
+                        <h3 class="modal-title">Comentarios Registrados</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p>Los comentarios sobre el formulario han sido registrados exitosamente.</p>
+                        <button class="action-btn close-comments-modal"><i class="fas fa-check"></i> Aceptar</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Formulario de revisión -->
             <div id="review-form" class="details-container" style="display: none; position: relative;">
                 <a href="#" class="close-form-btn"><i class="fas fa-times"></i></a>
@@ -313,6 +355,27 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- Sección de comentarios generales -->
+                                    <div class="form-section filled-section" data-section="comentarios">
+                                        <div class="section-header">
+                                            <h4><i class="fas fa-comment"></i> Comentarios Generales</h4>
+                                        </div>
+                                        <div class="form-group full-width">
+                                            <label class="form-label">Escriba sus comentarios sobre el formulario</label>
+                                            <textarea id="general-comments" class="form-input" rows="5" placeholder="Ingrese comentarios generales sobre la revisión del formulario"></textarea>
+                                        </div>
+                                        <button class="action-btn submit-comments-btn"><i class="fas fa-paper-plane"></i> Enviar Comentarios</button>
+                                    </div>
+                                    <!-- Botones de decisión -->
+                                    <div class="form-section decision-buttons" style="display: none;">
+                                        <div class="section-header">
+                                            <h4><i class="fas fa-check-circle"></i> Decisión Final</h4>
+                                        </div>
+                                        <div class="form-group decision-group">
+                                            <button class="action-btn accept-btn"><i class="fas fa-check"></i> Aceptar Formulario</button>
+                                            <button class="action-btn deny-btn" style="background-color: var(--danger-color);"><i class="fas fa-times"></i> Denegar Formulario</button>
+                                        </div>
+                                    </div>
                                 </div>
                                 <!-- Carrusel de PDFs -->
                                 <div class="pdf-carousel-container">
@@ -357,13 +420,6 @@
                                             <i class="fas fa-file-pdf pdf-icon"></i>
                                             <span class="pdf-name">curriculum_actualizado.pdf</span>
                                             <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/curriculum_actualizado.pdf') }}">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                        </div>
-                                        <div class="pdf-card">
-                                            <i class="fas fa-file-pdf pdf-icon"></i>
-                                            <span class="pdf-name">croquis_localizacion.pdf</span>
-                                            <button class="preview-btn" title="Ver PDF" data-pdf="{{ Storage::url('pdfs/croquis_localizacion.pdf') }}">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </div>
@@ -967,10 +1023,10 @@
         }
 
         .form-column {
-lorescence: flex;
+            flex: 1;
             min-width: 400px;
             max-width: 100%;
-            min-height: 90vh;
+            min-height: auto;
             box-sizing: border-box;
             transition: max-width 0.3s ease;
         }
@@ -1037,6 +1093,7 @@ lorescence: flex;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
+            min-height: 80vh;
         }
 
         .pdf-header {
@@ -1077,12 +1134,13 @@ lorescence: flex;
         }
 
         .pdf-viewer iframe {
-            width: 100%;
-            height: 1600px;
-            max-width: 1000px;
+            width: 102%;
+            height: 106%;
+            min-height: 79vh;
             border: none;
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-md);
+            object-fit: contain;
         }
 
         .filled-form-container {
@@ -1177,9 +1235,9 @@ lorescence: flex;
 
         .shareholder-item {
             background: var(--bg-light);
-            padding: 12px;
+            padding: 8px;
             border-radius: var(--radius-md);
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .preview-btn {
@@ -1206,6 +1264,36 @@ lorescence: flex;
             transform: translateY(-2px);
         }
 
+        /* Estilos para Socios y Representante Legal */
+        .form-section[data-section="socios"] .form-container,
+        .form-section[data-section="representante"] .form-container {
+            padding: 8px;
+            margin-bottom: 0%;
+        }
+
+        .form-section[data-section="socios"] .form-column,
+        .form-section[data-section="representante"] .form-column {
+            padding: 0;
+        }
+
+        .shareholders-container {
+            margin-top: 8px;
+        }
+
+        .form-section[data-section="socios"] .form-header,
+        .form-section[data-section="representante"] .section-header {
+            margin-bottom: 8px;
+        }
+
+        .form-section[data-section="socios"] .subtitle {
+            font-size: 12px;
+            margin: 4px 0;
+        }
+
+        .percentage-summary {
+            margin-top: 4px;
+        }
+
         /* Estilos para el carrusel de PDFs */
         .pdf-carousel-container {
             margin-top: 24px;
@@ -1224,9 +1312,12 @@ lorescence: flex;
         .pdf-carousel {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(2, auto);
             gap: 16px;
             padding: 16px 0;
+        }
+
+        .form-pdf-container.pdf-visible .pdf-carousel {
+            grid-template-columns: repeat(3, 1fr);
         }
 
         .pdf-card {
@@ -1264,6 +1355,30 @@ lorescence: flex;
             color: var(--success-dark);
             text-align: center;
             word-break: break-all;
+        }
+
+        /* Estilos para los botones de decisión */
+        .decision-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-family: var(--font-primary);
+            resize: vertical;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px var(--primary-light);
         }
 
         @keyframes slideUp {
@@ -1312,9 +1427,9 @@ lorescence: flex;
                 font-size: 13px;
             }
 
-            .pdf-carousel {
+            .pdf-carousel,
+            .form-pdf-container.pdf-visible .pdf-carousel {
                 grid-template-columns: 1fr;
-                grid-template-rows: auto;
                 padding: 8px 0;
             }
 
@@ -1342,12 +1457,17 @@ lorescence: flex;
             }
 
             .pdf-viewer iframe {
-                height: 1000px;
+                height: 100%;
                 max-width: 100%;
             }
 
             .form-scroll-container {
                 max-height: 70vh;
+            }
+
+            .decision-group {
+                flex-direction: column;
+                gap: 8px;
             }
         }
     </style>
@@ -1389,6 +1509,9 @@ lorescence: flex;
             const countAll = document.getElementById('count-all');
             const reviewForm = document.getElementById('review-form');
             const reviewModal = document.getElementById('review-modal');
+            const successModal = document.getElementById('success-modal');
+            const deniedModal = document.getElementById('denied-modal');
+            const commentsModal = document.getElementById('comments-modal');
             const modalContent = document.getElementById('modal-content');
             const closeModalBtn = document.querySelector('.close-modal-btn');
             const closeFormBtn = document.querySelector('.close-form-btn');
@@ -1396,13 +1519,16 @@ lorescence: flex;
             const pdfIframe = document.getElementById('pdf-iframe');
             const closePdfBtn = document.querySelector('.close-pdf-btn');
             const formPdfContainer = document.querySelector('.form-pdf-container');
+            const decisionButtons = document.querySelector('.decision-buttons');
+            const submitCommentsBtn = document.querySelector('.submit-comments-btn');
+            const generalComments = document.getElementById('general-comments');
 
             function renderAlert(message, type = 'info') {
                 alertContainer.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
             }
 
-            function closeModal() {
-                reviewModal.style.display = 'none';
+            function closeModal(modal) {
+                modal.style.display = 'none';
             }
 
             function closeForm() {
@@ -1411,6 +1537,7 @@ lorescence: flex;
                 pdfPreview.style.display = 'none';
                 formPdfContainer.classList.remove('pdf-visible');
                 pdfIframe.src = '';
+                decisionButtons.style.display = 'none';
                 document.querySelectorAll('.filled-section').forEach(section => {
                     section.classList.remove('validated');
                 });
@@ -1426,10 +1553,38 @@ lorescence: flex;
                 });
             }
 
-            closeModalBtn.addEventListener('click', closeModal);
+            // Close modals
+            document.querySelectorAll('.close-modal-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    closeModal(this.closest('.modal'));
+                });
+            });
+
+            document.querySelector('.close-success-modal').addEventListener('click', function() {
+                closeModal(successModal);
+                closeForm();
+                renderPvs(testData.supplier, testData.pvs);
+            });
+
+            document.querySelector('.close-denied-modal').addEventListener('click', function() {
+                closeModal(deniedModal);
+            });
+
+            document.querySelector('.close-comments-modal').addEventListener('click', function() {
+                closeModal(commentsModal);
+            });
+
             window.addEventListener('click', function(event) {
                 if (event.target === reviewModal) {
-                    closeModal();
+                    closeModal(reviewModal);
+                } else if (event.target === successModal) {
+                    closeModal(successModal);
+                    closeForm();
+                    renderPvs(testData.supplier, testData.pvs);
+                } else if (event.target === deniedModal) {
+                    closeModal(deniedModal);
+                } else if (event.target === commentsModal) {
+                    closeModal(commentsModal);
                 }
             });
 
@@ -1448,6 +1603,7 @@ lorescence: flex;
                     formPdfContainer.classList.add('pdf-visible');
                     pdfIframe.src = pdfUrl;
                     renderAlert('PDF cargado para revisión.', 'info');
+                    checkAllSectionsReviewed();
                 });
             });
 
@@ -1458,12 +1614,10 @@ lorescence: flex;
                     const section = this.dataset.section;
                     const page = this.dataset.page || 1;
 
-                    // Load PDF and scroll to the specified page
                     pdfPreview.style.display = 'block';
                     formPdfContainer.classList.add('pdf-visible');
                     pdfIframe.src = `${pdfUrl}#page=${page}`;
 
-                    // Highlight the corresponding section
                     document.querySelectorAll('.filled-section').forEach(section => {
                         section.classList.remove('validated');
                     });
@@ -1474,7 +1628,43 @@ lorescence: flex;
                     }
 
                     renderAlert(`${section.charAt(0).toUpperCase() + section.slice(1)} validado en página ${page}.`, 'info');
+                    checkAllSectionsReviewed();
                 });
+            });
+
+            // Check if all sections are reviewed to show decision buttons
+            function checkAllSectionsReviewed() {
+                const sections = document.querySelectorAll('.filled-section:not([data-section="comentarios"]):not([data-section="decision"])');
+                const allReviewed = Array.from(sections).every(section => section.classList.contains('validated'));
+                if (allReviewed) {
+                    decisionButtons.style.display = 'block';
+                    decisionButtons.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }
+            }
+
+            // Event listener para el botón de aceptar formulario
+            document.querySelector('.accept-btn').addEventListener('click', function() {
+                closeForm();
+                successModal.style.display = 'block';
+                renderAlert('Formulario aceptado exitosamente.', 'info');
+            });
+
+            // Event listener para el botón de denegar formulario
+            document.querySelector('.deny-btn').addEventListener('click', function() {
+                deniedModal.style.display = 'block';
+                renderAlert('Formulario denegado.', 'danger');
+            });
+
+            // Event listener para enviar comentarios
+            submitCommentsBtn.addEventListener('click', function() {
+                const comments = generalComments.value.trim();
+                if (comments) {
+                    commentsModal.style.display = 'block';
+                    renderAlert('Comentarios registrados exitosamente.', 'info');
+                    generalComments.value = ''; // Limpiar el campo
+                } else {
+                    renderAlert('Por favor, ingrese comentarios antes de enviar.', 'danger');
+                }
             });
 
             function renderPvs(supplier, pvs) {
@@ -1582,7 +1772,7 @@ lorescence: flex;
                             startReviewBtn.className = 'action-btn';
                             startReviewBtn.innerHTML = '<i class="fas fa-clipboard-check"></i> Iniciar Revisión';
                             startReviewBtn.addEventListener('click', function() {
-                                closeModal();
+                                closeModal(reviewModal);
                                 supplierPvs.style.display = 'none';
                                 reviewForm.style.display = 'block';
                                 pdfPreview.style.display = 'none';
