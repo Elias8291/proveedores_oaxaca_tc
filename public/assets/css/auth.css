@@ -167,7 +167,7 @@ body {
 }
 
 body::before {
-    background-image: url('/assets/imagenes/logobg.png');
+    background-image: url('/assets/images/welcome/oaxaca-logo.png');
     background-position: center;
     background-repeat: repeat;
     background-size: 100px;
