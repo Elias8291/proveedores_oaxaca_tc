@@ -72,6 +72,12 @@
             <p class="formulario__input-error">Entre calle 2 debe contener letras, números o espacios, máximo 100 caracteres, o dejar en blanco.</p>
         </div>
     </div>
+
+    <div class="form-group text-center">
+        <button type="button" id="showMapButton" class="btn btn-primary">
+            <i class="fas fa-map-marked-alt"></i> Ver en Mapa
+        </button>
+    </div>
 </form>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -193,4 +199,6 @@
         });
     }
 });
+
+
     </script>
