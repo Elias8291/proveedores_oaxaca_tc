@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nombre_apoderado: /^[a-zA-ZÀ-ÿ\s]{1,100}$/,
         numero_notario: /^\d{1,10}$/,
         numero_registro: /^\d{1,10}$/,
-        codigo_postal: /^\d{4}$/
+        codigo_postal: /^\d{5}$/
     };
 
     // Límites de caracteres

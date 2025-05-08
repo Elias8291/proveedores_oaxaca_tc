@@ -1008,13 +1008,94 @@ h4 i {
 .formulario__input-error-activo {
   display: block;
 }
-
-.formulario__grupo-incorrecto .form-control {
-  border-color: var(--danger-color);
+/* Estilos específicos para formulario6 */
+.formulario__grupo.file-item {
+  padding-bottom: 3rem; /* Más espacio para mensajes de error absolutos */
 }
 
-.formulario__grupo-correcto .form-control {
-  border-color: var(--success-color);
+/* Estilos para los mensajes de error */
+.formulario__input-error,
+.formulario__input-error-size {
+  display: none; /* Oculto por defecto */
+  color: #d32f2f; /* Rojo suave para errores */
+  font-size: 0.85rem;
+  font-weight: 500;
+  background-color: #fef1f1; /* Fondo claro */
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  margin-top: 0.5rem; /* Espacio para formularios 1-5 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(10px); /* Efecto de entrada */
+  opacity: 0;
+}
+
+/* Posicionamiento absoluto para formulario6 */
+.formulario__grupo.file-item .formulario__input-error,
+.formulario__grupo.file-item .formulario__input-error-size {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: 0; /* Sin margen superior en posicionamiento absoluto */
+  z-index: 10;
+}
+
+/* Mostrar mensaje de error cuando está activo */
+.formulario__input-error-activo,
+.formulario__input-error-size.formulario__input-error-activo {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Ícono de advertencia en el mensaje */
+.formulario__input-error::before,
+.formulario__input-error-size::before {
+  content: '\f071'; /* Ícono de advertencia de FontAwesome */
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  margin-right: 0.5rem;
+  color: #d32f2f;
+}
+
+/* Estilo para inputs en caso de error */
+.formulario__grupo-incorrecto input,
+.formulario__grupo-incorrecto select,
+.formulario__grupo-incorrecto .file-upload-input {
+  border: 1px solid #d32f2f;
+  background-color: #fff5f5;
+}
+
+/* Asegurar que el file-status y file-preview no se vean afectados (específico para formulario6) */
+.file-status {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.file-status[data-status="pending"] .status-icon,
+.file-status[data-status="pending-review"] .status-icon {
+  color: #ffa726;
+}
+
+.file-status[data-status="completed"] .status-icon {
+  color: #4caf50;
+}
+
+.file-status[data-status="error"] .status-icon {
+  color: #d32f2f;
+}
+
+.file-preview {
+  margin-top: 0.5rem;
+}
+
+/* Animación para el file-item al cargar un archivo (específico para formulario6) */
+.file-uploaded-animation {
+  animation: pulse 0.5s ease;
 }
 
 /* Improved validation styles with checkmark inside input */
@@ -1071,10 +1152,6 @@ h4 i {
   color: #bb2929;
 }
 
-.formulario__grupo-incorrecto .formulario__validacion-estado {
-  color: #bb2929;
-  opacity: 1;
-}
 
 .formulario__grupo-incorrecto .form-control {
   border: 2px solid #bb2929;
